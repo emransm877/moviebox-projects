@@ -28,6 +28,9 @@ try:
         page.wait_for_function("!document.getElementById('refresh-live').disabled")
         page.locator('#refresh-live').click()
         assert page.locator('#refresh-live .sync-icon').count()==1
+        assert page.locator('#refresh-live').inner_text()==''
+        assert page.locator('#refresh-live').get_attribute('aria-label')
+        assert page.locator('#refresh-live').evaluate("node=>getComputedStyle(node).backgroundColor==='rgba(0, 0, 0, 0)' && getComputedStyle(node).borderRadius==='50%'")
         assert page.locator('#refresh-live').evaluate("node=>node.classList.contains('is-spinning')")
         page.wait_for_function("!document.getElementById('refresh-live').classList.contains('is-spinning')")
         checks['sync_icon_animates_on_manual_click']=True

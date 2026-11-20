@@ -33,7 +33,7 @@
   function syncButton(){
     const button=$('refresh-live');button.disabled=refreshing;button.setAttribute('aria-busy',String(refreshing));
     button.classList.toggle('is-spinning',refreshing||Date.now()<syncFeedbackUntil);
-    $('refresh-label').textContent=refreshing?'Syncing counts':'Sync counts';
+    button.setAttribute('aria-label',refreshing?'Syncing live download counts':'Sync live download counts');
   }
   function showTime(live,message=''){
     const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
