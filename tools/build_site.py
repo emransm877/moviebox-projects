@@ -1,6 +1,6 @@
 """Generate useful project pages and consistent search metadata from published data."""
 from html import escape as e
-import json,re
+import json,re,hashlib
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -101,7 +101,7 @@ def build():
         start=text.index('  <meta name="description"');end=text.index('</head>')
         text=text[:start]+'<!-- seo:start -->\n'+head('')+'\n<!-- seo:end -->\n<link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>\n'+text[end:]
     text=text.replace('<script src="app.js" defer></script>','<script src="live-counts.js" defer></script><script src="app.js" defer></script>') if 'src="live-counts.js"' not in text else text
-    if 'href="guides.css"' not in text:text=text.replace('</head>','<link rel="stylesheet" href="guides.css"></head>')
+    if not re.search(r'href="guides\.css(?:\?[^" ]*)?"',text):text=text.replace('</head>','<link rel="stylesheet" href="guides.css"></head>')
     if 'id="refresh-live"' not in text:text=text.replace('<p id="snapshot-status"','<div class="live-refresh"><button type="button" id="refresh-live">Refresh live counts</button><p id="snapshot-status"').replace('Loading the last collected snapshot…</p></div>','Loading the last collected snapshot…</p></div></div>')
     text=text.replace('Snapshots are scheduled daily. GitHub may delay scheduled jobs; the timestamp above shows the actual collection time.','Live counts are checked every 10 seconds while this page is visible. GitHub caching and API rate limits can delay the source data; any pause and the last verified time are shown above. Daily snapshots retain observed growth.')
     index.write_text(text,encoding='utf-8')
@@ -110,6 +110,24 @@ def build():
         node=ET.SubElement(xml,'url');ET.SubElement(node,'loc').text=BASE+path
     (SITE/'sitemap.xml').write_bytes(ET.tostring(xml,encoding='utf-8',xml_declaration=True))
     (SITE/'404.html').write_text(f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | MovieBox Projects</title><link rel="stylesheet" href="{BASE}styles.css"></head><body><main class="wrap guide"><p class="eyebrow">MOVIEBOX PROJECTS</p><h1>That page is not here.</h1><p>Find the published Windows, Android and Samsung TV projects in the shared hub.</p><a class="button primary" href="{BASE}">Go to the project hub</a></main></body></html>',encoding='utf-8')
-    print('Built five canonical, indexable pages and a noindex 404 page. No ratings, reviews or rankings are invented.')
+    # Content fingerprints prevent cached CSS/JS from mismatching fresh HTML.
+    # Keep responsive screenshots in the static HTML, independent of JavaScript.
+    for page_path in SITE.rglob('*.html'):
+        if page_path.parent.name=='assets':continue
+        if re.fullmatch(r'google[a-f0-9]+\.html',page_path.name):continue
+        html=page_path.read_text(encoding='utf-8')
+        for name in ['styles.css','guides.css','app.js','live-counts.js']:
+            digest=hashlib.sha256((SITE/name).read_bytes()).hexdigest()[:12]
+            html=re.sub(r'((?:href|src)="(?:[^"?]*/)?'+re.escape(name)+r')(?:\?v=[a-f0-9]+)?"',lambda m:m[1]+'?v='+digest+'"',html)
+        for name,widths in [('desktop-home',[640,1280]),('android-home',[360,720])]:
+            pattern=r'<img\b[^>]*\bsrc="(?P<prefix>(?:\.\./)?assets/)'+name+r'\.png"[^>]*>'
+            def responsive(match):
+                tag=match[0];prefix=match['prefix']
+                sources=', '.join(f'{prefix}{name}-{width}.webp {width}w' for width in widths)
+                sizes='(max-width:720px) calc(100vw - 48px), (max-width:1100px) 90vw, 640px' if name=='desktop-home' else '(max-width:720px) 180px, 220px'
+                return '<picture><source type="image/webp" srcset="'+sources+'" sizes="'+sizes+'">'+tag+'</picture>'
+            html=re.sub(pattern,responsive,html) if '<picture>' not in html else html
+        page_path.write_text(html,encoding='utf-8')
+    print('Built five canonical pages, responsive captures, fingerprinted assets and a noindex 404. No ratings or rankings are invented.')
 
 if __name__=='__main__':build()

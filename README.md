@@ -56,6 +56,26 @@ passwords or login codes there. Regenerate, deploy, then verify and submit
 `https://emransm877.github.io/moviebox-projects/sitemap.xml` through your own account.
 The `bing` key accepts a public Bing verification value similarly.
 
+Google's alternative HTML-file verification is also supported. The current
+owner-provided file is `site/googledf06fecf9831794f.html`; keep its contents
+unchanged and retain it after verification. The build leaves verification files
+untouched. Click **Verify** in Search Console once this file is live, then submit
+the sitemap above. Hosting the file alone does not confirm account verification
+or indexing.
+
+Every deployment runs `tools/check_live_seo.py` against the public site: five
+HTTP-200 canonical pages, unique titles, indexability, sitemap URLs, a real 404,
+the old URL's redirect/canonical, and the exact Google verification file bytes.
+Its result is retained as the `live-seo-audit` Actions artifact. This is a
+technical crawlability check, not an invented ranking score or a field Core Web
+Vitals measurement.
+
+Responsive WebP copies reduce screenshot transfer sizes while original captures
+remain available. CSS and JavaScript URLs contain content fingerprints to avoid
+mixing cached assets with updated pages. Regenerate image derivatives only when
+original screenshots change using `python tools/prepare_web_images.py` with the
+existing Playwright setup.
+
 ## Licensing and independence
 
 Original hub code is MIT licensed. Names, logos, app screenshots and catalogue
