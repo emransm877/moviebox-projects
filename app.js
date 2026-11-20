@@ -1,7 +1,40 @@
 'use strict';
 (() => {
   const $ = id => document.getElementById(id), format = value => Number(value || 0).toLocaleString();
+  function setupProjectFlips(){
+    const grid=document.querySelector('.project-grid');if(!grid)return;
+    const cards=Array.from(grid.children),fine=matchMedia('(hover:hover) and (pointer:fine)');
+    cards.forEach((card,index)=>{
+      const label=card.querySelector('.project-label'),heading=card.querySelector('h3'),description=card.querySelector(':scope > p'),features=card.querySelector('.feature-list'),downloads=card.querySelector('.project-download');
+      const name=label.querySelector('span').textContent,inner=element('div',null,'project-flip-inner'),front=element('div',null,'flip-face flip-front'),back=element('div',null,'flip-face flip-back');
+      back.id='project-back-'+index;back.inert=true;back.setAttribute('aria-hidden','true');
+      const mark=element('img',null,'flip-mark');mark.src='assets/moviebox-logo.svg';mark.alt='';mark.width=100;mark.height=100;
+      const open=element('button',index===3?'Explore build status':'Explore downloads','flip-open');open.type='button';open.setAttribute('aria-expanded','false');open.setAttribute('aria-controls',back.id);
+      const backHeader=element('div',null,'flip-back-heading'),backLabel=element('p',name,'flip-platform'),close=element('button','Back','flip-close');close.type='button';close.setAttribute('aria-label','Show '+name+' overview');backHeader.append(backLabel,close);
+      front.append(label,mark,heading,description,open);back.append(backHeader,features,downloads);inner.append(front,back);card.replaceChildren(inner);
+      function flip(show,focus=false){
+        if(card.classList.contains('is-flipped')===show)return;
+        card.classList.toggle('is-flipped',show);front.inert=show;back.inert=!show;front.setAttribute('aria-hidden',String(show));back.setAttribute('aria-hidden',String(!show));open.setAttribute('aria-expanded',String(show));
+        if(focus)(show?close:open).focus({preventScroll:true});
+      }
+      open.addEventListener('click',()=>flip(true,true));close.addEventListener('click',()=>flip(false,true));
+      card.addEventListener('pointerenter',event=>{if(fine.matches&&event.pointerType!=='touch'&&!card.contains(document.activeElement))flip(true);});
+      card.addEventListener('pointerleave',()=>{if(!card.contains(document.activeElement))flip(false);});
+      card.addEventListener('focusout',()=>setTimeout(()=>{if(!card.contains(document.activeElement))flip(false);},0));
+      card.addEventListener('keydown',event=>{if(event.key==='Escape'&&card.classList.contains('is-flipped')){event.preventDefault();flip(false,true);}});
+      card.addEventListener('toggle',()=>size(),true);
+    });
+    grid.classList.add('flip-ready');
+    function size(){cards.forEach(card=>card.firstElementChild.style.height='640px');const height=Math.max(640,...cards.flatMap(card=>Array.from(card.querySelectorAll('.flip-face')).map(face=>face.scrollHeight+2)));cards.forEach(card=>card.firstElementChild.style.height=height+'px');}
+    size();window.addEventListener('resize',size);if(document.fonts)document.fonts.ready.then(size);
+  }
   let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
+  let syncFeedbackUntil=0;
+  function syncButton(){
+    const button=$('refresh-live');button.disabled=refreshing;button.setAttribute('aria-busy',String(refreshing));
+    button.classList.toggle('is-spinning',refreshing||Date.now()<syncFeedbackUntil);
+    $('refresh-label').textContent=refreshing?'Syncing counts':'Sync counts';
+  }
   function showTime(live,message=''){
     const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
     const observed=new Date(snapshot.observedAt),status=$('snapshot-status');
@@ -12,7 +45,7 @@
   }
   async function refreshLive(manual=false){
     if(refreshing||(!manual&&document.hidden)||Date.now()-lastRefresh<9500)return;
-    refreshing=true;$('refresh-live').disabled=true;$('refresh-live').textContent='Refreshing…';
+    refreshing=true;syncButton();
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
     try{
       const live=await window.MovieBoxLiveCounts.load(controller.signal);
@@ -22,7 +55,7 @@
       setDownloads(snapshot.repositories.find(r=>r.platform==='Samsung TV'),{tv_bundle:'tv-download'},'tv');
     }catch(error){
       lastRefresh=Date.now();showTime(snapshot!==savedSnapshot,(error.status===403||error.status===429?'GitHub rate limit reached'+(error.retryAt?'; next API request after '+new Date(error.retryAt).toLocaleTimeString():''):'Live refresh unavailable')+'; showing last available counts');
-    }finally{clearTimeout(timeout);refreshing=false;$('refresh-live').disabled=false;$('refresh-live').textContent='Refresh live counts';}
+    }finally{clearTimeout(timeout);refreshing=false;syncButton();}
   }
   function element(tag, text, className) {
     const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node;
@@ -131,12 +164,12 @@
       $('release-page-size').addEventListener('change',()=>{releasePage=1;renderReleases();});
       $('release-previous').addEventListener('click',()=>{releasePage--;renderReleases();});
       $('release-next').addEventListener('click',()=>{releasePage++;renderReleases();});
-      $('refresh-live').addEventListener('click',()=>refreshLive(true));
+      $('refresh-live').addEventListener('click',()=>{syncFeedbackUntil=Date.now()+800;syncButton();setTimeout(syncButton,820);refreshLive(true);});
       refreshLive();setInterval(()=>refreshLive(),10000);
     } catch {
       $('snapshot-status').textContent = 'Download statistics are unavailable. Published download links above still work.'; $('snapshot-status').classList.add('error');
       $('release-rows').replaceChildren(); const row = element('tr'), cell = element('td', 'Could not load the last successful snapshot. Please try again later.'); cell.colSpan = 5; row.append(cell); $('release-rows').append(row);
     }
   }
-  load();
+  setupProjectFlips();load();
 })();
