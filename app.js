@@ -6,8 +6,7 @@
     const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
     const observed=new Date(snapshot.observedAt),status=$('snapshot-status');
     const detail=(live?'Refreshed from GitHub ':'Saved snapshot collected ')+observed.toLocaleString()+' · Auto-check: 10 seconds'+(message?' · '+message:stale?' · Older than 48 hours':'');
-    const state=message?(message.includes('rate limit')?'Refresh paused':'Refresh unavailable'):stale?'Older data':'Auto-check: 10s';
-    status.textContent=(live?'Updated ':'Saved ')+observed.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+' · '+state;
+    status.textContent=(live?'Updated ':'Saved ')+observed.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
     status.title=detail;status.setAttribute('aria-description',detail);
     $('snapshot-status').classList.toggle('error',!!message||stale);
   }
