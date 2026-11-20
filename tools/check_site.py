@@ -48,10 +48,17 @@ try:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
             page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
+            if width >= 1280:
+                for selector in ['.project-download', '.project-download .button', '.project-source']:
+                    tops=page.locator(selector).evaluate_all('(nodes)=>nodes.map(node=>node.getBoundingClientRect().top)')
+                    assert max(tops)-min(tops)<2,(width,selector,tops)
+                checks['project_downloads_align_'+str(width)]=True
             for image in page.locator('img').all():
                 image.scroll_into_view_if_needed()
                 page.wait_for_function('(image)=>image.complete&&image.naturalWidth>0',arg=image.element_handle())
             page.evaluate('scrollTo(0,0)')
+            if width==1280:
+                page.locator('.project-grid').screenshot(path=str(out/'project-downloads.png'))
             checks['layout_and_images_'+str(width)]=True
             if width==390:page.screenshot(path=str(out/'mobile-top.png'));page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'mobile-analytics.png'))
         failure=browser_context.new_page();failure.set_viewport_size({'width':390,'height':900})
