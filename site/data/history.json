@@ -13,7 +13,7 @@
       "repo": "moviebox-android"
     },
     "moviebox-android:740994538": {
-      "count": 117,
+      "count": 118,
       "kind": "apk",
       "repo": "moviebox-android"
     },
@@ -592,9 +592,9 @@
       }
     },
     {
-      "at": "2026-11-20T20:59:37+00:00",
+      "at": "2026-11-20T21:14:18+00:00",
       "packages": {
-        "moviebox-android": 200,
+        "moviebox-android": 201,
         "moviebox-desktop": 237,
         "moviebox-tizen": 52
       }
