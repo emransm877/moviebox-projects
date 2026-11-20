@@ -30,7 +30,7 @@ try:
         assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==0
         page.locator('#android-tv-project summary').click()
         assert page.locator('#android-tv-project details').get_attribute('open') is not None
-        assert 'no public installation APK' in page.locator('#android-tv-project details').inner_text()
+        assert 'No public installation APK' in page.locator('#android-tv-project details').inner_text()
         page.locator('#android-tv-project summary').click()
         checks['four_project_cards_with_honest_android_tv_status']=True
         page.locator('#count-mode').select_option('all')
@@ -70,10 +70,17 @@ try:
         checks['faq_works_with_keyboard']=True
         page.screenshot(path=str(out/'desktop-top.png'))
         page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'desktop-analytics.png'))
-        for width in [390,768,1280,1920]:
+        for width in [390,768,1024,1280,1920]:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
             page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
+            if width >= 768:
+                cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
+                for card in cards:
+                    peers=[other for other in cards if abs(other['top']-card['top'])<2]
+                    assert max(other['button'] for other in peers)-min(other['button'] for other in peers)<2,(width,cards)
+                    assert abs(card['width']-card['footerWidth'])<2,(width,card)
+                checks['card_actions_align_each_row_'+str(width)]=True
             if width >= 1280:
                 for selector in ['.project-download', '.project-download .button', '.project-source']:
                     tops=page.locator(selector).evaluate_all('(nodes)=>nodes.map(node=>node.getBoundingClientRect().top)')
