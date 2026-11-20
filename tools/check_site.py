@@ -103,7 +103,8 @@ try:
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
         state['limited']=True;live.clock.fast_forward(10000)
-        live.wait_for_function("document.getElementById('snapshot-status').textContent.includes('Refresh paused')")
+        live.wait_for_function("document.getElementById('snapshot-status').title.includes('GitHub rate limit reached')")
+        assert 'Refresh paused' not in live.locator('#snapshot-status').inner_text()
         assert len(live.locator('#snapshot-status').inner_text())<85
         assert 'GitHub rate limit reached' in live.locator('#snapshot-status').get_attribute('title')
         assert int(live.locator('#windows-count').inner_text().replace(',',''))==windows['packages']+1
