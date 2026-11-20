@@ -25,13 +25,35 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
+        page.wait_for_function("!document.getElementById('refresh-live').disabled")
+        page.locator('#refresh-live').click()
+        assert page.locator('#refresh-live .sync-icon').count()==1
+        assert page.locator('#refresh-live').evaluate("node=>node.classList.contains('is-spinning')")
+        page.wait_for_function("!document.getElementById('refresh-live').classList.contains('is-spinning')")
+        checks['sync_icon_animates_on_manual_click']=True
         assert page.locator('.project-grid > .project').count()==4
         assert 'In development' in page.locator('#android-tv-project').inner_text()
         assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==0
+        page.locator('#android-tv-project .flip-open').focus();page.keyboard.press('Enter')
+        assert page.locator('#android-tv-project').evaluate("node=>node.classList.contains('is-flipped')")
         page.locator('#android-tv-project summary').click()
         assert page.locator('#android-tv-project details').get_attribute('open') is not None
         assert 'No public installation APK' in page.locator('#android-tv-project details').inner_text()
         page.locator('#android-tv-project summary').click()
+        page.keyboard.press('Escape')
+        assert page.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
+        page.locator('.windows-project').hover()
+        assert page.locator('.windows-project').evaluate("node=>node.classList.contains('is-flipped')")
+        page.locator('#projects-title').hover()
+        checks['cards_flip_with_hover_keyboard_and_escape']=True
+        touch=browser.new_context(viewport={'width':390,'height':900},has_touch=True,is_mobile=True,reduced_motion='reduce')
+        touch.route('https://api.github.com/**',lambda route:route.fulfill(status=403,body='{}'))
+        mobile=touch.new_page();mobile.goto(url);mobile.locator('#android-tv-project .flip-open').tap()
+        assert mobile.locator('#android-tv-project .flip-back').get_attribute('aria-hidden')=='false'
+        assert mobile.locator('#android-tv-project .project-flip-inner').evaluate('node=>getComputedStyle(node).transform')=='none'
+        mobile.locator('#android-tv-project .flip-close').tap()
+        assert mobile.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
+        touch.close();checks['touch_flip_and_reduced_motion_work']=True
         checks['four_project_cards_with_honest_android_tv_status']=True
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
@@ -65,15 +87,22 @@ try:
         assert '/'+windows['latestTag']+'/' in page.locator('#windows-download').get_attribute('href')
         assert '/'+next(r for r in data['repositories'] if r['platform']=='Android')['latestTag']+'/' in page.locator('#android-download').get_attribute('href')
         checks['download_buttons_target_published_stable_assets']=True
-        page.locator('summary').first.focus();page.keyboard.press('Enter')
-        assert page.locator('details').first.get_attribute('open') is not None
+        page.locator('.faq summary').first.focus();page.keyboard.press('Enter')
+        assert page.locator('.faq details').first.get_attribute('open') is not None
         checks['faq_works_with_keyboard']=True
         page.screenshot(path=str(out/'desktop-top.png'))
         page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'desktop-analytics.png'))
         for width in [390,768,1024,1280,1920]:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
             page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
+            page.mouse.move(0,0)
+            page.locator('.project').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
+            page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
+            sync=page.locator('#refresh-live').bounding_box();status=page.locator('#snapshot-status').bounding_box()
+            assert status['y']>=sync['y']+sync['height'],(width,sync,status)
+            assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
+            assert sync['height']>=58
             if width >= 768:
                 cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
                 for card in cards:
