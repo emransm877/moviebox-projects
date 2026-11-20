@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $ = id => document.getElementById(id), format = value => Number(value || 0).toLocaleString();
-  let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0;
+  let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
   function showTime(live,message=''){
     const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
     const observed=new Date(snapshot.observedAt),status=$('snapshot-status');
@@ -61,16 +61,24 @@
     return snapshot.repositories.filter(r => $('platform-filter').value === 'all' || r.platform === $('platform-filter').value)
       .flatMap(repo => repo.releases.map(release => ({ repo, release })));
   }
-  function updateVersions() {
-    const select = $('version-filter'); select.replaceChildren(element('option', 'All versions')); select.firstChild.value = 'all';
+  function updateVersions(preserve=true) {
+    const select = $('version-filter'),previous=preserve?select.value:'all'; select.replaceChildren(element('option', 'All versions')); select.firstChild.value = 'all';
     for (const { repo, release } of filteredReleases()) { const option = element('option', repo.platform + ' ' + release.tag); option.value = repo.name + ':' + release.tag; select.append(option); }
+    if(Array.from(select.options).some(option=>option.value===previous))select.value=previous;
     renderReleases();
   }
   function renderReleases() {
     const body = $('release-rows'); body.replaceChildren(); const all = $('count-mode').value === 'all';
     const releases = filteredReleases().filter(({ repo, release }) => $('version-filter').value === 'all' || $('version-filter').value === repo.name + ':' + release.tag)
       .sort((a, b) => b.release.publishedAt.localeCompare(a.release.publishedAt));
-    for (const { repo, release } of releases) {
+    const selectedSize=Number($('release-page-size').value),pageSize=[5,10,20].includes(selectedSize)?selectedSize:5;
+    const pages=Math.max(1,Math.ceil(releases.length/pageSize));releasePage=Math.max(1,Math.min(releasePage,pages));
+    const start=(releasePage-1)*pageSize,end=Math.min(start+pageSize,releases.length);
+    $('release-previous').disabled=releasePage===1;$('release-next').disabled=releasePage===pages;
+    $('release-page-label').textContent='Page '+releasePage+' of '+pages;
+    const range=releases.length?'Showing '+(start+1)+'–'+end+' of '+format(releases.length)+' releases':'No matching releases';
+    if($('release-range').textContent!==range)$('release-range').textContent=range;
+    for (const { repo, release } of releases.slice(start,end)) {
       const assets = release.assets.filter(a => all || ['apk', 'installer', 'portable', 'tv_bundle', 'tv_widget'].includes(a.kind));
       const row = element('tr'); row.append(element('td', repo.platform));
       const version = element('td'), url = releaseLink(release.url, repo.name);
@@ -78,11 +86,13 @@
       if (release.tag === repo.latestTag) version.append(element('span', 'Latest', 'release-badge'));
       if (release.prerelease) version.append(element('span', 'Preview', 'release-badge'));
       row.append(version, element('td', new Date(release.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })), element('td', format(assets.reduce((n, a) => n + a.count, 0)), 'number'));
-      const files = element('td', null, 'file-links');
+      const files = element('td', null, 'file-links'),chips=element('div',null,'release-assets');files.append(chips);
       for (const asset of assets) {
         const target = safeDownload(asset.url, repo.name); if (!target) continue;
-        const file = element('a', ({ apk: 'APK', installer: 'Setup EXE', portable: 'Portable ZIP', tv_bundle: 'TV bundle', tv_widget: 'TV widget', checksums: 'Checksum', other: asset.name })[asset.kind] + ' · ' + format(asset.count));
-        file.href = target; file.title = asset.name; files.append(file);
+        let label=({ apk: 'APK', installer: 'Setup EXE', portable: 'Portable ZIP', tv_bundle: 'TV bundle', tv_widget: 'TV widget', checksums: 'Checksum', other: asset.name })[asset.kind];
+        if(asset.kind==='checksums')label=/setup/i.test(asset.name)?'EXE checksum':/desktop|portable/i.test(asset.name)?'ZIP checksum':/bundle/i.test(asset.name)?'Bundle checksum':/\.wgt/i.test(asset.name)?'Widget checksum':'Checksum';
+        const file=element('a',null,'asset-chip');file.append(element('span',label),element('span',format(asset.count),'asset-downloads'));
+        file.href = target; file.title = asset.name;file.setAttribute('aria-label',asset.name+': '+format(asset.count)+' downloads');chips.append(file);
       }
       row.append(files); body.append(row);
     }
@@ -115,7 +125,12 @@
       setDownloads(snapshot.repositories.find(r => r.platform === 'Android'), { apk: 'android-download' }, 'android');
       setDownloads(snapshot.repositories.find(r => r.platform === 'Samsung TV'), { tv_bundle: 'tv-download' }, 'tv');
       renderStats(); updateVersions(); renderGrowth();
-      $('count-mode').addEventListener('change', renderStats); $('platform-filter').addEventListener('change', updateVersions); $('version-filter').addEventListener('change', renderReleases);
+      $('count-mode').addEventListener('change', renderStats);
+      $('platform-filter').addEventListener('change',()=>{releasePage=1;updateVersions(false);});
+      $('version-filter').addEventListener('change',()=>{releasePage=1;renderReleases();});
+      $('release-page-size').addEventListener('change',()=>{releasePage=1;renderReleases();});
+      $('release-previous').addEventListener('click',()=>{releasePage--;renderReleases();});
+      $('release-next').addEventListener('click',()=>{releasePage++;renderReleases();});
       $('refresh-live').addEventListener('click',()=>refreshLive(true));
       refreshLive();setInterval(()=>refreshLive(),10000);
     } catch {
