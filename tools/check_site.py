@@ -98,12 +98,14 @@ try:
             route.fulfill(content_type='application/json',body=json.dumps(result))
         live_context.route('https://api.github.com/**',github_fixture)
         live=live_context.new_page();live.clock.install();live.goto(url)
-        live.wait_for_function("document.getElementById('snapshot-status').textContent.startsWith('Refreshed from GitHub')")
+        live.wait_for_function("document.getElementById('snapshot-status').textContent.startsWith('Updated ')")
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
         state['limited']=True;live.clock.fast_forward(10000)
-        live.wait_for_function("document.getElementById('snapshot-status').textContent.includes('GitHub rate limit reached')")
+        live.wait_for_function("document.getElementById('snapshot-status').textContent.includes('Refresh paused')")
+        assert len(live.locator('#snapshot-status').inner_text())<85
+        assert 'GitHub rate limit reached' in live.locator('#snapshot-status').get_attribute('title')
         assert int(live.locator('#windows-count').inner_text().replace(',',''))==windows['packages']+1
         checks['api_rate_limit_keeps_verified_counts_and_reports_pause']=True
         live_context.close()
