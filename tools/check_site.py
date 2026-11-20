@@ -25,6 +25,14 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
+        assert page.locator('.project-grid > .project').count()==4
+        assert 'In development' in page.locator('#android-tv-project').inner_text()
+        assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==0
+        page.locator('#android-tv-project summary').click()
+        assert page.locator('#android-tv-project details').get_attribute('open') is not None
+        assert 'no public installation APK' in page.locator('#android-tv-project details').inner_text()
+        page.locator('#android-tv-project summary').click()
+        checks['four_project_cards_with_honest_android_tv_status']=True
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
         checks['all_file_counts_match_github_asset_sum']=True
