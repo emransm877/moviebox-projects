@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-20T22:39:30+00:00",
+  "observedAt": "2026-11-20T23:06:14+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -16,7 +16,7 @@
             {
               "id": 744847608,
               "name": "MovieBox-Android-0.2.0.apk",
-              "count": 83,
+              "count": 84,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.2.0/MovieBox-Android-0.2.0.apk",
               "size": 67368390,
@@ -65,7 +65,7 @@
         }
       ],
       "kinds": {
-        "apk": 202,
+        "apk": 203,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -73,8 +73,8 @@
         "checksums": 4,
         "other": 0
       },
-      "packages": 202,
-      "allAssets": 206,
+      "packages": 203,
+      "allAssets": 207,
       "latestTag": "v0.2.0"
     },
     {
@@ -91,7 +91,7 @@
             {
               "id": 748121556,
               "name": "MovieBox-Desktop-0.10.3-windows-x64.zip",
-              "count": 28,
+              "count": 29,
               "kind": "portable",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Desktop-0.10.3-windows-x64.zip",
               "size": 58994941,
@@ -111,7 +111,7 @@
             {
               "id": 748121235,
               "name": "MovieBox-Setup-0.10.3-windows-x64.exe",
-              "count": 128,
+              "count": 129,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Setup-0.10.3-windows-x64.exe",
               "size": 42459520,
@@ -709,15 +709,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 192,
-        "portable": 45,
+        "installer": 193,
+        "portable": 46,
         "tv_bundle": 0,
         "tv_widget": 0,
         "checksums": 28,
         "other": 0
       },
-      "packages": 237,
-      "allAssets": 265,
+      "packages": 239,
+      "allAssets": 267,
       "latestTag": "v0.10.3"
     },
     {
