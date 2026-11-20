@@ -63,7 +63,9 @@ td.file-links .asset-chip{display:inline-flex;align-items:center;gap:10px;max-wi
 .flip-back-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.flip-platform{color:var(--card-accent);font-size:.68rem;letter-spacing:1px;margin:0}.flip-close{font:inherit;font-size:.75rem;color:var(--card-accent);border:1px solid color-mix(in srgb,var(--card-accent) 35%,transparent);border-radius:6px;background:transparent;padding:5px 9px;cursor:pointer}
 .flip-back .feature-list{font-size:.85rem;margin:0 0 24px;min-height:165px}.flip-back .project-download{margin-top:auto;min-height:275px}.flip-back .project-install-notes{padding-top:16px}.flip-back .project-source{font-size:.76rem}.flip-back .download-actions>.button,.flip-back .build-status summary{font-size:.8rem;padding:12px 10px}
 .flip-open:focus-visible,.flip-close:focus-visible{outline:2px solid var(--card-accent);outline-offset:5px}
-.flip-back .project-download{flex:0 0 300px;min-height:300px}
+.flip-back .project-download{position:relative;flex:0 0 340px;min-height:340px;padding-bottom:52px}
+.flip-back .project-source{position:absolute;bottom:0;left:0;right:0}
+.flip-back .build-status{position:relative}.flip-back .build-status[open]>p{position:absolute;z-index:3;top:58px;left:0;right:0;max-height:270px;overflow:auto;margin:0;padding:16px;border:1px solid var(--card-accent);border-radius:8px;background:var(--card-surface);box-shadow:0 12px 30px #0006}
 @media(max-width:1100px){.project-grid.flip-ready{gap:28px}.project-flip-inner{transform:rotateY(-5deg) rotateX(2deg)}.flip-face{padding:28px}.flip-front h3{font-size:1.8rem}}
 @media(max-width:720px){.project-grid.flip-ready{padding-inline:0;gap:24px}.project-flip-inner{transform:none}.flip-mark{margin-block:20px}.flip-face{padding:25px}.flip-front>p{font-size:1rem}.flip-back .feature-list{min-height:120px}}
 @media(prefers-reduced-motion:reduce){.project-flip-inner,.project.is-flipped .project-flip-inner{transform:none;transition:none}.flip-back{transform:none;visibility:hidden}.is-flipped .flip-front{visibility:hidden}.is-flipped .flip-back{visibility:visible}}
@@ -79,3 +81,4 @@ td.file-links .asset-chip{display:inline-flex;align-items:center;gap:10px;max-wi
 @keyframes sync-turn{to{transform:rotate(360deg)}}
 @media(max-width:600px){.analytics-toolbar .live-refresh{grid-column:1;grid-row:2;justify-self:start}.analytics-toolbar>label{padding-top:0}}
 @media(prefers-reduced-motion:reduce){.is-spinning .sync-icon{animation:none}}
+select:focus-visible{outline:1px solid #91baa3;outline-offset:2px;box-shadow:none}
