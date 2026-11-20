@@ -1,11 +1,12 @@
 /* Public GitHub metadata only. No tokens, app telemetry or visitor identifiers. */
 (function(global){
   'use strict';
-  const owner='emransm877',projects=[['moviebox-android','Android'],['moviebox-desktop','Windows'],['moviebox-tizen','Samsung TV']];
+  const owner='emransm877',projects=[['moviebox-android','Android'],['moviebox-desktop','Windows'],['moviebox-tizen','Samsung TV'],['moviebox-android-tv','Android TV']];
   function kind(name,repo){
     name=name.toLowerCase();
     if(/\.(sha256|sha512)$/.test(name)||['sha256sums.txt','checksums.txt'].includes(name))return 'checksums';
     if(repo==='moviebox-android'&&/^moviebox-android-[0-9.]+\.apk$/.test(name))return 'apk';
+    if(repo==='moviebox-android-tv'&&/^moviebox-android-tv-[0-9.]+\.apk$/.test(name))return 'apk';
     if(repo==='moviebox-desktop'&&/^moviebox-setup-[0-9.]+-windows-x64\.exe$/.test(name))return 'installer';
     if(repo==='moviebox-desktop'&&/^moviebox-(desktop-)?[0-9.]+-windows-x64(-portable)?\.zip$/.test(name))return 'portable';
     if(repo==='moviebox-tizen'&&/^moviebox-tv-[0-9.]+-install-bundle\.zip$/.test(name))return 'tv_bundle';
@@ -30,7 +31,7 @@
     async function request(path){
       const response=await fetch('https://api.github.com/repos/'+owner+'/'+path,{headers:{Accept:'application/vnd.github+json'},cache:'no-cache',signal});
       const remaining=Number(response.headers.get('x-ratelimit-remaining')),reset=Number(response.headers.get('x-ratelimit-reset'))*1000;
-      if(response.headers.has('x-ratelimit-remaining')&&remaining<7&&reset>Date.now())pausedUntil=reset;
+      if(response.headers.has('x-ratelimit-remaining')&&remaining<9&&reset>Date.now())pausedUntil=reset;
       if(!response.ok){const error=new Error(response.status===403||response.status===429?'GitHub rate limit reached':'GitHub could not be reached');error.status=response.status;error.retryAt=reset||Date.now()+60000;pausedUntil=Math.max(pausedUntil,error.retryAt);throw error;}
       return response.json();
     }

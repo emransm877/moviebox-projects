@@ -9,7 +9,7 @@
       const name=label.querySelector('span').textContent,inner=element('div',null,'project-flip-inner'),front=element('div',null,'flip-face flip-front'),back=element('div',null,'flip-face flip-back');
       back.id='project-back-'+index;back.inert=true;back.setAttribute('aria-hidden','true');
       const mark=element('img',null,'flip-mark');mark.src='assets/moviebox-logo.svg';mark.alt='';mark.width=100;mark.height=100;
-      const open=element('button',index===3?'Explore build status':'Explore downloads','flip-open');open.type='button';open.setAttribute('aria-expanded','false');open.setAttribute('aria-controls',back.id);
+      const open=element('button','Explore downloads','flip-open');open.type='button';open.setAttribute('aria-expanded','false');open.setAttribute('aria-controls',back.id);
       const backHeader=element('div',null,'flip-back-heading'),backLabel=element('p',name,'flip-platform'),close=element('button','Back','flip-close');close.type='button';close.setAttribute('aria-label','Show '+name+' overview');backHeader.append(backLabel,close);
       front.append(label,mark,heading,description,open);back.append(backHeader,features,downloads);inner.append(front,back);card.replaceChildren(inner);
       function flip(show,focus=false){
@@ -49,7 +49,7 @@
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
     try{
       const live=await window.MovieBoxLiveCounts.load(controller.signal);
-      snapshot=live;lastRefresh=Date.now();showTime(true);renderStats();updateVersions();renderGrowth();
+      snapshot=live;lastRefresh=Date.now();showTime(true);setDownloads(snapshot.repositories.find(r=>r.platform==='Android TV'),{apk:'androidtv-download'},'androidtv');renderStats();updateVersions();renderGrowth();
       setDownloads(snapshot.repositories.find(r=>r.platform==='Windows'),{installer:'windows-download',portable:'portable-download'},'windows');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Android'),{apk:'android-download'},'android');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Samsung TV'),{tv_bundle:'tv-download'},'tv');
@@ -80,14 +80,15 @@
     $('windows-count').textContent = format(all ? windows.allAssets : windows.packages);
     $('tv-count').textContent = format(all ? tv.allAssets : tv.packages);
     $('tv-count-label').textContent = all ? 'all file downloads' : 'package downloads';
+    const androidtv=snapshot.repositories.find(repo=>repo.platform==='Android TV');$('androidtv-count').textContent=format(all?androidtv.allAssets:androidtv.packages);$('androidtv-count-label').textContent=all?'all file downloads':'APK downloads';$('androidtv-breakdown').textContent=format(androidtv.kinds.apk)+' APKs · '+format(androidtv.kinds.checksums)+' checksum files';
     $('tv-breakdown').textContent = format(tv.kinds.tv_bundle) + ' bundles · ' + format(tv.kinds.tv_widget) + ' widgets';
-    $('combined-count').textContent = format(all ? android.allAssets + windows.allAssets + tv.allAssets : android.packages + windows.packages + tv.packages);
+    $('combined-count').textContent = format(snapshot.repositories.reduce((total,repo)=>total+(all?repo.allAssets:repo.packages),0));
     $('android-count-label').textContent = all ? 'all file downloads' : 'APK downloads';
     $('windows-count-label').textContent = all ? 'all file downloads' : 'package downloads';
     $('combined-label').textContent = all ? 'Combined release-file downloads' : 'Combined package downloads';
     $('android-breakdown').textContent = format(android.kinds.apk) + ' APKs · ' + format(android.kinds.checksums) + ' checksum files';
     $('windows-breakdown').textContent = format(windows.kinds.installer) + ' installers · ' + format(windows.kinds.portable) + ' ZIPs';
-    $('checksum-note').textContent = 'Currently observed: ' + format(android.kinds.checksums + windows.kinds.checksums + tv.kinds.checksums) + ' checksum-file downloads across the three published projects. These are excluded from application-package totals.';
+    $('checksum-note').textContent = 'Currently observed: ' + format(snapshot.repositories.reduce((total,repo)=>total+repo.kinds.checksums,0)) + ' checksum-file downloads across the four published projects. These are excluded from application-package totals.';
     renderReleases();
   }
   function filteredReleases() {
@@ -158,12 +159,12 @@
       if (responses.some(r => !r.ok)) throw new Error('Snapshot unavailable');
       [snapshot, history] = await Promise.all(responses.map(r => r.json()));
       savedSnapshot=snapshot;
-      if (snapshot.schemaVersion !== 1 || !snapshot.repositories || snapshot.repositories.length !== 3) throw new Error('Unsupported snapshot');
+      if (snapshot.schemaVersion !== 1 || !snapshot.repositories || snapshot.repositories.length !== 4) throw new Error('Unsupported snapshot');
       showTime(false);
       setDownloads(snapshot.repositories.find(r => r.platform === 'Windows'), { installer: 'windows-download', portable: 'portable-download' }, 'windows');
       setDownloads(snapshot.repositories.find(r => r.platform === 'Android'), { apk: 'android-download' }, 'android');
       setDownloads(snapshot.repositories.find(r => r.platform === 'Samsung TV'), { tv_bundle: 'tv-download' }, 'tv');
-      renderStats(); updateVersions(); renderGrowth();
+      setDownloads(snapshot.repositories.find(r=>r.platform==='Android TV'),{apk:'androidtv-download'},'androidtv');renderStats(); updateVersions(); renderGrowth();
       $('count-mode').addEventListener('change', renderStats);
       $('platform-filter').addEventListener('change',()=>{releasePage=1;updateVersions(false);});
       $('version-filter').addEventListener('change',()=>{releasePage=1;renderReleases();});
