@@ -9,7 +9,7 @@ import time
 from urllib.request import Request, urlopen
 from urllib.parse import urlsplit
 
-REPOSITORIES = [('moviebox-android', 'Android'), ('moviebox-desktop', 'Windows'), ('moviebox-tizen', 'Samsung TV')]
+REPOSITORIES = [('moviebox-android', 'Android'), ('moviebox-desktop', 'Windows'), ('moviebox-tizen', 'Samsung TV'), ('moviebox-android-tv', 'Android TV')]
 OWNER = 'emransm877'
 
 def classify(name, repo):
@@ -17,6 +17,8 @@ def classify(name, repo):
     if name.endswith(('.sha256', '.sha512')) or name in ('sha256sums.txt', 'checksums.txt'):
         return 'checksums'
     if repo == 'moviebox-android' and re.fullmatch(r'moviebox-android-[0-9.]+\.apk', name):
+        return 'apk'
+    if repo == 'moviebox-android-tv' and re.fullmatch(r'moviebox-android-tv-[0-9.]+\.apk', name):
         return 'apk'
     if repo == 'moviebox-desktop' and re.fullmatch(r'moviebox-setup-[0-9.]+-windows-x64\.exe', name):
         return 'installer'

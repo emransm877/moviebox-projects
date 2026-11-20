@@ -33,7 +33,7 @@ def get(url):
 def audit():
     status,body,_=get(BASE+'sitemap.xml');assert status==200,('sitemap',status)
     urls=[element.text for element in ET.fromstring(body).iter() if element.tag.endswith('loc')]
-    assert set(urls)=={BASE,BASE+'windows/',BASE+'android/',BASE+'samsung-tv/',BASE+'help/'}
+    assert set(urls)=={BASE,BASE+'windows/',BASE+'android/',BASE+'samsung-tv/',BASE+'help/',BASE+'android-tv/'}
     def inspect(url):
         status,body,headers=get(url);assert status==200,(url,status)
         page=Page(body.decode('utf-8'));assert page.canonical==[url],(url,page.canonical)
@@ -41,7 +41,7 @@ def audit():
         assert 'noindex' not in page.robots.lower() and 'noindex' not in headers.get('X-Robots-Tag','').lower(),url
         return {'url':url,'status':status,'title':page.title,'canonical':page.canonical[0],'bytes':len(body)}
     with ThreadPoolExecutor(max_workers=5) as pool:pages=list(pool.map(inspect,urls))
-    assert len({page['title'] for page in pages})==5
+    assert len({page['title'] for page in pages})==6
     missing_status,_,_=get(BASE+'seo-audit-page-that-does-not-exist/')
     assert missing_status==404,('soft404',missing_status)
     status,body,_=get('https://emransm877.github.io/moviebox-desktop/')

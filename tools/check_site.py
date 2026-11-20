@@ -35,14 +35,11 @@ try:
         page.wait_for_function("!document.getElementById('refresh-live').classList.contains('is-spinning')")
         checks['sync_icon_animates_on_manual_click']=True
         assert page.locator('.project-grid > .project').count()==4
-        assert 'In development' in page.locator('#android-tv-project').inner_text()
-        assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==0
+        assert 'v0.1.0' in page.locator('#android-tv-project').inner_text()
+        assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==1
         page.locator('#android-tv-project .flip-open').focus();page.keyboard.press('Enter')
         assert page.locator('#android-tv-project').evaluate("node=>node.classList.contains('is-flipped')")
-        page.locator('#android-tv-project summary').click()
-        assert page.locator('#android-tv-project details').get_attribute('open') is not None
-        assert 'No public installation APK' in page.locator('#android-tv-project details').inner_text()
-        page.locator('#android-tv-project summary').click()
+        assert '/v0.1.0/MovieBox-Android-TV-0.1.0.apk' in page.locator('#androidtv-download').get_attribute('href')
         page.keyboard.press('Escape')
         assert page.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
         page.locator('.windows-project').hover()
@@ -57,7 +54,7 @@ try:
         mobile.locator('#android-tv-project .flip-close').tap()
         assert mobile.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
         touch.close();checks['touch_flip_and_reduced_motion_work']=True
-        checks['four_project_cards_with_honest_android_tv_status']=True
+        checks['four_published_project_cards_with_real_downloads']=True
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
         checks['all_file_counts_match_github_asset_sum']=True
@@ -147,7 +144,7 @@ try:
         assert history_page.locator('#growth-range').input_value()=='24'
         checks['same_day_growth_and_platform_baselines_are_correct']=True
         checks['measured_growth_delta_renders_correctly']=True
-        for route in ['windows/','android/','samsung-tv/','help/']:
+        for route in ['windows/','android/','samsung-tv/','android-tv/','help/']:
             response=page.goto(url+route)
             assert response.status==200
             assert page.locator('h1').count()==1

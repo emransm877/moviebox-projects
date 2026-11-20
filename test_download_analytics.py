@@ -19,6 +19,8 @@ class DownloadAnalyticsTests(unittest.TestCase):
         self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64.exe','moviebox-desktop'),'installer')
         self.assertEqual(classify('MovieBox-Desktop-0.10.3-windows-x64.zip','moviebox-desktop'),'portable')
         self.assertEqual(classify('MovieBox-Android-0.2.0.apk','moviebox-android'),'apk')
+        self.assertEqual(classify('MovieBox-Android-TV-0.1.0.apk','moviebox-android-tv'),'apk')
+        self.assertEqual(classify('MovieBox-Android-TV-0.1.0.apk','moviebox-android'),'other')
         self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64.exe.sha256','moviebox-desktop'),'checksums')
         self.assertEqual(classify('SHA256SUMS.txt','moviebox-desktop'),'checksums')
         self.assertEqual(classify('debug-evidence.zip','moviebox-desktop'),'other')
