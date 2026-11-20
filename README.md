@@ -1,16 +1,17 @@
 # MovieBox Projects
 
-The independent community hub for the published **Windows**, **Android patch**
-and **Samsung Tizen TV** projects maintained by Emran Hossain.
+The independent community hub for the published **Windows**, **Android patch**,
+**Samsung Tizen TV** and **Android TV / Google TV** projects maintained by Emran Hossain.
 
 [Website](https://emransm877.github.io/moviebox-projects/) ·
 [Windows](https://github.com/emransm877/moviebox-desktop) ·
 [Android patch](https://github.com/emransm877/moviebox-android) ·
-[Samsung TV](https://github.com/emransm877/moviebox-tizen)
+[Samsung TV](https://github.com/emransm877/moviebox-tizen) · [Android TV](https://github.com/emransm877/moviebox-android-tv)
 
 Only projects with published downloads and documented working scope are offered
-as ready downloads. Apple work and the new Android TV project remain development
-work until verified. Device compatibility limits are explicit on each page.
+as ready downloads. Android TV 0.1.0 is published with signed-artifact runtime
+evidence. Apple work remains outside ready downloads. Device compatibility limits
+are explicit on each page.
 
 ## Maintain the site
 
@@ -43,7 +44,7 @@ started, or assets deleted before collection, cannot be reconstructed.
 
 ## SEO and ownership
 
-The site has five unique canonical pages, relevant static content, breadcrumbs,
+The site has six unique canonical pages, relevant static content, breadcrumbs,
 honest JSON-LD, social metadata, a 1200×630 social card and an XML sitemap. No
 invented ratings, reviews or ranking guarantees are used. Project Pages hosts
 this site under a path; the effective robots file is at the host root, not this
