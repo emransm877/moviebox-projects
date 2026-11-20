@@ -38,6 +38,7 @@ td.file-links .asset-chip{display:inline-flex;align-items:center;gap:10px;max-wi
 .project .download-actions{align-items:flex-start;flex-direction:column;gap:12px}
 .android-tv-project{background:#20253a;border-color:#444c69}
 .android-tv-project .project-label{color:#c6ccff}
+.project-download .project-source{display:block;min-height:3.3em;line-height:1.65}
 .build-status{width:100%}.build-status summary{cursor:pointer;list-style:none}
 .build-status summary::-webkit-details-marker{display:none}
 .build-status summary:focus-visible{outline:3px solid var(--mint);outline-offset:4px}
