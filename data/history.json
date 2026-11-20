@@ -3,7 +3,7 @@
   "trackingStartedAt": "2026-11-20T19:43:55+00:00",
   "assetPeaks": {
     "moviebox-android:744847608": {
-      "count": 82,
+      "count": 83,
       "kind": "apk",
       "repo": "moviebox-android"
     },
@@ -592,9 +592,9 @@
       }
     },
     {
-      "at": "2026-11-20T20:04:52+00:00",
+      "at": "2026-11-20T20:24:13+00:00",
       "packages": {
-        "moviebox-android": 194,
+        "moviebox-android": 195,
         "moviebox-desktop": 237,
         "moviebox-tizen": 51
       }
