@@ -25,7 +25,7 @@
       card.addEventListener('toggle',()=>size(),true);
     });
     grid.classList.add('flip-ready');
-    function size(){cards.forEach(card=>card.firstElementChild.style.height='640px');const height=Math.max(640,...cards.flatMap(card=>Array.from(card.querySelectorAll('.flip-face')).map(face=>face.scrollHeight+2)));cards.forEach(card=>card.firstElementChild.style.height=height+'px');}
+    function size(){cards.forEach(card=>card.firstElementChild.style.height='680px');const height=Math.max(680,...cards.flatMap(card=>Array.from(card.querySelectorAll('.flip-face')).map(face=>face.scrollHeight+2)));cards.forEach(card=>card.firstElementChild.style.height=height+'px');}
     size();window.addEventListener('resize',size);if(document.fonts)document.fonts.ready.then(size);
   }
   let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
