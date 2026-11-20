@@ -1,0 +1,71 @@
+name: Project website and download snapshots
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'tools/**', 'test_*.py', '.github/workflows/site.yml']
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: moviebox-project-site
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install playwright==1.65.1
+      - run: python -m playwright install --with-deps chromium
+      - run: python tools/build_site.py
+      - run: python -m unittest test_download_analytics test_seo
+      - run: python tools/check_site.py
+  snapshot:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect public release counts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/collect_downloads.py
+      - name: Check collector and documentation contracts
+        run: |
+          python tools/build_site.py
+          python -m unittest test_download_analytics test_seo
+          node --check site/app.js
+          node --check site/live-counts.js
+      - name: Retain observation history
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update project metadata and download observations [skip ci]'
+            git push
+          fi
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: snapshot
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish project website
+        id: deployment
+        uses: actions/deploy-pages@v4
