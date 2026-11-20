@@ -34,7 +34,7 @@ visible and offers a manual refresh button. GitHub caches and public API limits
 can delay updates. The page shows the actual verified time and any rate-limit
 pause; it never claims that an old snapshot was just refreshed.
 
-Daily Actions snapshots retain an observation history for growth charts. Counts
+Hourly Actions snapshots retain an observation history for growth charts. Counts
 measure file downloads, not people, installs or active users. Application-package
 totals exclude checksums. TV bundles and raw widgets count as separate downloads.
 Deleted assets retain their last observed peak in historical data. A newly added

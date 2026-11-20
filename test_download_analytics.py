@@ -6,6 +6,15 @@ def fixture(count=10):
     return {'schemaVersion':1,'observedAt':'2026-11-21T12:00:00+00:00','repositories':[{'name':'moviebox-desktop','releases':[{'assets':[{'id':1,'count':count,'kind':'installer'}]}]}]}
 
 class DownloadAnalyticsTests(unittest.TestCase):
+    def test_hourly_observations_preserve_first_baseline_and_latest_in_hour(self):
+        first=fixture(10);history=update_history({},first)
+        second=fixture(12);second['observedAt']='2026-11-21T12:30:00+00:00';history=update_history(history,second)
+        third=fixture(14);third['observedAt']='2026-11-21T12:55:00+00:00';history=update_history(history,third)
+        self.assertEqual(len(history['points']),2)
+        self.assertEqual(history['points'][0]['packages']['moviebox-desktop'],10)
+        self.assertEqual(history['points'][-1]['packages']['moviebox-desktop'],14)
+        fourth=fixture(16);fourth['observedAt']='2026-11-21T13:05:00+00:00';history=update_history(history,fourth)
+        self.assertEqual(len(history['points']),3)
     def test_checksums_never_inflate_application_downloads(self):
         self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64.exe','moviebox-desktop'),'installer')
         self.assertEqual(classify('MovieBox-Desktop-0.10.3-windows-x64.zip','moviebox-desktop'),'portable')

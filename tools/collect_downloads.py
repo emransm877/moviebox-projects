@@ -69,7 +69,7 @@ def update_history(history, snapshot):
     points = list(history.get('points', []))
     if not points:
         points = [point]
-    elif points[-1]['at'][:10] == point['at'][:10] and len(points) > 1:
+    elif points[-1]['at'][:13] == point['at'][:13] and len(points) > 1:
         points[-1] = point
     elif points[-1] != point:
         points.append(point)

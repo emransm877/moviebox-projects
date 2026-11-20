@@ -49,7 +49,7 @@
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
     try{
       const live=await window.MovieBoxLiveCounts.load(controller.signal);
-      snapshot=live;lastRefresh=Date.now();showTime(true);renderStats();updateVersions();
+      snapshot=live;lastRefresh=Date.now();showTime(true);renderStats();updateVersions();renderGrowth();
       setDownloads(snapshot.repositories.find(r=>r.platform==='Windows'),{installer:'windows-download',portable:'portable-download'},'windows');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Android'),{apk:'android-download'},'android');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Samsung TV'),{tv_bundle:'tv-download'},'tv');
@@ -87,7 +87,7 @@
     $('combined-label').textContent = all ? 'Combined release-file downloads' : 'Combined package downloads';
     $('android-breakdown').textContent = format(android.kinds.apk) + ' APKs · ' + format(android.kinds.checksums) + ' checksum files';
     $('windows-breakdown').textContent = format(windows.kinds.installer) + ' installers · ' + format(windows.kinds.portable) + ' ZIPs';
-    $('checksum-note').textContent = 'Currently observed: ' + format(android.kinds.checksums + windows.kinds.checksums + tv.kinds.checksums) + ' checksum-file downloads across both projects. These are excluded from application-package totals.';
+    $('checksum-note').textContent = 'Currently observed: ' + format(android.kinds.checksums + windows.kinds.checksums + tv.kinds.checksums) + ' checksum-file downloads across the three published projects. These are excluded from application-package totals.';
     renderReleases();
   }
   function filteredReleases() {
@@ -132,19 +132,25 @@
     if (!releases.length) { const row = element('tr'), cell = element('td', 'No published releases match this filter.'); cell.colSpan = 5; row.append(cell); body.append(row); }
   }
   function renderGrowth() {
-    const chart = $('growth-chart'), points = history.points || []; chart.replaceChildren();
-    const days = new Set(points.map(p => p.at.slice(0, 10)));
-    if (days.size < 2) {
-      chart.append(element('p', 'Tracking has started. Daily growth will appear after the next day’s collection. Earlier daily downloads cannot be reconstructed.')); return;
+    const chart=$('growth-chart'),oldRange=chart.querySelector('select'),restoreRangeFocus=oldRange===document.activeElement,range=oldRange?oldRange.value:'all',projects=snapshot.repositories,points=(history.points||[]).map(point=>({at:point.at,packages:{...point.packages}}));chart.replaceChildren();
+    if(snapshot!==savedSnapshot&&points.length&&Date.parse(snapshot.observedAt)>Date.parse(points.at(-1).at)){
+      const peaks={...(history.assetPeaks||{})},totals={...points.at(-1).packages};
+      projects.forEach(repo=>{let gain=0;repo.releases.forEach(release=>release.assets.filter(asset=>['apk','installer','portable','tv_bundle','tv_widget'].includes(asset.kind)).forEach(asset=>{const old=peaks[repo.name+':'+asset.id];gain+=old?Math.max(0,asset.count-old.count):(history.assetPeaks?asset.count:0);}));totals[repo.name]=Object.hasOwn(totals,repo.name)?totals[repo.name]+gain:repo.packages;});
+      points.push({at:snapshot.observedAt,packages:totals,live:true});
     }
-    const changes = points.slice(1).map((p, i) => ({ at: p.at, delta: Object.entries(p.packages).reduce((total, [name, count]) => total + (Object.hasOwn(points[i].packages, name) ? Math.max(0,count-points[i].packages[name]) : 0), 0) })).slice(-14);
-    const max = Math.max(1, ...changes.map(p => p.delta)), bars = element('div', null, 'growth-bars');
-    for (const point of changes) {
-      const bar = element('div', null, 'growth-bar'), fill = element('div'); fill.style.height = (point.delta ? Math.max(4, point.delta / max * 90) : 2) + 'px';
-      const date = new Date(point.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      bar.append(element('b', '+' + format(point.delta)), fill, element('span', date)); bar.setAttribute('aria-label', date + ': ' + format(point.delta) + ' additional observed package downloads'); bars.append(bar);
-    }
-    chart.append(bars);
+    const latest=points.at(-1),start=history.trackingStartedAt||(points[0]||{}).at;
+    const header=element('div',null,'growth-controls'),rangeLabel=element('label','Show '),select=element('select');select.id='growth-range';select.setAttribute('aria-label','Growth observation range');
+    [['all','All observations'],['24','Past 24 hours'],['168','Past 7 days'],['720','Past 30 days']].forEach(([value,label])=>{const option=element('option',label);option.value=value;select.append(option);});select.value=range;select.addEventListener('change',renderGrowth);rangeLabel.append(select);header.append(rangeLabel);chart.append(header);
+    const legend=element('div',null,'growth-legend');
+    projects.forEach((repo,index)=>{const first=points.find(point=>Object.hasOwn(point.packages,repo.name)),count=latest&&Object.hasOwn(latest.packages,repo.name)?latest.packages[repo.name]:repo.packages,delta=first?Math.max(0,count-first.packages[repo.name]):0,item=element('div',null,'growth-platform growth-color-'+index);item.append(element('span',repo.platform),element('strong',format(repo.packages)),element('small',first?'+'+format(delta)+' observed since '+new Date(first.at).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'Baseline starts with the next collection'));legend.append(item);});chart.append(legend);
+    const changes=points.slice(1).map((point,index)=>{const deltas={};projects.forEach(repo=>{deltas[repo.name]=Object.hasOwn(points[index].packages,repo.name)?Math.max(0,(point.packages[repo.name]||0)-points[index].packages[repo.name]):0;});return {at:point.at,from:points[index].at,delta:Object.values(deltas).reduce((n,v)=>n+v,0),deltas,packages:point.packages};});
+    const end=latest?Date.parse(latest.at):Date.now(),filtered=changes.filter(point=>range==='all'||Date.parse(point.at)>=end-Number(range)*3600000),bins=[],size=Math.max(1,Math.ceil(filtered.length/60));
+    for(let i=0;i<filtered.length;i+=size){const group=filtered.slice(i,i+size),point={...group.at(-1),from:group[0].from,delta:0,deltas:{}};group.forEach(record=>{point.delta+=record.delta;projects.forEach(repo=>point.deltas[repo.name]=(point.deltas[repo.name]||0)+record.deltas[repo.name]);});bins.push(point);}
+    const detail=element('p',null,'growth-selection');detail.setAttribute('role','status');detail.setAttribute('aria-live','polite');
+    if(!bins.length){const baseline=element('p','Baseline established. Earlier daily downloads cannot be reconstructed. New observed growth will appear automatically after another successful collection.','growth-baseline');chart.append(baseline);}
+    else{const max=Math.max(1,...bins.map(point=>point.delta)),bars=element('div',null,'growth-bars');bins.forEach(point=>{const bar=element('button',null,'growth-bar');bar.type='button';const stack=element('div',null,'growth-stack');stack.style.height=(point.delta?Math.max(6,point.delta/max*110):2)+'px';projects.forEach((repo,index)=>{const segment=element('span',null,'growth-color-'+index);segment.style.height=(point.delta?point.deltas[repo.name]/point.delta*100:0)+'%';stack.append(segment);});const label=new Date(point.at).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}),info=new Date(point.from).toLocaleString()+' – '+new Date(point.at).toLocaleString()+': +'+format(point.delta)+' observed downloads. '+projects.map(repo=>repo.platform+' +'+format(point.deltas[repo.name])).join(' · ');bar.append(element('b','+'+format(point.delta)),stack,element('span',label));bar.title=info;bar.setAttribute('aria-label',info);const show=()=>{detail.textContent=info;};bar.addEventListener('focus',show);bar.addEventListener('pointerenter',show);bar.addEventListener('click',show);bars.append(bar);});chart.append(bars);detail.textContent='Select a bar for its collection interval and platform breakdown.';}
+    chart.append(detail);
+    const note=element('p',null,'growth-meta');note.textContent=(start?'Tracking began '+new Date(start).toLocaleString()+'. ':'')+format(points.length)+' observations'+(latest?' · Last observation '+new Date(latest.at).toLocaleString():'')+'. Hourly collection is scheduled on GitHub; runs may be delayed. Bars measure collection intervals, including any gaps. Live observations update after successful syncs and are not saved as hourly history.';chart.append(note);if(restoreRangeFocus)select.focus({preventScroll:true});
   }
   async function load() {
     try {

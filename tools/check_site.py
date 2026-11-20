@@ -133,9 +133,16 @@ try:
         baseline_page.goto(url);baseline_page.wait_for_function("document.getElementById('growth-chart').textContent.includes('Earlier daily downloads cannot be reconstructed')")
         checks['baseline_has_no_invented_growth_history']=True
         history_page=browser_context.new_page();history_page.set_viewport_size({'width':900,'height':900})
-        fake={'schemaVersion':1,'points':[{'at':'2026-11-21T12:00:00Z','packages':{'moviebox-android':194,'moviebox-desktop':236}},{'at':'2026-11-22T12:00:00Z','packages':{'moviebox-android':197,'moviebox-desktop':240,'moviebox-tizen':51}}]}
+        fake={'schemaVersion':1,'points':[{'at':'2026-11-21T12:00:00Z','packages':{'moviebox-android':194,'moviebox-desktop':236}},{'at':'2026-11-21T13:00:00Z','packages':{'moviebox-android':197,'moviebox-desktop':240,'moviebox-tizen':51}}]}
         history_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps(fake)))
         history_page.goto(url);history_page.locator('.growth-bar').wait_for();assert '+7' in history_page.locator('.growth-bar').inner_text()
+        history_page.locator('.growth-bar').click()
+        assert 'Android +3' in history_page.locator('.growth-selection').inner_text()
+        assert 'Windows +4' in history_page.locator('.growth-selection').inner_text()
+        assert 'Samsung TV +0' in history_page.locator('.growth-selection').inner_text()
+        history_page.locator('#growth-range').select_option('24')
+        assert history_page.locator('#growth-range').input_value()=='24'
+        checks['same_day_growth_and_platform_baselines_are_correct']=True
         checks['measured_growth_delta_renders_correctly']=True
         for route in ['windows/','android/','samsung-tv/','help/']:
             response=page.goto(url+route)
@@ -164,10 +171,13 @@ try:
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
+        assert int(live.locator('.growth-platform').nth(1).locator('strong').inner_text().replace(',',''))==windows['packages']+1
+        live.locator('#growth-range').select_option('24')
         live.locator('#version-filter').select_option('moviebox-desktop:'+windows['latestTag'])
         live.clock.fast_forward(10000)
         live.wait_for_function('(value)=>document.getElementById("version-filter").value===value',arg='moviebox-desktop:'+windows['latestTag'])
         assert live.locator('#release-rows tr').count()==1
+        assert live.locator('#growth-range').input_value()=='24'
         live.locator('#version-filter').select_option('all');live.locator('#release-next').click()
         live.clock.fast_forward(10000)
         assert live.locator('#release-page-label').inner_text().startswith('Page 2 ')

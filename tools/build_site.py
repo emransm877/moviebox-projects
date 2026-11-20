@@ -103,7 +103,7 @@ def build():
     text=text.replace('<script src="app.js" defer></script>','<script src="live-counts.js" defer></script><script src="app.js" defer></script>') if 'src="live-counts.js"' not in text else text
     if not re.search(r'href="guides\.css(?:\?[^" ]*)?"',text):text=text.replace('</head>','<link rel="stylesheet" href="guides.css"></head>')
     if 'id="refresh-live"' not in text:text=text.replace('<p id="snapshot-status"','<div class="live-refresh"><button type="button" id="refresh-live">Refresh live counts</button><p id="snapshot-status"').replace('Loading the last collected snapshot…</p></div>','Loading the last collected snapshot…</p></div></div>')
-    text=text.replace('Snapshots are scheduled daily. GitHub may delay scheduled jobs; the timestamp above shows the actual collection time.','Live counts are checked every 10 seconds while this page is visible. GitHub caching and API rate limits can delay the source data; any pause and the last verified time are shown above. Daily snapshots retain observed growth.')
+    text=text.replace('Snapshots are scheduled daily. GitHub may delay scheduled jobs; the timestamp above shows the actual collection time.','Live counts are checked every 10 seconds while this page is visible. GitHub caching and API rate limits can delay the source data; any pause and the last verified time are shown above. Hourly snapshots retain observed growth.')
     index.write_text(text,encoding='utf-8')
     ET.register_namespace('','http://www.sitemaps.org/schemas/sitemap/0.9');xml=ET.Element('{http://www.sitemaps.org/schemas/sitemap/0.9}urlset')
     for path in PAGES:
