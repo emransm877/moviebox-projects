@@ -28,9 +28,27 @@ try:
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
         checks['all_file_counts_match_github_asset_sum']=True
+        total_releases=sum(len(repo['releases']) for repo in data['repositories'])
+        assert page.locator('#release-rows tr').count()==min(5,total_releases)
+        assert page.locator('#release-previous').is_disabled()
+        first_page=page.locator('#release-rows').inner_text()
+        page.locator('#release-next').focus();page.keyboard.press('Enter')
+        assert page.locator('#release-page-label').inner_text().startswith('Page 2 ')
+        assert page.locator('#release-rows').inner_text()!=first_page
+        page.locator('#release-previous').click()
+        assert page.locator('#release-rows').inner_text()==first_page
+        page.locator('#release-page-size').select_option('10')
+        assert page.locator('#release-rows tr').count()==min(10,total_releases)
+        while page.locator('#release-next').is_enabled():page.locator('#release-next').click()
+        assert page.locator('#release-rows tr').count()==(total_releases%10 or 10)
+        assert page.locator('#release-range').inner_text().endswith('of '+str(total_releases)+' releases')
+        page.locator('#release-page-size').select_option('5')
+        checks['release_pagination_keyboard_page_size_and_last_page']=True
         page.locator('#platform-filter').select_option('Windows')
         page.locator('#version-filter').select_option('moviebox-desktop:'+windows['latestTag'])
         assert page.locator('#release-rows tr').count()==1
+        assert page.locator('#release-page-label').inner_text()=='Page 1 of 1'
+        assert page.locator('#release-next').is_disabled()
         assert 'Windows' in page.locator('#release-rows').inner_text()
         checks['platform_and_version_filters_work']=True
         page.locator('#count-mode').select_option('packages')
@@ -102,6 +120,14 @@ try:
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
+        live.locator('#version-filter').select_option('moviebox-desktop:'+windows['latestTag'])
+        live.clock.fast_forward(10000)
+        live.wait_for_function('(value)=>document.getElementById("version-filter").value===value',arg='moviebox-desktop:'+windows['latestTag'])
+        assert live.locator('#release-rows tr').count()==1
+        live.locator('#version-filter').select_option('all');live.locator('#release-next').click()
+        live.clock.fast_forward(10000)
+        assert live.locator('#release-page-label').inner_text().startswith('Page 2 ')
+        checks['live_refresh_preserves_release_filters_and_page']=True
         state['limited']=True;live.clock.fast_forward(10000)
         live.wait_for_function("document.getElementById('snapshot-status').title.includes('GitHub rate limit reached')")
         assert 'Refresh paused' not in live.locator('#snapshot-status').inner_text()
