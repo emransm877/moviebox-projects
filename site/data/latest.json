@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-20T22:21:12+00:00",
+  "observedAt": "2026-11-20T22:32:38+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -734,7 +734,7 @@
             {
               "id": 751659404,
               "name": "MovieBox-TV-0.9.2-install-bundle.zip",
-              "count": 5,
+              "count": 6,
               "kind": "tv_bundle",
               "url": "https://github.com/emransm877/moviebox-tizen/releases/download/v0.9.2/MovieBox-TV-0.9.2-install-bundle.zip",
               "size": 424693,
@@ -1450,13 +1450,13 @@
         "apk": 0,
         "installer": 0,
         "portable": 0,
-        "tv_bundle": 34,
+        "tv_bundle": 35,
         "tv_widget": 18,
         "checksums": 30,
         "other": 0
       },
-      "packages": 52,
-      "allAssets": 82,
+      "packages": 53,
+      "allAssets": 83,
       "latestTag": "v0.9.2"
     }
   ]

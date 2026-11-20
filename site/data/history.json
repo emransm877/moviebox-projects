@@ -283,7 +283,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-tizen:751659404": {
-      "count": 5,
+      "count": 6,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
@@ -592,11 +592,11 @@
       }
     },
     {
-      "at": "2026-11-20T22:21:12+00:00",
+      "at": "2026-11-20T22:32:38+00:00",
       "packages": {
         "moviebox-android": 202,
         "moviebox-desktop": 237,
-        "moviebox-tizen": 52
+        "moviebox-tizen": 53
       }
     }
   ]
