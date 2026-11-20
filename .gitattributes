@@ -1,0 +1,2 @@
+# Ownership verification files must be served byte-for-byte as supplied.
+site/google*.html -text
