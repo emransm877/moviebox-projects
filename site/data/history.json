@@ -598,7 +598,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773868950": {
-      "count": 0,
+      "count": 1,
       "kind": "other",
       "repo": "moviebox-desktop"
     },
@@ -608,7 +608,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773868822": {
-      "count": 0,
+      "count": 1,
       "kind": "other",
       "repo": "moviebox-desktop"
     },
@@ -651,7 +651,7 @@
       }
     },
     {
-      "at": "2026-11-21T00:35:32+00:00",
+      "at": "2026-11-21T00:41:29+00:00",
       "packages": {
         "moviebox-android": 214,
         "moviebox-desktop": 256,
