@@ -7,8 +7,8 @@
     if(/\.(sha256|sha512)$/.test(name)||['sha256sums.txt','checksums.txt'].includes(name))return 'checksums';
     if(repo==='moviebox-android'&&/^moviebox-android-[0-9.]+\.apk$/.test(name))return 'apk';
     if(repo==='moviebox-android-tv'&&/^moviebox-android-tv-[0-9.]+\.apk$/.test(name))return 'apk';
-    if(repo==='moviebox-desktop'&&/^moviebox-setup-[0-9.]+-windows-x64\.exe$/.test(name))return 'installer';
-    if(repo==='moviebox-desktop'&&/^moviebox-(desktop-)?[0-9.]+-windows-x64(-portable)?\.zip$/.test(name))return 'portable';
+    if(repo==='moviebox-desktop'&&/^moviebox-setup-[0-9.]+-windows-x64(-self-signed-test)?\.exe$/.test(name))return 'installer';
+    if(repo==='moviebox-desktop'&&/^moviebox-(desktop-)?[0-9.]+-windows-x64(-portable|-self-signed-test)?\.zip$/.test(name))return 'portable';
     if(repo==='moviebox-tizen'&&/^moviebox-tv-[0-9.]+-install-bundle\.zip$/.test(name))return 'tv_bundle';
     if(repo==='moviebox-tizen'&&/^moviebox-tv-[0-9.]+-unsigned\.wgt$/.test(name))return 'tv_widget';
     return 'other';

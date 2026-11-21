@@ -129,6 +129,7 @@
         const file=element('a',null,'asset-chip');file.append(element('span',label),element('span',format(asset.count),'asset-downloads'));
         file.href = target; file.title = asset.name;file.setAttribute('aria-label',asset.name+': '+format(asset.count)+' downloads');chips.append(file);
       }
+      if(!chips.children.length){const fallback=element(url?'a':'span',url?'View release files':'No package files');if(url)fallback.href=url;chips.append(fallback);}
       row.append(files); body.append(row);
     }
     if (!releases.length) { const row = element('tr'), cell = element('td', 'No published releases match this filter.'); cell.colSpan = 5; row.append(cell); body.append(row); }
