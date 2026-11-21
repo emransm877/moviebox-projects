@@ -137,7 +137,7 @@ try:
             sync=page.locator('#refresh-live').bounding_box();status=page.locator('#snapshot-status').bounding_box()
             assert status['y']>=sync['y']+sync['height'],(width,sync,status)
             assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
-            assert sync['height']>=58
+            assert 38<=sync['height']<=44
             if width >= 768:
                 assert page.locator('.analytics-header').bounding_box()['height']<140
                 cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
