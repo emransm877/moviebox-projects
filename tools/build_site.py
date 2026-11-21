@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 
 ROOT=Path(__file__).resolve().parents[1];SITE=ROOT/'site'
 BASE='https://emransm877.github.io/moviebox-projects/'
+FACEBOOK_PAGE='https://www.facebook.com/profile.php?id=61596772531631'
 OWNER={'@type':'Person','@id':BASE+'#maintainer','name':'Emran Hossain','url':'https://github.com/emransm877'}
 PAGES={
  '':('MovieBox Projects | Windows, Android & TV Apps','Independent MovieBox apps for Windows, Android phones, Samsung Tizen and Android TV. Find published downloads, installation guides, compatibility and live counts.'),
@@ -23,7 +24,7 @@ def product(data,name,kind):
 
 def head(path,extra=None):
     title,description=PAGES[path];prefix='../' if path else ''
-    graph=[OWNER,{'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':'MovieBox Projects','creator':{'@id':OWNER['@id']},'inLanguage':'en'}]
+    graph=[OWNER,{'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':'MovieBox Projects','creator':{'@id':OWNER['@id']},'inLanguage':'en','sameAs':[FACEBOOK_PAGE]}]
     page={'@type':'CollectionPage' if not path else 'WebPage','@id':BASE+path+'#page','url':BASE+path,'name':title,'description':description,'isPartOf':{'@id':BASE+'#website'},'inLanguage':'en'}
     graph.append(page)
     if path:
@@ -132,6 +133,9 @@ def build():
         if page_path.parent.name=='assets':continue
         if re.fullmatch(r'google[a-f0-9]+\.html',page_path.name):continue
         html=page_path.read_text(encoding='utf-8')
+        if '<footer class="wrap footer"' in html and 'data-community-facebook' not in html:
+            link='<a data-community-facebook href="'+e(FACEBOOK_PAGE)+'">Facebook community</a>'
+            html=re.sub(r'(<footer class="wrap footer">.*?)(</div></footer>)',lambda match:match[1]+link+match[2],html,count=1,flags=re.S)
         if 'id="live-presence"' in html and 'src="presence.js' not in html and 'src="../presence.js' not in html:
             prefix='../' if page_path.parent!=SITE else ''
             html=html.replace('</head>','<script src="'+prefix+'presence.js" defer></script></head>')
