@@ -37,7 +37,7 @@ class SEOTests(unittest.TestCase):
             self.assertEqual(page.canonical,[url]);self.assertEqual(page.h1,1)
             self.assertIn('index,follow',page.meta['robots'])
             self.assertEqual(page.meta['og:url'],url);self.assertEqual(page.meta['twitter:card'],'summary_large_image')
-            self.assertEqual(page.meta['og:image'],BASE+'assets/social-card.png')
+            self.assertEqual(page.meta['og:image'],BASE+'assets/community-share.png')
             self.assertTrue(page.json);self.assertTrue(25<=len(page.title)<=75)
             self.assertTrue(90<=len(page.meta['description'])<=190)
             raw=json.dumps(page.json)
@@ -52,7 +52,7 @@ class SEOTests(unittest.TestCase):
     def test_404_is_not_indexable_and_social_image_has_real_dimensions(self):
         self.assertIn('noindex',Page((SITE/'404.html').read_text(encoding='utf-8')).meta['robots'])
         import struct
-        image=(SITE/'assets/social-card.png').read_bytes();self.assertEqual(image[:8],b'\x89PNG\r\n\x1a\n');self.assertEqual(struct.unpack('>II',image[16:24]),(1200,630))
+        image=(SITE/'assets/community-share.png').read_bytes();self.assertEqual(image[:8],b'\x89PNG\r\n\x1a\n');self.assertEqual(struct.unpack('>II',image[16:24]),(1200,630))
     def test_only_four_published_projects_are_listed_as_downloads(self):
         text=(SITE/'index.html').read_text(encoding='utf-8')
         for name in ['windows-download','android-download','tv-download','androidtv-download']:self.assertIn('id="'+name+'"',text)

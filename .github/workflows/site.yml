@@ -29,6 +29,7 @@ jobs:
           node-version: '24'
       - run: node --test services/presence/test/presence.test.mjs
       - run: python tools/check_presence.py
+      - run: python tools/check_usage.py
   snapshot:
     needs: verify
     runs-on: ubuntu-latest
