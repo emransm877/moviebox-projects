@@ -158,14 +158,18 @@ try:
         history_page=browser_context.new_page();history_page.set_viewport_size({'width':900,'height':900})
         fake={'schemaVersion':1,'points':[{'at':'2026-11-21T12:00:00Z','packages':{'moviebox-android':194,'moviebox-desktop':236}},{'at':'2026-11-21T13:00:00Z','packages':{'moviebox-android':197,'moviebox-desktop':240,'moviebox-tizen':51}}]}
         history_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps(fake)))
-        history_page.goto(url);history_page.locator('.growth-bar').wait_for();assert '+7' in history_page.locator('.growth-bar').inner_text()
-        history_page.locator('.growth-bar').click()
+        history_page.goto(url);history_page.locator('.trend-point').wait_for();assert '+7' in history_page.locator('.trend-point').inner_text()
+        history_page.locator('.trend-point').click()
         assert 'Android +3' in history_page.locator('.growth-selection').inner_text()
         assert 'Windows +4' in history_page.locator('.growth-selection').inner_text()
         assert 'Samsung TV +0' in history_page.locator('.growth-selection').inner_text()
         history_page.locator('#growth-range').select_option('24')
         assert history_page.locator('#growth-range').input_value()=='24'
         checks['same_day_growth_and_platform_baselines_are_correct']=True
+        assert '+7 downloads' in history_page.locator('.trend-tooltip').inner_text()
+        assert 'Nov 21' in history_page.locator('.trend-tooltip').inner_text()
+        assert history_page.locator('.trend-line').count()==4
+        assert not history_page.locator('.chart-method').get_attribute('open')
         checks['measured_growth_delta_renders_correctly']=True
         for route in ['windows/','android/','samsung-tv/','android-tv/','help/']:
             response=page.goto(url+route)
