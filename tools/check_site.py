@@ -26,7 +26,9 @@ try:
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
         assert page.locator('#downloads .quick-download').count()==4
-        assert page.locator('.hero-actions .primary').get_attribute('href')=='#downloads'
+        assert page.locator('.hero-actions .primary:visible').get_attribute('href')=='#projects'
+        assert not page.locator('#downloads').is_visible()
+        assert page.locator('#projects').is_visible()
         for quick in page.locator('[data-download-source]').all():
             original=page.locator('#'+quick.get_attribute('data-download-source'))
             assert quick.get_attribute('href')==original.get_attribute('href')
@@ -54,12 +56,12 @@ try:
         checks['cards_flip_with_hover_keyboard_and_escape']=True
         touch=browser.new_context(viewport={'width':390,'height':900},has_touch=True,is_mobile=True,reduced_motion='reduce')
         touch.route('https://api.github.com/**',lambda route:route.fulfill(status=403,body='{}'))
-        mobile=touch.new_page();mobile.goto(url);mobile.locator('#android-tv-project .flip-open').tap()
-        assert mobile.locator('#android-tv-project .flip-back').get_attribute('aria-hidden')=='false'
-        assert mobile.locator('#android-tv-project .project-flip-inner').evaluate('node=>getComputedStyle(node).transform')=='none'
-        mobile.locator('#android-tv-project .flip-close').tap()
-        assert mobile.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
-        touch.close();checks['touch_flip_and_reduced_motion_work']=True
+        mobile=touch.new_page();mobile.goto(url)
+        assert mobile.locator('#downloads').is_visible()
+        assert not mobile.locator('#projects').is_visible()
+        assert mobile.locator('.hero-actions .primary:visible').get_attribute('href')=='#downloads'
+        assert mobile.locator('#downloads .quick-primary:visible').count()==4
+        touch.close();checks['mobile_uses_direct_downloads_without_3d_cards']=True
         checks['four_published_project_cards_with_real_downloads']=True
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
@@ -106,14 +108,19 @@ try:
             page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
             quick_rows=page.locator('#downloads .quick-download')
-            for button in page.locator('#downloads .quick-primary').all():assert button.bounding_box()['height']>=44
             if width<=720:
+                assert not page.locator('#projects').is_visible()
+                assert page.locator('#downloads').is_visible()
+                for button in page.locator('#downloads .quick-primary').all():assert button.bounding_box()['height']>=44
                 rows=quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().top)')
                 assert all(b>a for a,b in zip(rows,rows[1:])),rows
                 assert page.locator('#downloads').bounding_box()['y']<page.locator('.hero-preview').bounding_box()['y']
                 assert page.locator('#downloads').bounding_box()['height']<600
                 page.locator('#downloads').screenshot(path=str(out/'mobile-quick-downloads.png'))
                 checks['compact_vertical_downloads_before_mobile_preview']=True
+            else:
+                assert not page.locator('#downloads').is_visible()
+                assert page.locator('#projects').is_visible()
             sync=page.locator('#refresh-live').bounding_box();status=page.locator('#snapshot-status').bounding_box()
             assert status['y']>=sync['y']+sync['height'],(width,sync,status)
             assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
@@ -131,6 +138,7 @@ try:
                     assert max(tops)-min(tops)<2,(width,selector,tops)
                 checks['project_downloads_align_'+str(width)]=True
             for image in page.locator('img').all():
+                if not image.is_visible():continue
                 image.scroll_into_view_if_needed()
                 page.wait_for_function('(image)=>image.complete&&image.naturalWidth>0',arg=image.element_handle())
             page.evaluate('scrollTo(0,0)')

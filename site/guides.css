@@ -95,6 +95,9 @@ select:focus-visible{outline:1px solid #91baa3;outline-offset:2px;box-shadow:non
 @media(max-width:600px){.growth-legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* File-first navigation alongside the visual project showcase. */
+.mobile-only{display:none!important}
+@media(min-width:721px){#downloads{display:none}}
+@media(max-width:720px){.mobile-only{display:inline-flex!important}.desktop-only,#projects{display:none!important}}
 .hero-copy{grid-column:1;grid-row:1}.hero-preview{grid-column:2;grid-row:1}
 .quick-downloads{grid-column:1/-1;grid-row:2;min-width:0;padding:22px;border:1px solid var(--line);border-radius:14px;background:#11211c;scroll-margin-top:24px}
 .quick-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:8px}.quick-heading h2{font-size:1.4rem;letter-spacing:-.4px}.quick-heading>a{font-size:.8rem;color:var(--muted)}.quick-intro{font-size:.85rem;color:var(--muted);margin:0 0 20px}
