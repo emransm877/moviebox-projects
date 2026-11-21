@@ -25,6 +25,12 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
+        assert page.locator('#downloads .quick-download').count()==4
+        assert page.locator('.hero-actions .primary').get_attribute('href')=='#downloads'
+        for quick in page.locator('[data-download-source]').all():
+            original=page.locator('#'+quick.get_attribute('data-download-source'))
+            assert quick.get_attribute('href')==original.get_attribute('href')
+        checks['compact_downloads_link_to_exact_published_assets']=True
         page.wait_for_function("!document.getElementById('refresh-live').disabled")
         page.locator('#refresh-live').click()
         assert page.locator('#refresh-live .sync-icon').count()==1
@@ -99,6 +105,15 @@ try:
             page.locator('.project').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
             page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
+            quick_rows=page.locator('#downloads .quick-download')
+            for button in page.locator('#downloads .quick-primary').all():assert button.bounding_box()['height']>=44
+            if width<=720:
+                rows=quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().top)')
+                assert all(b>a for a,b in zip(rows,rows[1:])),rows
+                assert page.locator('#downloads').bounding_box()['y']<page.locator('.hero-preview').bounding_box()['y']
+                assert page.locator('#downloads').bounding_box()['height']<600
+                page.locator('#downloads').screenshot(path=str(out/'mobile-quick-downloads.png'))
+                checks['compact_vertical_downloads_before_mobile_preview']=True
             sync=page.locator('#refresh-live').bounding_box();status=page.locator('#snapshot-status').bounding_box()
             assert status['y']>=sync['y']+sync['height'],(width,sync,status)
             assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
