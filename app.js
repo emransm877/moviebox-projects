@@ -69,9 +69,10 @@
   function setDownloads(repo, selector, prefix) {
     const release = repo.releases.find(item => item.tag === repo.latestTag && !item.prerelease);
     if (!release) return; $(prefix + '-version').textContent = release.tag;
+    document.querySelectorAll('[data-version-source="'+prefix+'"]').forEach(node=>node.textContent=release.tag);
     for (const [kind, id] of Object.entries(selector)) {
       const asset = release.assets.find(item => item.kind === kind), url = asset && safeDownload(asset.url, repo.name);
-      if (url) $(id).href = url;
+      if (url) {$(id).href = url;document.querySelectorAll('[data-download-source="'+id+'"]').forEach(node=>node.href=url);}
     }
   }
   function renderStats() {
