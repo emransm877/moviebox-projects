@@ -25,6 +25,15 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
+        assert page.locator('.hero-preview .preview-phone img').is_visible()
+        assert page.locator('.android-capture').count()==0
+        page.locator('#preview-windows-tab').focus();page.keyboard.press('ArrowRight')
+        assert page.locator('#preview-tv-panel').is_visible()
+        assert not page.locator('#preview-windows-panel').is_visible()
+        assert page.locator('#preview-tv-tab').get_attribute('aria-selected')=='true'
+        page.keyboard.press('Home')
+        assert page.locator('#preview-windows-panel').is_visible()
+        checks['top_preview_contains_phone_and_keyboard_switchable_tv_capture']=True
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe','moviebox-desktop')")=='installer'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip','moviebox-desktop')")=='portable'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-TEST-ONLY.cer','moviebox-desktop')")=='other'
@@ -130,6 +139,7 @@ try:
             assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
             assert sync['height']>=58
             if width >= 768:
+                assert page.locator('.analytics-header').bounding_box()['height']<140
                 cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
                 for card in cards:
                     peers=[other for other in cards if abs(other['top']-card['top'])<2]
