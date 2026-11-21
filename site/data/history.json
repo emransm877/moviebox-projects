@@ -3,7 +3,7 @@
   "trackingStartedAt": "2026-11-20T19:43:55+00:00",
   "assetPeaks": {
     "moviebox-android:744847608": {
-      "count": 94,
+      "count": 98,
       "kind": "apk",
       "repo": "moviebox-android"
     },
@@ -13,7 +13,7 @@
       "repo": "moviebox-android"
     },
     "moviebox-android:740994538": {
-      "count": 121,
+      "count": 123,
       "kind": "apk",
       "repo": "moviebox-android"
     },
@@ -23,7 +23,7 @@
       "repo": "moviebox-android"
     },
     "moviebox-desktop:748121556": {
-      "count": 38,
+      "count": 40,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
@@ -33,7 +33,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:748121235": {
-      "count": 138,
+      "count": 141,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
@@ -283,7 +283,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-tizen:751659404": {
-      "count": 15,
+      "count": 17,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
@@ -583,7 +583,7 @@
       "repo": "moviebox-tizen"
     },
     "moviebox-android-tv:773729053": {
-      "count": 4,
+      "count": 6,
       "kind": "apk",
       "repo": "moviebox-android-tv"
     },
@@ -660,12 +660,12 @@
       }
     },
     {
-      "at": "2026-11-21T01:34:33+00:00",
+      "at": "2026-11-21T01:54:03+00:00",
       "packages": {
-        "moviebox-android": 215,
-        "moviebox-desktop": 262,
-        "moviebox-tizen": 62,
-        "moviebox-android-tv": 4
+        "moviebox-android": 221,
+        "moviebox-desktop": 267,
+        "moviebox-tizen": 64,
+        "moviebox-android-tv": 6
       }
     }
   ]
