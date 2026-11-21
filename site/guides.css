@@ -110,6 +110,7 @@ select:focus-visible{outline:1px solid #91baa3;outline-offset:2px;box-shadow:non
 @media(max-width:360px){.quick-download{grid-template-columns:minmax(0,1fr) 100px;padding:12px;gap:8px}.quick-symbol{display:none}.hero .hero-copy h1{font-size:2.2rem}}
 
 /* Compact statistics and a full-width, interactive download trend. */
+.stat-grid .stat:before{display:none}.stat-grid .stat p{position:relative}.stat-grid .stat p:before{content:"";position:absolute;left:0;top:calc(.725em - 3px);width:6px;height:6px;border-radius:50%;background:var(--stat-color,#adf1cd)}
 .stat-grid{gap:12px}.stat{padding:16px 18px;border-radius:12px;position:relative;min-width:0;background:linear-gradient(135deg,#182a23,#13231e)}
 .stat:before{content:"";position:absolute;left:18px;top:16px;width:6px;height:6px;background:var(--stat-color,#adf1cd);border-radius:50%}
 .stat:nth-child(2){--stat-color:#efcf87}.stat:nth-child(3){--stat-color:#9dcfff}.stat:nth-child(4){--stat-color:#c9adff}

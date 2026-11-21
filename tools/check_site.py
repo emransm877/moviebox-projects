@@ -25,6 +25,9 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
+        assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe','moviebox-desktop')")=='installer'
+        assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip','moviebox-desktop')")=='portable'
+        assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-TEST-ONLY.cer','moviebox-desktop')")=='other'
         assert page.locator('#downloads .quick-download').count()==4
         assert page.locator('.hero-actions .primary:visible').get_attribute('href')=='#projects'
         assert not page.locator('#downloads').is_visible()
@@ -107,6 +110,7 @@ try:
             page.locator('.project').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
             page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
+            assert page.locator('.stat p').evaluate_all("nodes=>nodes.every(node=>{const dot=getComputedStyle(node,'::before'),label=getComputedStyle(node);return Math.abs(parseFloat(dot.top)+3-parseFloat(label.lineHeight)/2)<1;})")
             quick_rows=page.locator('#downloads .quick-download')
             if width<=720:
                 assert not page.locator('#projects').is_visible()

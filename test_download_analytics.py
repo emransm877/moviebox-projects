@@ -24,6 +24,10 @@ class DownloadAnalyticsTests(unittest.TestCase):
         self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64.exe.sha256','moviebox-desktop'),'checksums')
         self.assertEqual(classify('SHA256SUMS.txt','moviebox-desktop'),'checksums')
         self.assertEqual(classify('debug-evidence.zip','moviebox-desktop'),'other')
+        self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe','moviebox-desktop'),'installer')
+        self.assertEqual(classify('MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip','moviebox-desktop'),'portable')
+        self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe.sha256','moviebox-desktop'),'checksums')
+        self.assertEqual(classify('MovieBox-TEST-ONLY.cer','moviebox-desktop'),'other')
         self.assertEqual(classify('MovieBox-TV-0.9.2-install-bundle.zip','moviebox-tizen'),'tv_bundle')
         self.assertEqual(classify('MovieBox-TV-0.9.2-unsigned.wgt','moviebox-tizen'),'tv_widget')
     def test_deleted_reset_and_new_assets_preserve_observed_history(self):

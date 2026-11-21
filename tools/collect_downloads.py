@@ -20,9 +20,9 @@ def classify(name, repo):
         return 'apk'
     if repo == 'moviebox-android-tv' and re.fullmatch(r'moviebox-android-tv-[0-9.]+\.apk', name):
         return 'apk'
-    if repo == 'moviebox-desktop' and re.fullmatch(r'moviebox-setup-[0-9.]+-windows-x64\.exe', name):
+    if repo == 'moviebox-desktop' and re.fullmatch(r'moviebox-setup-[0-9.]+-windows-x64(?:-self-signed-test)?\.exe', name):
         return 'installer'
-    if repo == 'moviebox-desktop' and re.fullmatch(r'moviebox-(?:desktop-)?[0-9.]+-windows-x64(?:-portable)?\.zip', name):
+    if repo == 'moviebox-desktop' and re.fullmatch(r'moviebox-(?:desktop-)?[0-9.]+-windows-x64(?:-portable|-self-signed-test)?\.zip', name):
         return 'portable'
     if repo == 'moviebox-tizen' and re.fullmatch(r'moviebox-tv-[0-9.]+-install-bundle\.zip',name):
         return 'tv_bundle'
