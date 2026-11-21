@@ -153,7 +153,13 @@ def build():
                 sizes='(max-width:720px) calc(100vw - 48px), (max-width:1100px) 90vw, 640px' if name=='desktop-home' else '(max-width:720px) 180px, 220px'
                 return '<picture><source type="image/webp" srcset="'+sources+'" sizes="'+sizes+'">'+tag+'</picture>'
             html=re.sub(pattern,responsive,html) if '<picture>' not in html else html
-        page_path.write_text(html,encoding='utf-8')
+        if page_path.name == 'index.html' and 'data-cf-beacon' not in html:
+            html = html.replace(
+                '</head>',
+                """<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"639c7f632e8b4d9fb5a4836e2a8a3117"}'></script></head>""",
+                1,
+                )
+     page_path.write_text(html,encoding='utf-8')
     print('Built six canonical pages, responsive captures, fingerprinted assets and a noindex 404. No ratings or rankings are invented.')
 
 if __name__=='__main__':build()
