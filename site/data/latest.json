@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-21T00:41:29+00:00",
+  "observedAt": "2026-11-21T00:46:23+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -139,7 +139,7 @@
             {
               "id": 773869285,
               "name": "cryptographic-integrity.json",
-              "count": 0,
+              "count": 1,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/cryptographic-integrity.json",
               "size": 577,
@@ -149,7 +149,7 @@
             {
               "id": 773868950,
               "name": "MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip",
-              "count": 1,
+              "count": 3,
               "kind": "portable",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip",
               "size": 59001789,
@@ -169,7 +169,7 @@
             {
               "id": 773868822,
               "name": "MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe",
-              "count": 1,
+              "count": 2,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe",
               "size": 42472688,
@@ -199,7 +199,7 @@
             {
               "id": 773869225,
               "name": "SELF-SIGNED-TEST.md",
-              "count": 0,
+              "count": 1,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SELF-SIGNED-TEST.md",
               "size": 1223,
@@ -209,7 +209,7 @@
             {
               "id": 773869448,
               "name": "SHA256SUMS.txt",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SHA256SUMS.txt",
               "size": 519,
@@ -797,15 +797,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 202,
-        "portable": 56,
+        "installer": 203,
+        "portable": 58,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 28,
-        "other": 0
+        "checksums": 29,
+        "other": 2
       },
-      "packages": 258,
-      "allAssets": 286,
+      "packages": 261,
+      "allAssets": 292,
       "latestTag": "v0.10.3"
     },
     {
@@ -1561,7 +1561,7 @@
             {
               "id": 773729053,
               "name": "MovieBox-Android-TV-0.1.0.apk",
-              "count": 3,
+              "count": 4,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.1.0/MovieBox-Android-TV-0.1.0.apk",
               "size": 5060565,
@@ -1571,7 +1571,7 @@
             {
               "id": 773729173,
               "name": "MovieBox-Android-TV-0.1.0.apk.sha256",
-              "count": 2,
+              "count": 3,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.1.0/MovieBox-Android-TV-0.1.0.apk.sha256",
               "size": 97,
@@ -1582,16 +1582,16 @@
         }
       ],
       "kinds": {
-        "apk": 3,
+        "apk": 4,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 2,
+        "checksums": 3,
         "other": 0
       },
-      "packages": 3,
-      "allAssets": 5,
+      "packages": 4,
+      "allAssets": 7,
       "latestTag": "v0.1.0"
     }
   ]
