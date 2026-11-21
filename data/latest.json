@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-21T00:46:23+00:00",
+  "observedAt": "2026-11-21T01:34:33+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -44,7 +44,7 @@
             {
               "id": 740994538,
               "name": "MovieBox-Android-0.1.0.apk",
-              "count": 120,
+              "count": 121,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.1.0/MovieBox-Android-0.1.0.apk",
               "size": 67352006,
@@ -65,7 +65,7 @@
         }
       ],
       "kinds": {
-        "apk": 214,
+        "apk": 215,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -73,8 +73,8 @@
         "checksums": 4,
         "other": 0
       },
-      "packages": 214,
-      "allAssets": 218,
+      "packages": 215,
+      "allAssets": 219,
       "latestTag": "v0.2.0"
     },
     {
@@ -111,7 +111,7 @@
             {
               "id": 748121235,
               "name": "MovieBox-Setup-0.10.3-windows-x64.exe",
-              "count": 137,
+              "count": 138,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Setup-0.10.3-windows-x64.exe",
               "size": 42459520,
@@ -139,7 +139,7 @@
             {
               "id": 773869285,
               "name": "cryptographic-integrity.json",
-              "count": 1,
+              "count": 2,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/cryptographic-integrity.json",
               "size": 577,
@@ -159,7 +159,7 @@
             {
               "id": 773869395,
               "name": "MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip.sha256",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip.sha256",
               "size": 124,
@@ -179,7 +179,7 @@
             {
               "id": 773869326,
               "name": "MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe.sha256",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe.sha256",
               "size": 122,
@@ -189,7 +189,7 @@
             {
               "id": 773869194,
               "name": "MovieBox-TEST-ONLY.cer",
-              "count": 0,
+              "count": 1,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-TEST-ONLY.cer",
               "size": 1072,
@@ -199,7 +199,7 @@
             {
               "id": 773869225,
               "name": "SELF-SIGNED-TEST.md",
-              "count": 1,
+              "count": 2,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SELF-SIGNED-TEST.md",
               "size": 1223,
@@ -209,7 +209,7 @@
             {
               "id": 773869448,
               "name": "SHA256SUMS.txt",
-              "count": 1,
+              "count": 2,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SHA256SUMS.txt",
               "size": 519,
@@ -797,15 +797,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 203,
+        "installer": 204,
         "portable": 58,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 29,
-        "other": 2
+        "checksums": 32,
+        "other": 5
       },
-      "packages": 261,
-      "allAssets": 292,
+      "packages": 262,
+      "allAssets": 299,
       "latestTag": "v0.10.3"
     },
     {
