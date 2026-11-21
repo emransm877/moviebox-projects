@@ -2,7 +2,7 @@ name: Project website and download snapshots
 on:
   push:
     branches: [main]
-    paths: ['site/**', 'tools/**', 'test_*.py', '.github/workflows/site.yml']
+    paths: ['site/**', 'services/presence/**', 'tools/**', 'test_*.py', '.github/workflows/site.yml']
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:
@@ -24,6 +24,11 @@ jobs:
       - run: python tools/build_site.py
       - run: python -m unittest test_download_analytics test_seo
       - run: python tools/check_site.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test services/presence/test/presence.test.mjs
+      - run: python tools/check_presence.py
   snapshot:
     needs: verify
     runs-on: ubuntu-latest

@@ -30,6 +30,15 @@ signing key or GitHub token is sent to visitors' browsers.
 
 ## Live counts and historical observations
 
+The eye badge is a separate [live browser presence counter](docs/LIVE_PRESENCE.md):
+visible project pages send anonymous heartbeats to a small Worker/D1 service.
+It counts browsers active in the last 90 seconds, shares IDs across tabs, and
+shows a dash during outages. Automated/local QA and `?presence=off` are excluded.
+It is not an exact count of people and does not affect GitHub download counters.
+Backend source and SQLite tests are available in [services/presence](services/presence/).
+The browser scenarios in `tools/check_presence.py` intercept the backend and never
+send test traffic to production or download release files.
+
 The page attempts automatic public GitHub count refreshes every 10 seconds while
 visible and offers a manual refresh button. GitHub caches and public API limits
 can delay updates. The page shows the actual verified time and any rate-limit
