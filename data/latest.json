@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-21T00:20:10+00:00",
+  "observedAt": "2026-11-21T00:30:52+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -127,6 +127,94 @@
               "size": 105,
               "createdAt": "2026-11-14T16:46:57Z",
               "digest": "sha256:f8c945a5dcd104ea0f223b772d73d783fa76f4ef5c6e04043d63cade590d4b77"
+            }
+          ]
+        },
+        {
+          "tag": "v0.10.3-selfsigned.1",
+          "url": "https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.3-selfsigned.1",
+          "publishedAt": "2026-11-21T00:27:53Z",
+          "prerelease": true,
+          "assets": [
+            {
+              "id": 773869285,
+              "name": "cryptographic-integrity.json",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/cryptographic-integrity.json",
+              "size": 577,
+              "createdAt": "2026-11-21T00:27:47Z",
+              "digest": "sha256:e55ce6bb24c961f738daa3408e4a4ca1a1a5b422b373ea446cb4675ada54a29d"
+            },
+            {
+              "id": 773868950,
+              "name": "MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip",
+              "size": 59001789,
+              "createdAt": "2026-11-21T00:27:39Z",
+              "digest": "sha256:518f387de4dcfc12d847a04c4d4b5b3b364cb97b9beabb510c1f1a73981c3a90"
+            },
+            {
+              "id": 773869395,
+              "name": "MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip.sha256",
+              "count": 0,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip.sha256",
+              "size": 124,
+              "createdAt": "2026-11-21T00:27:49Z",
+              "digest": "sha256:a3539a5aa0bdf35be0ec9de272dff90517a09783b8bd1d7eef765074c6ae0eaf"
+            },
+            {
+              "id": 773868822,
+              "name": "MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe",
+              "size": 42472688,
+              "createdAt": "2026-11-21T00:27:33Z",
+              "digest": "sha256:eee85256a3b2eba8fd3ae3f429d146496afbaaaef34fb0705a7bb18480d121ae"
+            },
+            {
+              "id": 773869326,
+              "name": "MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe.sha256",
+              "count": 0,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe.sha256",
+              "size": 122,
+              "createdAt": "2026-11-21T00:27:48Z",
+              "digest": "sha256:3499f1c87a3568e4a2df49a4607d5580f3505d9dc5e6ab5e7ab23edb9928be64"
+            },
+            {
+              "id": 773869194,
+              "name": "MovieBox-TEST-ONLY.cer",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/MovieBox-TEST-ONLY.cer",
+              "size": 1072,
+              "createdAt": "2026-11-21T00:27:44Z",
+              "digest": "sha256:5d933e5a7a883c9c97fc993a8e38e2e8cf42d69723ce0a449699f7132c8c677c"
+            },
+            {
+              "id": 773869225,
+              "name": "SELF-SIGNED-TEST.md",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SELF-SIGNED-TEST.md",
+              "size": 1223,
+              "createdAt": "2026-11-21T00:27:46Z",
+              "digest": "sha256:ee03b63f52c56a7bdebf9894782a97e23625022eef8983130f5c2c7782320904"
+            },
+            {
+              "id": 773869448,
+              "name": "SHA256SUMS.txt",
+              "count": 0,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3-selfsigned.1/SHA256SUMS.txt",
+              "size": 519,
+              "createdAt": "2026-11-21T00:27:51Z",
+              "digest": "sha256:2a7a68956ab3a792fe74231947dcddf1f21768175047f43d2f350f2106bc316c"
             }
           ]
         },

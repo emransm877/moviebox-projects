@@ -591,6 +591,46 @@
       "count": 2,
       "kind": "checksums",
       "repo": "moviebox-android-tv"
+    },
+    "moviebox-desktop:773869285": {
+      "count": 0,
+      "kind": "other",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773868950": {
+      "count": 0,
+      "kind": "other",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773869395": {
+      "count": 0,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773868822": {
+      "count": 0,
+      "kind": "other",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773869326": {
+      "count": 0,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773869194": {
+      "count": 0,
+      "kind": "other",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773869225": {
+      "count": 0,
+      "kind": "other",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:773869448": {
+      "count": 0,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
     }
   },
   "points": [
@@ -611,7 +651,7 @@
       }
     },
     {
-      "at": "2026-11-21T00:20:10+00:00",
+      "at": "2026-11-21T00:30:52+00:00",
       "packages": {
         "moviebox-android": 214,
         "moviebox-desktop": 256,
