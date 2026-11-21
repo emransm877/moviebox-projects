@@ -29,13 +29,19 @@
     size();window.addEventListener('resize',size);if(document.fonts)document.fonts.ready.then(size);
   }
   let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
-  let syncFeedbackUntil=0;
+  let syncFeedbackUntil=0,syncMessageTimer=null,snapshotIsLive=false;
+  function syncMessage(text,kind='neutral'){
+    let message=$('sync-feedback');if(!message){message=element('span',null,'sync-feedback');message.id='sync-feedback';message.setAttribute('role','status');$('refresh-live').parentElement.append(message);}
+    clearTimeout(syncMessageTimer);message.textContent=text;message.dataset.kind=kind;
+    if(kind!=='busy')syncMessageTimer=setTimeout(()=>{message.textContent='';},6000);
+  }
   function syncButton(){
     const button=$('refresh-live');button.disabled=refreshing;button.setAttribute('aria-busy',String(refreshing));
     button.classList.toggle('is-spinning',refreshing||Date.now()<syncFeedbackUntil);
     button.setAttribute('aria-label',refreshing?'Syncing live download counts':'Sync live download counts');
   }
   function showTime(live,message=''){
+    snapshotIsLive=live;
     const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
     const observed=new Date(snapshot.observedAt),status=$('snapshot-status');
     const detail=(live?'Refreshed from GitHub ':'Saved snapshot collected ')+observed.toLocaleString()+' · Auto-check: 10 seconds'+(message?' · '+message:stale?' · Older than 48 hours':'');
@@ -44,17 +50,32 @@
     $('snapshot-status').classList.toggle('error',!!message||stale);
   }
   async function refreshLive(manual=false){
-    if(refreshing||(!manual&&document.hidden)||Date.now()-lastRefresh<9500)return;
+    if(refreshing||(!manual&&(document.hidden||Date.now()-lastRefresh<9500)))return;
+    if(manual)syncMessage('Checking…','busy');
     refreshing=true;syncButton();
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
     try{
-      const live=await window.MovieBoxLiveCounts.load(controller.signal);
+      const previous=snapshot.repositories.map(repo=>repo.name+':'+repo.packages+':'+repo.allAssets).join('|'),live=await window.MovieBoxLiveCounts.load(controller.signal);
       snapshot=live;lastRefresh=Date.now();showTime(true);setDownloads(snapshot.repositories.find(r=>r.platform==='Android TV'),{apk:'androidtv-download'},'androidtv');renderStats();updateVersions();renderGrowth();
       setDownloads(snapshot.repositories.find(r=>r.platform==='Windows'),{installer:'windows-download',portable:'portable-download'},'windows');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Android'),{apk:'android-download'},'android');
       setDownloads(snapshot.repositories.find(r=>r.platform==='Samsung TV'),{tv_bundle:'tv-download'},'tv');
+      if(manual)syncMessage(previous===snapshot.repositories.map(repo=>repo.name+':'+repo.packages+':'+repo.allAssets).join('|')?'Up to date':'Counts updated','success');
     }catch(error){
-      lastRefresh=Date.now();showTime(snapshot!==savedSnapshot,(error.status===403||error.status===429?'GitHub rate limit reached'+(error.retryAt?'; next API request after '+new Date(error.retryAt).toLocaleTimeString():''):'Live refresh unavailable')+'; showing last available counts');
+      const limited=error.status===403||error.status===429,message=(limited?'GitHub rate limit reached'+(error.retryAt?'; next API request after '+new Date(error.retryAt).toLocaleTimeString():''):'Live refresh unavailable')+'; showing last available counts';
+      lastRefresh=Date.now();let newerSaved=false;
+      if(manual){
+        const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),5000);
+        try{
+          const response=await fetch('data/latest.json',{cache:'no-store',signal:fallbackController.signal});if(!response.ok)throw new Error('Saved data unavailable');const saved=await response.json();
+          if(saved.schemaVersion===1&&saved.repositories?.length===4&&saved.repositories.every(repo=>Number.isSafeInteger(repo.packages)&&Number.isSafeInteger(repo.allAssets))&&Date.parse(saved.observedAt)>Date.parse(snapshot.observedAt)){
+            snapshot=saved;newerSaved=true;showTime(false,message);renderStats();updateVersions();renderGrowth();
+            for(const [platform,prefix,kinds] of [['Windows','windows',{installer:'windows-download',portable:'portable-download'}],['Android','android',{apk:'android-download'}],['Samsung TV','tv',{tv_bundle:'tv-download'}],['Android TV','androidtv',{apk:'androidtv-download'}]])setDownloads(snapshot.repositories.find(repo=>repo.platform===platform),kinds,prefix);
+          }
+        }catch{}finally{clearTimeout(fallbackTimeout);}
+      }
+      if(!newerSaved)showTime(snapshotIsLive,message);
+      if(manual)syncMessage(newerSaved?'Saved counts refreshed':limited?'GitHub limit · try later':'Connection unavailable',newerSaved?'success':'warning');
     }finally{clearTimeout(timeout);refreshing=false;syncButton();}
   }
   function element(tag, text, className) {

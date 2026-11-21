@@ -46,7 +46,8 @@ try:
             assert quick.get_attribute('href')==original.get_attribute('href')
         checks['compact_downloads_link_to_exact_published_assets']=True
         page.wait_for_function("!document.getElementById('refresh-live').disabled")
-        page.locator('#refresh-live').click()
+        with page.expect_request('**/data/latest.json'):
+            page.locator('#refresh-live').click()
         assert page.locator('#refresh-live .sync-icon').count()==1
         assert page.locator('#refresh-live').inner_text()==''
         assert page.locator('#refresh-live').get_attribute('aria-label')
@@ -209,6 +210,12 @@ try:
         live_context.route('https://api.github.com/**',github_fixture)
         live=live_context.new_page();live.clock.install();live.goto(url)
         live.wait_for_function("document.getElementById('snapshot-status').textContent.startsWith('Updated ')")
+        for _ in range(2):
+            before_requests=state['requests']
+            live.locator('#refresh-live').click()
+            live.wait_for_function("document.getElementById('sync-feedback').textContent==='Up to date'")
+            assert state['requests']>=before_requests+8
+        checks['rapid_manual_syncs_fetch_metadata_without_silent_cooldown']=True
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
