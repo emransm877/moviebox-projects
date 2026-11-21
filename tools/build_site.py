@@ -159,7 +159,7 @@ def build():
                 """<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"639c7f632e8b4d9fb5a4836e2a8a3117"}'></script></head>""",
                 1,
                 )
-             page_path.write_text(html,encoding='utf-8')
+                     page_path.write_text(html,encoding='utf-8')
     print('Built six canonical pages, responsive captures, fingerprinted assets and a noindex 404. No ratings or rankings are invented.')
 
 if __name__=='__main__':build()
