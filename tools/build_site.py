@@ -112,7 +112,6 @@ def build():
         text=text[:start]+'<!-- seo:start -->\n'+head('')+'\n<!-- seo:end -->\n<link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>\n'+text[end:]
     text=text.replace('<script src="app.js" defer></script>','<script src="live-counts.js" defer></script><script src="app.js" defer></script>') if 'src="live-counts.js"' not in text else text
     if not re.search(r'href="guides\.css(?:\?[^" ]*)?"',text):text=text.replace('</head>','<link rel="stylesheet" href="guides.css"></head>')
-    if 'id="refresh-live"' not in text:text=text.replace('<p id="snapshot-status"','<div class="live-refresh"><button type="button" id="refresh-live">Refresh live counts</button><p id="snapshot-status"').replace('Loading the last collected snapshot…</p></div>','Loading the last collected snapshot…</p></div></div>')
     text=text.replace('Snapshots are scheduled daily. GitHub may delay scheduled jobs; the timestamp above shows the actual collection time.','Live counts are checked every 10 seconds while this page is visible. GitHub caching and API rate limits can delay the source data; any pause and the last verified time are shown above. Hourly snapshots retain observed growth.')
     for prefix,repo,release,mapping in [('windows',w,wr,{'installer':'windows-download','portable':'portable-download'}),('android',a,ar,{'apk':'android-download'}),('tv',t,tr,{'tv_bundle':'tv-download'}),('androidtv',atv,atvr,{'apk':'androidtv-download'})]:
         text=re.sub(r'(<span\b[^>]*id="'+prefix+r'-version"[^>]*>)[^<]*(</span>)',lambda match:match[1]+e(release['tag'])+match[2],text)
@@ -142,7 +141,7 @@ def build():
         if page_path.name=='index.html' and (page_path.parent==SITE or page_path.parent.name in ('windows','android','samsung-tv','android-tv','help')) and 'usage.js' not in html:
             prefix='../' if page_path.parent!=SITE else ''
             html=html.replace('</head>','<script src="'+prefix+'usage.js" defer></script></head>')
-        for name in ['styles.css','guides.css','app.js','live-counts.js','presence.js','usage.js']:
+        for name in ['styles.css','guides.css','trends.css','app.js','live-counts.js','presence.js','usage.js']:
             digest=hashlib.sha256((SITE/name).read_bytes()).hexdigest()[:12]
             html=re.sub(r'((?:href|src)="(?:[^"?]*/)?'+re.escape(name)+r')(?:\?v=[a-f0-9]+)?"',lambda m:m[1]+'?v='+digest+'"',html)
         for name,widths in [('desktop-home',[640,1280]),('android-home',[360,720])]:

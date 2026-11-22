@@ -22,7 +22,7 @@ try:
         browser_context.route('https://api.github.com/**',lambda route:route.fulfill(status=403,content_type='application/json',body='{"message":"Fixture: offline rate-limit fallback"}'))
         page=browser_context.new_page();page.set_viewport_size({'width':1440,'height':1000})
         page.on('pageerror',lambda error:errors.append(str(error)))
-        page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
+        page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== 'â€”'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
         assert page.locator('.hero-preview .preview-phone img').is_visible()
@@ -45,16 +45,10 @@ try:
             original=page.locator('#'+quick.get_attribute('data-download-source'))
             assert quick.get_attribute('href')==original.get_attribute('href')
         checks['compact_downloads_link_to_exact_published_assets']=True
-        page.wait_for_function("!document.getElementById('refresh-live').disabled")
-        with page.expect_request('**/data/latest.json'):
-            page.locator('#refresh-live').click()
-        assert page.locator('#refresh-live .sync-icon').count()==1
-        assert page.locator('#refresh-live').inner_text()==''
-        assert page.locator('#refresh-live').get_attribute('aria-label')
-        assert page.locator('#refresh-live').evaluate("node=>getComputedStyle(node).backgroundColor==='rgba(0, 0, 0, 0)' && getComputedStyle(node).borderRadius==='50%'")
-        assert page.locator('#refresh-live').evaluate("node=>node.classList.contains('is-spinning')")
-        page.wait_for_function("!document.getElementById('refresh-live').classList.contains('is-spinning')")
-        checks['sync_icon_animates_on_manual_click']=True
+        assert page.locator('#refresh-live').count()==0
+        assert page.locator('#snapshot-status').count()==0
+        assert page.locator('.chart-method').count()==0
+        checks['requested_sync_and_explainer_removed']=True
         assert page.locator('.project-grid > .project').count()==4
         assert 'v0.1.0' in page.locator('#android-tv-project').inner_text()
         assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==1
@@ -74,6 +68,15 @@ try:
         assert not mobile.locator('#projects').is_visible()
         assert mobile.locator('.hero-actions .primary:visible').get_attribute('href')=='#downloads'
         assert mobile.locator('#downloads .quick-primary:visible').count()==4
+        mobile.locator('#trend-interactive').scroll_into_view_if_needed()
+        mobile.locator('#trend-interactive').tap()
+        assert mobile.locator('.trend-tooltip').is_visible(), 'Touch details must persist after finger lift'
+        mobile.locator('.trend-caption').tap()
+        assert mobile.locator('.trend-tooltip').is_hidden(), 'Outside tap dismisses touch details'
+        mobile.locator('#trend-interactive').tap()
+        mobile.keyboard.press('Escape')
+        assert mobile.locator('.trend-tooltip').is_hidden()
+        checks['touch_tooltip_persists_and_dismisses_outside_or_escape']=True
         touch.close();checks['mobile_uses_direct_downloads_without_3d_cards']=True
         checks['four_published_project_cards_with_real_downloads']=True
         page.locator('#count-mode').select_option('all')
@@ -115,7 +118,7 @@ try:
         page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'desktop-analytics.png'))
         for width in [390,768,1024,1280,1920]:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
-            page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
+            page.wait_for_function("document.getElementById('windows-count').textContent !== 'â€”'")
             page.mouse.move(0,0)
             page.locator('.project').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
             page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
@@ -135,10 +138,6 @@ try:
             else:
                 assert not page.locator('#downloads').is_visible()
                 assert page.locator('#projects').is_visible()
-            sync=page.locator('#refresh-live').bounding_box();status=page.locator('#snapshot-status').bounding_box()
-            assert status['y']>=sync['y']+sync['height'],(width,sync,status)
-            assert abs(status['x']+status['width']/2-sync['x']-sync['width']/2)<2,(width,sync,status)
-            assert 38<=sync['height']<=44
             if width >= 768:
                 assert page.locator('.analytics-header').bounding_box()['height']<140
                 cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
@@ -163,29 +162,34 @@ try:
             if width==390:page.screenshot(path=str(out/'mobile-top.png'));page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'mobile-analytics.png'))
         failure=browser_context.new_page();failure.set_viewport_size({'width':390,'height':900})
         failure.route('**/data/latest.json',lambda route:route.fulfill(status=503,body='unavailable'))
-        failure.goto(url);failure.wait_for_function("document.getElementById('snapshot-status').classList.contains('error')")
+        failure.goto(url);failure.wait_for_function("document.getElementById('analytics').dataset.state==='unavailable'")
         assert '/'+windows['latestTag']+'/' in failure.locator('#windows-download').get_attribute('href')
         checks['snapshot_failure_keeps_published_downloads_usable']=True
         baseline_page=browser_context.new_page()
         baseline_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps({'schemaVersion':1,'points':[]})))
-        baseline_page.goto(url);baseline_page.wait_for_function("document.getElementById('growth-chart').textContent.includes('Earlier daily downloads cannot be reconstructed')")
+        baseline_page.goto(url);baseline_page.wait_for_function("document.querySelector('#growth-chart .trend-empty')!==null")
         checks['baseline_has_no_invented_growth_history']=True
         history_page=browser_context.new_page();history_page.set_viewport_size({'width':900,'height':900})
         fake={'schemaVersion':1,'points':[{'at':'2026-11-21T12:00:00Z','packages':{'moviebox-android':194,'moviebox-desktop':236}},{'at':'2026-11-21T13:00:00Z','packages':{'moviebox-android':197,'moviebox-desktop':240,'moviebox-tizen':51}}]}
         history_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps(fake)))
-        history_page.goto(url);history_page.locator('.trend-point').wait_for();assert '+7' in history_page.locator('.trend-point').inner_text()
-        history_page.locator('.trend-point').click()
-        assert 'Android +3' in history_page.locator('.growth-selection').inner_text()
-        assert 'Windows +4' in history_page.locator('.growth-selection').inner_text()
-        assert 'Samsung TV +0' in history_page.locator('.growth-selection').inner_text()
+        history_page.goto(url);history_page.locator('#trend-interactive').wait_for()
+        assert history_page.locator('.trend-caption strong').inner_text()=='+7'
+        history_page.locator('#trend-interactive').focus()
+        assert 'Android +3' in history_page.locator('.trend-tooltip').inner_text()
+        assert 'Windows +4' in history_page.locator('.trend-tooltip').inner_text()
+        assert 'Samsung TV +0' in history_page.locator('.trend-tooltip').inner_text()
+        history_page.keyboard.press('Escape');assert history_page.locator('.trend-tooltip').is_hidden()
+        history_page.keyboard.press('End');assert history_page.locator('.trend-tooltip').is_visible()
         history_page.locator('#growth-range').select_option('24')
         assert history_page.locator('#growth-range').input_value()=='24'
-        checks['same_day_growth_and_platform_baselines_are_correct']=True
-        assert '+7 downloads' in history_page.locator('.trend-tooltip').inner_text()
-        assert 'Nov 21' in history_page.locator('.trend-tooltip').inner_text()
+        assert history_page.locator('.trend-caption strong').inner_text()=='+7'
         assert history_page.locator('.trend-line').count()==4
-        assert not history_page.locator('.chart-method').get_attribute('open')
-        checks['measured_growth_delta_renders_correctly']=True
+        history_page.locator('#trend-platform-moviebox-desktop').click()
+        assert history_page.locator('.trend-caption strong').inner_text()=='+4'
+        assert history_page.locator('.trend-line').count()==1
+        history_page.locator('#trend-interactive').focus();history_page.keyboard.press('Home')
+        assert 'Nov 21' in history_page.locator('.trend-tooltip').inner_text()
+        checks['observed_growth_platform_filters_keyboard_and_tooltip']=True
         for route in ['windows/','android/','samsung-tv/','android-tv/','help/']:
             response=page.goto(url+route)
             assert response.status==200
@@ -209,34 +213,26 @@ try:
             route.fulfill(content_type='application/json',body=json.dumps(result))
         live_context.route('https://api.github.com/**',github_fixture)
         live=live_context.new_page();live.clock.install();live.goto(url)
-        live.wait_for_function("document.getElementById('snapshot-status').textContent.startsWith('Updated ')")
-        for _ in range(2):
-            before_requests=state['requests']
-            live.locator('#refresh-live').click()
-            live.wait_for_function("document.getElementById('sync-feedback').textContent==='Up to date'")
-            assert state['requests']>=before_requests+8
-        checks['rapid_manual_syncs_fetch_metadata_without_silent_cooldown']=True
+        live.wait_for_function("document.getElementById('analytics').dataset.state==='live'")
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True
-        assert int(live.locator('.growth-platform').nth(1).locator('strong').inner_text().replace(',',''))==windows['packages']+1
+        live.locator('#trend-platform-moviebox-desktop').click()
         live.locator('#growth-range').select_option('24')
         live.locator('#version-filter').select_option('moviebox-desktop:'+windows['latestTag'])
         live.clock.fast_forward(10000)
         live.wait_for_function('(value)=>document.getElementById("version-filter").value===value',arg='moviebox-desktop:'+windows['latestTag'])
         assert live.locator('#release-rows tr').count()==1
         assert live.locator('#growth-range').input_value()=='24'
+        assert live.locator('#trend-platform-moviebox-desktop').get_attribute('aria-pressed')=='true'
         live.locator('#version-filter').select_option('all');live.locator('#release-next').click()
         live.clock.fast_forward(10000)
         assert live.locator('#release-page-label').inner_text().startswith('Page 2 ')
         checks['live_refresh_preserves_release_filters_and_page']=True
         state['limited']=True;live.clock.fast_forward(10000)
-        live.wait_for_function("document.getElementById('snapshot-status').title.includes('GitHub rate limit reached')")
-        assert 'Refresh paused' not in live.locator('#snapshot-status').inner_text()
-        assert len(live.locator('#snapshot-status').inner_text())<85
-        assert 'GitHub rate limit reached' in live.locator('#snapshot-status').get_attribute('title')
+        live.wait_for_function("document.getElementById('analytics').dataset.refreshState==='unavailable'")
         assert int(live.locator('#windows-count').inner_text().replace(',',''))==windows['packages']+1
-        checks['api_rate_limit_keeps_verified_counts_and_reports_pause']=True
+        checks['api_rate_limit_keeps_verified_counts']=True
         live_context.close()
         assert not errors,errors
         checks['no_browser_javascript_errors']=True

@@ -139,3 +139,72 @@ select:focus-visible{outline:1px solid #91baa3;outline-offset:2px;box-shadow:non
 @media(max-width:1100px) and (min-width:721px){.topbar{flex-wrap:wrap;height:auto;padding-block:22px;gap:18px}.topbar nav{order:3;flex-basis:100%;justify-content:center}.topbar .header-meta{margin-left:auto}}
 @media(max-width:720px){.header-meta{gap:12px;margin-left:auto}.presence-badge{padding:6px 9px;gap:5px;min-height:32px}.presence-badge .presence-word{display:none}.presence-badge svg{width:17px;height:17px}.topbar .brand{font-size:19px}.topbar .brand-note{font-size:8px;letter-spacing:1.5px}.topbar nav{gap:16px}.header-meta .nav-github{font-size:.8rem}}
 .usage-control{background:none;border:0;color:var(--muted,#b6ccbf);font:inherit;font-size:.875rem;padding:.5rem 0;cursor:pointer;text-decoration:underline;text-underline-offset:4px}.usage-dialog{width:min(94vw,620px);max-height:85vh;overflow:auto;border:1px solid #466451;border-radius:18px;padding:26px;background:#11251d;color:#edf7ee;font:16px/1.65 system-ui}.usage-dialog::backdrop{background:#06100ccc}.usage-dialog h2{font-size:1.5rem;line-height:1.25;margin-top:0}.usage-dialog p{color:#bdd0c3}.usage-actions{display:flex;flex-wrap:wrap;gap:10px}.usage-actions button{padding:11px 15px;border-radius:9px;border:1px solid #476a55;background:#1d3729;color:#edf7ee;font:inherit;cursor:pointer}.usage-actions button:first-child{background:#adf1cd;color:#10241b}.usage-control:focus-visible,.usage-actions button:focus-visible{outline:2px solid #adf1cd;outline-offset:3px}
+
+/* Shared reading rhythm for the landing page and installation guides. */
+.topbar nav a {
+  padding-block: .42rem;
+  text-underline-offset: .42em;
+}
+.topbar nav a:hover,
+.topbar nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+.hero-copy h1,
+.section-heading h2,
+.help-section h2,
+.guide h1,
+.guide h2 {
+  text-wrap: balance;
+}
+.hero-copy .lead,
+.guide > .lead {
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.device-showcase .preview-top {
+  background: #152720;
+}
+.trust-strip {
+  padding-block: 1.15rem;
+}
+.help-section details[open] summary {
+  color: var(--mint);
+}
+.footer a:hover {
+  color: var(--mint);
+}
+.guide .breadcrumbs {
+  font-size: .875rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2.75rem);
+}
+.guide > .lead,
+.guide section p,
+.guide section li {
+  max-width: 70ch;
+}
+.guide section {
+  border-top: 1px solid var(--line);
+  padding-top: clamp(1.35rem, 3vw, 2.15rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.guide section h2 {
+  margin-top: 0;
+  margin-bottom: .85rem;
+}
+.guide section li::marker {
+  color: var(--mint);
+}
+.guide section a,
+.footer a {
+  text-decoration-thickness: 1px;
+}
+@media (max-width: 720px) {
+  .quick-download {
+    background: linear-gradient(110deg, #172c25, #13251f);
+    border-color: #32493e;
+  }
+  .guide-actions {
+    margin-bottom: 2rem;
+  }
+}
