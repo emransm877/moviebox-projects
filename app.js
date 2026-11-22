@@ -35,24 +35,36 @@
     analytics.dataset.observedAt = snapshot.observedAt;
     analytics.dataset.refreshState = message ? 'unavailable' : 'available';
   }
+  function applySnapshot(candidate,live=false){
+    const checked=window.MovieBoxLiveCounts.validate(candidate);
+    if(snapshot&&Date.parse(checked.observedAt)<Date.parse(snapshot.observedAt))return false;
+    snapshot=checked;showTime(live);updateNativeAvailability();renderStats();updateVersions();renderGrowth();
+    for(const [platform,prefix,kinds] of [
+      ['Windows','windows',{installer:'windows-download',portable:'portable-download'}],
+      ['Android','android',{apk:'android-download'}],['Samsung TV','tv',{tv_bundle:'tv-download'}],
+      ['Android TV','androidtv',{apk:'androidtv-download'}],['Android app','native',{apk:'native-download'}]
+    ])setDownloads(snapshot.repositories.find(repo=>repo.platform===platform),kinds,prefix);
+    return true;
+  }
+  async function refreshSaved(signal){
+    const response=await fetch('data/latest.json',{cache:'no-cache',signal});
+    if(!response.ok)throw new Error('Snapshot unavailable');
+    const candidate=window.MovieBoxLiveCounts.validate(await response.json());
+    if(!savedSnapshot||Date.parse(candidate.observedAt)>Date.parse(savedSnapshot.observedAt)){
+      savedSnapshot=candidate;window.MovieBoxLiveCounts.remember(candidate);
+      try{const result=await fetch('data/history.json',{cache:'no-cache',signal});if(result.ok){const next=await result.json();if(next.schemaVersion===1&&Array.isArray(next.points))history=next;}}catch{/* Keep the last known history. */}
+      if(!applySnapshot(candidate)&&snapshot)renderGrowth();
+    }
+  }
   async function refreshLive() {
     if (refreshing || document.hidden || Date.now() - lastRefresh < 9500) return;
     refreshing = true;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 18000);
     try {
-      snapshot = await window.MovieBoxLiveCounts.load(controller.signal);
-      showTime(true);
-      updateNativeAvailability();renderStats();
-      updateVersions();
-      renderGrowth();
-      for (const [platform, prefix, kinds] of [
-        ['Windows', 'windows', {installer:'windows-download', portable:'portable-download'}],
-        ['Android', 'android', {apk:'android-download'}],
-        ['Samsung TV', 'tv', {tv_bundle:'tv-download'}],
-        ['Android TV', 'androidtv', {apk:'androidtv-download'}],
-        ['Android app', 'native', {apk:'native-download'}]
-      ]) setDownloads(snapshot.repositories.find(repo => repo.platform === platform), kinds, prefix);
+      // Static collections can recover while GitHub's public API is rate-limited.
+      try{await refreshSaved(controller.signal);}catch{/* Keep the newest verified observation. */}
+      applySnapshot(window.MovieBoxLiveCounts.remember(await window.MovieBoxLiveCounts.load(controller.signal)),true);
     } catch {
       showTime($('analytics').dataset.state === 'live', 'unavailable');
     } finally {
@@ -289,17 +301,12 @@
   }
   async function load() {
     try {
-      const responses = await Promise.all(['data/latest.json', 'data/history.json'].map(url => fetch(url, { cache: 'no-cache' })));
-      if (responses.some(r => !r.ok)) throw new Error('Snapshot unavailable');
-      [snapshot, history] = await Promise.all(responses.map(r => r.json()));
-      savedSnapshot=snapshot;
-      if (snapshot.schemaVersion !== 1 || !snapshot.repositories || ![4,5].includes(snapshot.repositories.length)) throw new Error('Unsupported snapshot');
-      updateNativeAvailability();showTime(false);
-      setDownloads(snapshot.repositories.find(r => r.platform === 'Windows'), { installer: 'windows-download', portable: 'portable-download' }, 'windows');
-      setDownloads(snapshot.repositories.find(r => r.platform === 'Android'), { apk: 'android-download' }, 'android');
-      setDownloads(snapshot.repositories.find(r => r.platform === 'Samsung TV'), { tv_bundle: 'tv-download' }, 'tv');
-      setDownloads(snapshot.repositories.find(r=>r.platform==='Android TV'),{apk:'androidtv-download'},'androidtv');renderStats(); updateVersions(); renderGrowth();
-      $('count-mode').addEventListener('change', renderStats);
+      $('count-mode').value=window.MovieBoxLiveCounts.mode();
+      history={schemaVersion:1,points:[]};
+      const cached=window.MovieBoxLiveCounts.cached();
+      if(cached)applySnapshot(cached);
+      try{await refreshSaved();}catch{if(!snapshot)throw new Error('Snapshot unavailable');}
+      $('count-mode').addEventListener('change',()=>{window.MovieBoxLiveCounts.mode($('count-mode').value);renderStats();});
       $('platform-filter').addEventListener('change',()=>{releasePage=1;updateVersions(false);});
       $('version-filter').addEventListener('change',()=>{releasePage=1;renderReleases();});
       $('release-page-size').addEventListener('change',()=>{releasePage=1;renderReleases();});
