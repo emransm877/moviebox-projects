@@ -29,6 +29,13 @@
     size();window.addEventListener('resize',size);if(document.fonts)document.fonts.ready.then(size);
   }
   let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
+  function fitTotal(){
+    const total=$('combined-count');if(!total)return;
+    total.style.fontSize='';
+    if(total.clientWidth>0&&total.scrollWidth>total.clientWidth){
+      total.style.fontSize=(parseFloat(getComputedStyle(total).fontSize)*total.clientWidth/total.scrollWidth*.98)+'px';
+    }
+  }
   function showTime(live, message='') {
     const analytics = $('analytics');
     analytics.dataset.state = live ? 'live' : 'saved';
@@ -117,6 +124,7 @@
     $('tv-breakdown').textContent = format(tv.kinds.tv_bundle) + ' bundles · ' + format(tv.kinds.tv_widget) + ' widgets';
     const native=snapshot.repositories.find(repo=>repo.name==='moviebox-android-native');if(native){$('native-count').textContent=format(all?native.allAssets:native.packages);$('native-count-label').textContent=all?'all file downloads':'APK downloads';$('native-breakdown').textContent=format(native.kinds.apk)+' APKs \u00b7 '+format(native.kinds.checksums)+' checksum files';}
     $('combined-count').textContent = format(snapshot.repositories.reduce((total,repo)=>total+(all?repo.allAssets:repo.packages),0));
+    fitTotal();
     $('android-count-label').textContent = all ? 'all file downloads' : 'APK downloads';
     $('windows-count-label').textContent = all ? 'all file downloads' : 'package downloads';
     $('combined-label').textContent = all ? 'Release-file downloads across all releases' : 'Application package downloads across all releases';
@@ -324,5 +332,7 @@
     const activate=tab=>{tabs.forEach(item=>{const active=item===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;$(item.getAttribute('aria-controls')).hidden=!active;});};
     tabs.forEach((tab,index)=>{tab.addEventListener('click',()=>activate(tab));tab.addEventListener('keydown',event=>{let next;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();activate(tabs[next]);tabs[next].focus();});});
   }
+  window.addEventListener('resize',fitTotal);
+  if(document.fonts)document.fonts.ready.then(fitTotal);
   setupScreenshotPreview();setupProjectFlips();load();
 })();

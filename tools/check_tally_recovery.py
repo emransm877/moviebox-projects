@@ -234,6 +234,24 @@ with sync_playwright() as playwright:
     checks['storage_denied_still_works'] = True
     context.close()
 
+    # The external font requests remain blocked by fixture(). The four-digit
+    # total must fit a narrow phone even when only the system fallback is usable.
+    context, page, state, errors = fixture(browser, api_status=0)
+    expect_count(page, 1106)
+    for width in (320, 390, 1440):
+        page.set_viewport_size({'width': width, 'height': 850})
+        for mode, expected in [('packages', 1106), ('all', sum(repo['allAssets'] for repo in state['live']['repositories']))]:
+            page.locator('#count-mode').select_option(mode, force=True)
+            expect_count(page, expected)
+            page.wait_for_function("""() => {
+                const total = document.getElementById('combined-count');
+                return total.clientWidth > 0 && total.scrollWidth <= total.clientWidth;
+            }""")
+            assert page.locator('#combined-count').inner_text() == page.evaluate('value => value.toLocaleString()', expected)
+    assert not errors, errors
+    checks['fallback_font_total_fits_phone_and_desktop'] = True
+    context.close()
+
     browser.close()
 
 assert not downloads, downloads
