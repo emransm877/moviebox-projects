@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-22T22:08:11+00:00",
+  "observedAt": "2026-11-22T22:14:54+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -1812,7 +1812,7 @@
             {
               "id": 780243126,
               "name": "MovieBox-Android-App-0.1.0.apk",
-              "count": 25,
+              "count": 27,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk",
               "size": 4750201,
@@ -1833,7 +1833,7 @@
         }
       ],
       "kinds": {
-        "apk": 25,
+        "apk": 27,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -1841,8 +1841,8 @@
         "checksums": 1,
         "other": 0
       },
-      "packages": 25,
-      "allAssets": 26,
+      "packages": 27,
+      "allAssets": 28,
       "latestTag": "v0.1.0"
     }
   ]
