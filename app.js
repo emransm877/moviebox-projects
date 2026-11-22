@@ -29,54 +29,36 @@
     size();window.addEventListener('resize',size);if(document.fonts)document.fonts.ready.then(size);
   }
   let snapshot, history, savedSnapshot, refreshing=false, lastRefresh=0, releasePage=1;
-  let syncFeedbackUntil=0,syncMessageTimer=null,snapshotIsLive=false;
-  function syncMessage(text,kind='neutral'){
-    let message=$('sync-feedback');if(!message){message=element('span',null,'sync-feedback');message.id='sync-feedback';message.setAttribute('role','status');$('refresh-live').parentElement.append(message);}
-    clearTimeout(syncMessageTimer);message.textContent=text;message.dataset.kind=kind;
-    if(kind!=='busy')syncMessageTimer=setTimeout(()=>{message.textContent='';},6000);
+  function showTime(live, message='') {
+    const analytics = $('analytics');
+    analytics.dataset.state = live ? 'live' : 'saved';
+    analytics.dataset.observedAt = snapshot.observedAt;
+    analytics.dataset.refreshState = message ? 'unavailable' : 'available';
   }
-  function syncButton(){
-    const button=$('refresh-live');button.disabled=refreshing;button.setAttribute('aria-busy',String(refreshing));
-    button.classList.toggle('is-spinning',refreshing||Date.now()<syncFeedbackUntil);
-    button.setAttribute('aria-label',refreshing?'Syncing live download counts':'Sync live download counts');
-  }
-  function showTime(live,message=''){
-    snapshotIsLive=live;
-    const stale=Date.now()-Date.parse(snapshot.observedAt)>48*3600*1000;
-    const observed=new Date(snapshot.observedAt),status=$('snapshot-status');
-    const detail=(live?'Refreshed from GitHub ':'Saved snapshot collected ')+observed.toLocaleString()+' · Auto-check: 10 seconds'+(message?' · '+message:stale?' · Older than 48 hours':'');
-    status.textContent=(live?'Updated ':'Saved ')+observed.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
-    status.title=detail;status.setAttribute('aria-description',detail);
-    $('snapshot-status').classList.toggle('error',!!message||stale);
-  }
-  async function refreshLive(manual=false){
-    if(refreshing||(!manual&&(document.hidden||Date.now()-lastRefresh<9500)))return;
-    if(manual)syncMessage('Checking…','busy');
-    refreshing=true;syncButton();
-    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),18000);
-    try{
-      const previous=snapshot.repositories.map(repo=>repo.name+':'+repo.packages+':'+repo.allAssets).join('|'),live=await window.MovieBoxLiveCounts.load(controller.signal);
-      snapshot=live;lastRefresh=Date.now();showTime(true);setDownloads(snapshot.repositories.find(r=>r.platform==='Android TV'),{apk:'androidtv-download'},'androidtv');renderStats();updateVersions();renderGrowth();
-      setDownloads(snapshot.repositories.find(r=>r.platform==='Windows'),{installer:'windows-download',portable:'portable-download'},'windows');
-      setDownloads(snapshot.repositories.find(r=>r.platform==='Android'),{apk:'android-download'},'android');
-      setDownloads(snapshot.repositories.find(r=>r.platform==='Samsung TV'),{tv_bundle:'tv-download'},'tv');
-      if(manual)syncMessage(previous===snapshot.repositories.map(repo=>repo.name+':'+repo.packages+':'+repo.allAssets).join('|')?'Up to date':'Counts updated','success');
-    }catch(error){
-      const limited=error.status===403||error.status===429,message=(limited?'GitHub rate limit reached'+(error.retryAt?'; next API request after '+new Date(error.retryAt).toLocaleTimeString():''):'Live refresh unavailable')+'; showing last available counts';
-      lastRefresh=Date.now();let newerSaved=false;
-      if(manual){
-        const fallbackController=new AbortController(),fallbackTimeout=setTimeout(()=>fallbackController.abort(),5000);
-        try{
-          const response=await fetch('data/latest.json',{cache:'no-store',signal:fallbackController.signal});if(!response.ok)throw new Error('Saved data unavailable');const saved=await response.json();
-          if(saved.schemaVersion===1&&saved.repositories?.length===4&&saved.repositories.every(repo=>Number.isSafeInteger(repo.packages)&&Number.isSafeInteger(repo.allAssets))&&Date.parse(saved.observedAt)>Date.parse(snapshot.observedAt)){
-            snapshot=saved;newerSaved=true;showTime(false,message);renderStats();updateVersions();renderGrowth();
-            for(const [platform,prefix,kinds] of [['Windows','windows',{installer:'windows-download',portable:'portable-download'}],['Android','android',{apk:'android-download'}],['Samsung TV','tv',{tv_bundle:'tv-download'}],['Android TV','androidtv',{apk:'androidtv-download'}]])setDownloads(snapshot.repositories.find(repo=>repo.platform===platform),kinds,prefix);
-          }
-        }catch{}finally{clearTimeout(fallbackTimeout);}
-      }
-      if(!newerSaved)showTime(snapshotIsLive,message);
-      if(manual)syncMessage(newerSaved?'Saved counts refreshed':limited?'GitHub limit · try later':'Connection unavailable',newerSaved?'success':'warning');
-    }finally{clearTimeout(timeout);refreshing=false;syncButton();}
+  async function refreshLive() {
+    if (refreshing || document.hidden || Date.now() - lastRefresh < 9500) return;
+    refreshing = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 18000);
+    try {
+      snapshot = await window.MovieBoxLiveCounts.load(controller.signal);
+      showTime(true);
+      renderStats();
+      updateVersions();
+      renderGrowth();
+      for (const [platform, prefix, kinds] of [
+        ['Windows', 'windows', {installer:'windows-download', portable:'portable-download'}],
+        ['Android', 'android', {apk:'android-download'}],
+        ['Samsung TV', 'tv', {tv_bundle:'tv-download'}],
+        ['Android TV', 'androidtv', {apk:'androidtv-download'}]
+      ]) setDownloads(snapshot.repositories.find(repo => repo.platform === platform), kinds, prefix);
+    } catch {
+      showTime($('analytics').dataset.state === 'live', 'unavailable');
+    } finally {
+      clearTimeout(timeout);
+      lastRefresh = Date.now();
+      refreshing = false;
+    }
   }
   function element(tag, text, className) {
     const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node;
@@ -110,7 +92,6 @@
     $('combined-label').textContent = all ? 'Combined release-file downloads' : 'Combined package downloads';
     $('android-breakdown').textContent = format(android.kinds.apk) + ' APKs · ' + format(android.kinds.checksums) + ' checksum files';
     $('windows-breakdown').textContent = format(windows.kinds.installer) + ' installers · ' + format(windows.kinds.portable) + ' ZIPs';
-    $('checksum-note').textContent = 'Currently observed: ' + format(snapshot.repositories.reduce((total,repo)=>total+repo.kinds.checksums,0)) + ' checksum-file downloads across the four published projects. These are excluded from application-package totals.';
     renderReleases();
   }
   function filteredReleases() {
@@ -156,39 +137,130 @@
     if (!releases.length) { const row = element('tr'), cell = element('td', 'No published releases match this filter.'); cell.colSpan = 5; row.append(cell); body.append(row); }
   }
   function renderGrowth() {
-    const chart=$('growth-chart'),oldRange=chart.querySelector('select'),restoreRangeFocus=oldRange===document.activeElement,range=oldRange?oldRange.value:'all',projects=snapshot.repositories,points=(history.points||[]).map(point=>({at:point.at,packages:{...point.packages}}));chart.replaceChildren();
-    if(snapshot!==savedSnapshot&&points.length&&Date.parse(snapshot.observedAt)>Date.parse(points.at(-1).at)){
-      const peaks={...(history.assetPeaks||{})},totals={...points.at(-1).packages};
-      projects.forEach(repo=>{let gain=0;repo.releases.forEach(release=>release.assets.filter(asset=>['apk','installer','portable','tv_bundle','tv_widget'].includes(asset.kind)).forEach(asset=>{const old=peaks[repo.name+':'+asset.id];gain+=old?Math.max(0,asset.count-old.count):(history.assetPeaks?asset.count:0);}));totals[repo.name]=Object.hasOwn(totals,repo.name)?totals[repo.name]+gain:repo.packages;});
-      points.push({at:snapshot.observedAt,packages:totals,live:true});
+    const chart = $('growth-chart'), projects = snapshot.repositories;
+    const range = chart.dataset.range || 'all', platform = chart.dataset.platform || 'all';
+    const signature = JSON.stringify([history.points, projects.map(repo => [repo.name, repo.packages]), range, platform]);
+    if (chart.dataset.signature === signature) return;
+    const focused = chart.contains(document.activeElement) ? document.activeElement.id : '';
+    chart.dataset.signature = signature;
+    chart._trendPointerController?.abort();
+    chart._trendPointerController = new AbortController();
+    chart.replaceChildren();
+    const points = (history.points || []).filter(point => Number.isFinite(Date.parse(point.at))).map(point => ({at: point.at, packages: {...point.packages}}));
+    // Add only observed increases. A newly appearing platform establishes a baseline.
+    if (snapshot !== savedSnapshot && points.length && Date.parse(snapshot.observedAt) > Date.parse(points.at(-1).at)) {
+      const totals = {...points.at(-1).packages}, peaks = history.assetPeaks || {};
+      let increased = false;
+      projects.forEach(repo => {
+        let gain = 0;
+        repo.releases.forEach(release => release.assets.filter(asset => ['apk', 'installer', 'portable', 'tv_bundle', 'tv_widget'].includes(asset.kind)).forEach(asset => {
+          const old = peaks[repo.name + ':' + asset.id];
+          gain += old ? Math.max(0, asset.count - old.count) : history.assetPeaks ? asset.count : 0;
+        }));
+        if (Object.hasOwn(totals, repo.name)) { totals[repo.name] += gain; increased ||= gain > 0; }
+        else totals[repo.name] = repo.packages;
+      });
+      if (increased) points.push({at: snapshot.observedAt, packages: totals});
     }
-    const latest=points.at(-1),start=history.trackingStartedAt||(points[0]||{}).at;
-    const header=element('div',null,'growth-controls'),rangeLabel=element('label','Show '),select=element('select');select.id='growth-range';select.setAttribute('aria-label','Growth observation range');
-    [['all','All observations'],['24','Past 24 hours'],['168','Past 7 days'],['720','Past 30 days']].forEach(([value,label])=>{const option=element('option',label);option.value=value;select.append(option);});select.value=range;select.addEventListener('change',renderGrowth);rangeLabel.append(select);header.append(rangeLabel);chart.append(header);
-    const legend=element('div',null,'growth-legend');
-    projects.forEach((repo,index)=>{const first=points.find(point=>Object.hasOwn(point.packages,repo.name)),count=latest&&Object.hasOwn(latest.packages,repo.name)?latest.packages[repo.name]:repo.packages,delta=first?Math.max(0,count-first.packages[repo.name]):0,item=element('div',null,'growth-platform growth-color-'+index);item.append(element('span',repo.platform),element('strong',format(repo.packages)),element('small',first?'+'+format(delta)+' since tracking began':'Awaiting baseline'));legend.append(item);});chart.append(legend);
-    const changes=points.slice(1).map((point,index)=>{const deltas={};projects.forEach(repo=>{deltas[repo.name]=Object.hasOwn(points[index].packages,repo.name)?Math.max(0,(point.packages[repo.name]||0)-points[index].packages[repo.name]):0;});return {at:point.at,from:points[index].at,delta:Object.values(deltas).reduce((n,v)=>n+v,0),deltas,packages:point.packages};});
-    const end=latest?Date.parse(latest.at):Date.now(),filtered=changes.filter(point=>range==='all'||Date.parse(point.at)>=end-Number(range)*3600000),bins=[],size=Math.max(1,Math.ceil(filtered.length/60));
-    for(let i=0;i<filtered.length;i+=size){const group=filtered.slice(i,i+size),point={...group.at(-1),from:group[0].from,delta:0,deltas:{}};group.forEach(record=>{point.delta+=record.delta;projects.forEach(repo=>point.deltas[repo.name]=(point.deltas[repo.name]||0)+record.deltas[repo.name]);});bins.push(point);}
-    const detail=element('p',null,'growth-selection');detail.setAttribute('role','status');detail.setAttribute('aria-live','polite');
-    if(!bins.length){const baseline=element('p','Baseline established. Earlier daily downloads cannot be reconstructed. New observed growth will appear automatically after another successful collection.','growth-baseline');chart.append(baseline);}
-    else {
-      const svgNS='http://www.w3.org/2000/svg',svgNode=(tag,attributes={})=>{const node=document.createElementNS(svgNS,tag);Object.entries(attributes).forEach(([name,value])=>node.setAttribute(name,String(value)));return node;};
-      const plot=element('div',null,'trend-plot'),svg=svgNode('svg',{viewBox:'0 0 1000 250',preserveAspectRatio:'none','aria-hidden':'true'}),times=[Date.parse(bins[0].from),...bins.map(point=>Date.parse(point.at))],duration=Math.max(1,times.at(-1)-times[0]),x=time=>40+(time-times[0])/duration*920;
-      let running=0;const totals=[0],series=projects.map(()=>[0]);bins.forEach(point=>{running+=point.delta;totals.push(running);projects.forEach((repo,index)=>series[index].push(series[index].at(-1)+(point.deltas[repo.name]||0)));});
-      const maximum=Math.max(1,...totals),y=value=>220-value/maximum*185;
-      [0,.5,1].forEach(fraction=>{const height=y(maximum*fraction);svg.append(svgNode('line',{x1:40,x2:960,y1:height,y2:height,class:'trend-grid'}));const label=svgNode('text',{x:34,y:height-7,class:'trend-axis'});label.textContent='+'+format(Math.round(maximum*fraction));svg.append(label);});
-      const combined=totals.map((value,index)=>[x(times[index]),y(value)]),area=svgNode('path',{d:'M '+combined.map(pair=>pair.join(',')).join(' L ')+' L 960,220 L 40,220 Z',class:'trend-area'});svg.append(area);
-      series.forEach((values,index)=>svg.append(svgNode('polyline',{points:values.map((value,i)=>x(times[i])+','+y(value)).join(' '),class:'trend-line growth-color-'+index})));
-      svg.append(svgNode('polyline',{points:combined.map(pair=>pair.join(',')).join(' '),class:'trend-combined'}));
-      const cursor=svgNode('line',{x1:960,x2:960,y1:26,y2:225,class:'trend-cursor'});svg.append(cursor);plot.append(svg);
-      const tooltip=element('div',null,'trend-tooltip');tooltip.setAttribute('aria-hidden','true');plot.append(tooltip);
-      const show=(point,index)=>{const position=x(times[index+1]);cursor.setAttribute('x1',position);cursor.setAttribute('x2',position);tooltip.style.left=Math.max(22,Math.min(78,position/10))+'%';tooltip.replaceChildren(element('span',new Date(point.at).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})),element('strong','+'+format(point.delta)+' downloads'),element('small',format(Object.values(point.packages).reduce((sum,count)=>sum+count,0))+' observed total'));detail.textContent=projects.map(repo=>repo.platform+' +'+format(point.deltas[repo.name]||0)).join(' · ');};
-      bins.forEach((point,index)=>{const button=element('button',null,'trend-point');button.type='button';button.style.left=(x(times[index+1])/10)+'%';button.style.top=(y(totals[index+1])/250*100)+'%';button.setAttribute('aria-label',new Date(point.at).toLocaleString()+': +'+format(point.delta)+' downloads');button.append(element('span','+'+format(point.delta),'visually-hidden'));['pointerenter','focus','click'].forEach(event=>button.addEventListener(event,()=>show(point,index)));plot.append(button);});
-      const dates=element('div',null,'trend-dates');[times[0],times.at(-1)].forEach(time=>dates.append(element('span',new Date(time).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))));chart.append(plot,dates);show(bins.at(-1),bins.length-1);
+    const controls = element('div', null, 'trend-toolbar'), tabs = element('div', null, 'trend-tabs');
+    tabs.setAttribute('aria-label', 'Chart platform');
+    [['all', 'All platforms'], ...projects.map(repo => [repo.name, repo.platform])].forEach(([name, label], index) => {
+      const button = element('button', label, 'trend-tab' + (index ? ' growth-color-' + (index - 1) : ''));
+      button.id = 'trend-platform-' + name; button.type = 'button'; button.setAttribute('aria-pressed', String(name === platform));
+      button.addEventListener('click', () => { chart.dataset.platform = name; renderGrowth(); });
+      tabs.append(button);
+    });
+    const select = element('select'); select.id = 'growth-range'; select.setAttribute('aria-label', 'Download trend period');
+    [['all', 'All time'], ['24', '24 hours'], ['168', '7 days'], ['720', '30 days']].forEach(([value, label]) => {
+      const option = element('option', label); option.value = value; select.append(option);
+    });
+    select.value = range; select.addEventListener('change', () => { chart.dataset.range = select.value; renderGrowth(); });
+    controls.append(tabs, select); chart.append(controls);
+    const end = points.length ? Date.parse(points.at(-1).at) : Date.now();
+    const changes = points.slice(1).map((point, index) => {
+      const deltas = {};
+      projects.forEach(repo => { deltas[repo.name] = Object.hasOwn(points[index].packages, repo.name) && Object.hasOwn(point.packages, repo.name) ? Math.max(0, point.packages[repo.name] - points[index].packages[repo.name]) : 0; });
+      return {at: point.at, from: points[index].at, deltas};
+    }).filter(point => range === 'all' || Date.parse(point.from) >= end - Number(range) * 3600000);
+    if (!changes.length) {
+      chart.append(element('p', 'No recorded growth in this period yet.', 'trend-empty'));
+      if (focused) $(focused)?.focus({preventScroll: true});
+      return;
     }
-    chart.append(detail);
-    if(restoreRangeFocus)select.focus({preventScroll:true});
+    const active = platform === 'all' ? projects : projects.filter(repo => repo.name === platform);
+    const totals = [0], series = projects.map(() => [0]);
+    changes.forEach(point => {
+      totals.push(totals.at(-1) + active.reduce((sum, repo) => sum + point.deltas[repo.name], 0));
+      projects.forEach((repo, index) => series[index].push(series[index].at(-1) + point.deltas[repo.name]));
+    });
+    const caption = element('div', null, 'trend-caption');
+    caption.append(element('span', 'Observed package growth'), element('strong', '+' + format(totals.at(-1)))); chart.append(caption);
+    const svgNode = (tag, attrs = {}) => {
+      const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.entries(attrs).forEach(([name, value]) => node.setAttribute(name, String(value))); return node;
+    };
+    const times = [Date.parse(changes[0].from), ...changes.map(point => Date.parse(point.at))], duration = Math.max(1, times.at(-1) - times[0]);
+    const x = time => 48 + (time - times[0]) / duration * 904;
+    const max = Math.max(1, totals.at(-1)), y = value => 236 - value / max * 204;
+    const plot = element('div', null, 'trend-plot'); plot.id = 'trend-interactive'; plot.tabIndex = 0;
+    plot.setAttribute('role', 'group'); plot.setAttribute('aria-label', 'Download growth chart. Use left and right arrows to inspect observations.');
+    const svg = svgNode('svg', {viewBox: '0 0 1000 260', preserveAspectRatio: 'none', 'aria-hidden': 'true'});
+    [...new Set([0, Math.round(max / 2), max])].forEach(value => {
+      svg.append(svgNode('line', {x1: 48, x2: 952, y1: y(value), y2: y(value), class: 'trend-grid'}));
+      const label = element('span', format(value), 'trend-y-label');
+      label.style.top = (y(value) / 260 * 100) + '%'; plot.append(label);
+    });
+    const path = totals.map((value, index) => x(times[index]) + ',' + y(value)).join(' ');
+    svg.append(svgNode('path', {d: 'M ' + path.replaceAll(' ', ' L ') + ' L 952,236 L 48,236 Z', class: 'trend-area'}));
+    projects.forEach((repo, index) => {
+      if (platform !== 'all' && platform !== repo.name) return;
+      svg.append(svgNode('polyline', {points: series[index].map((value, i) => x(times[i]) + ',' + y(value)).join(' '), class: 'trend-line growth-color-' + index}));
+    });
+    svg.append(svgNode('polyline', {points: path, class: 'trend-combined'}));
+    const cursor = svgNode('line', {y1: 28, y2: 236, class: 'trend-cursor'}), dot = svgNode('circle', {r: 4, class: 'trend-dot'});
+    cursor.style.display = 'none'; dot.style.display = 'none'; svg.append(cursor, dot); plot.append(svg);
+    const tooltip = element('div', null, 'trend-tooltip'); tooltip.hidden = true; plot.append(tooltip);
+    const detail = element('p', null, 'growth-selection visually-hidden'); detail.setAttribute('role', 'status');
+    let selected = changes.length - 1;
+    function inspect(index) {
+      selected = Math.max(0, Math.min(changes.length - 1, index));
+      const point = changes[selected], position = x(times[selected + 1]), count = totals[selected + 1];
+      cursor.style.display = ''; dot.style.display = ''; cursor.setAttribute('x1', position); cursor.setAttribute('x2', position); dot.setAttribute('cx', position); dot.setAttribute('cy', y(count));
+      tooltip.hidden = false; tooltip.style.left = Math.max(24, Math.min(76, position / 10)) + '%';
+      tooltip.replaceChildren(element('span', new Date(point.at).toLocaleString(undefined, {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'})), element('strong', '+' + format(count) + ' in this period'));
+      active.forEach(repo => tooltip.append(element('small', repo.platform + ' +' + format(series[projects.indexOf(repo)][selected + 1]))));
+      detail.textContent = tooltip.textContent;
+    }
+    function hide() { tooltip.hidden = true; cursor.style.display = 'none'; dot.style.display = 'none'; }
+    function nearest(event) {
+      const bounds = plot.getBoundingClientRect(), value = (event.clientX - bounds.left) / bounds.width * 1000;
+      let index = 0;
+      changes.forEach((point, i) => { if (Math.abs(x(Date.parse(point.at)) - value) < Math.abs(x(Date.parse(changes[index].at)) - value)) index = i; });
+      inspect(index);
+    }
+    plot.addEventListener('pointermove', event => { if (event.pointerType !== 'touch') nearest(event); });
+    plot.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch') {
+        plot.focus({preventScroll: true});
+        nearest(event);
+      } else nearest(event);
+    });
+    plot.addEventListener('pointerleave', event => { if (event.pointerType !== 'touch') hide(); });
+    plot.addEventListener('focus', () => inspect(selected)); plot.addEventListener('blur', hide);
+    document.addEventListener('pointerdown', event => {
+      if (!plot.isConnected) return;
+      if (!plot.contains(event.target)) hide();
+    }, {signal: chart._trendPointerController?.signal});
+    plot.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Escape'].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === 'Escape') hide();
+      else inspect(event.key === 'Home' ? 0 : event.key === 'End' ? changes.length - 1 : selected + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    const dates = element('div', null, 'trend-dates');
+    [times[0], times.at(-1)].forEach(time => dates.append(element('span', new Date(time).toLocaleString(undefined, {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'}))));
+    chart.append(plot, dates, detail);
+    if (focused) $(focused)?.focus({preventScroll: true});
   }
   async function load() {
     try {
@@ -208,10 +280,10 @@
       $('release-page-size').addEventListener('change',()=>{releasePage=1;renderReleases();});
       $('release-previous').addEventListener('click',()=>{releasePage--;renderReleases();});
       $('release-next').addEventListener('click',()=>{releasePage++;renderReleases();});
-      $('refresh-live').addEventListener('click',()=>{syncFeedbackUntil=Date.now()+800;syncButton();setTimeout(syncButton,820);refreshLive(true);});
       refreshLive();setInterval(()=>refreshLive(),10000);
     } catch {
-      $('snapshot-status').textContent = 'Download statistics are unavailable. Published download links above still work.'; $('snapshot-status').classList.add('error');
+      $('analytics').dataset.state = 'unavailable';
+      $('growth-chart').textContent = 'Download statistics are temporarily unavailable.';
       $('release-rows').replaceChildren(); const row = element('tr'), cell = element('td', 'Could not load the last successful snapshot. Please try again later.'); cell.colSpan = 5; row.append(cell); $('release-rows').append(row);
     }
   }
