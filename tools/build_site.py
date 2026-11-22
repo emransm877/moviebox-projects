@@ -152,12 +152,11 @@ def build():
                 sizes='(max-width:720px) calc(100vw - 48px), (max-width:1100px) 90vw, 640px' if name=='desktop-home' else '(max-width:720px) 180px, 220px'
                 return '<picture><source type="image/webp" srcset="'+sources+'" sizes="'+sizes+'">'+tag+'</picture>'
             html=re.sub(pattern,responsive,html) if '<picture>' not in html else html
-        if page_path.name == 'index.html' and 'data-cf-beacon' not in html:
-            html = html.replace(
-                '</head>',
-                """<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"639c7f632e8b4d9fb5a4836e2a8a3117"}'></script></head>""",
-                1,
-                )
+        # Local previews and automation must not contribute production traffic.
+        beacon = """<script data-cf-analytics>if(location.hostname==='emransm877.github.io'&&location.pathname.startsWith('/moviebox-projects/')&&!navigator.webdriver){const beacon=document.createElement('script');beacon.type='module';beacon.src='https://static.cloudflareinsights.com/beacon.min.js';beacon.dataset.cfBeacon=JSON.stringify({token:'639c7f632e8b4d9fb5a4836e2a8a3117'});document.head.append(beacon);}</script>"""
+        html = re.sub(r'<script[^>]*(?:data-cf-beacon|data-cf-analytics)[^>]*>.*?</script>', '', html, flags=re.S)
+        if page_path.name == 'index.html':
+            html = html.replace('</head>', beacon + '</head>', 1)
         page_path.write_text(html,encoding='utf-8')
     print('Built six canonical pages, responsive captures, fingerprinted assets and a noindex 404. No ratings or rankings are invented.')
 
