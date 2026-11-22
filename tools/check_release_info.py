@@ -14,6 +14,14 @@ TARGETS={'moviebox-desktop':('windows','0.10.4','installer'),
          'moviebox-tizen':('tv','0.9.3','tv_bundle'),
          'moviebox-android-tv':('androidtv','0.2.0','apk')}
 
+def recount(snapshot):
+    # Keep simulated release lists and their summaries consistent, like the API.
+    for repo in snapshot['repositories']:
+        kinds={kind:sum(asset['count'] for release in repo['releases'] for asset in release['assets'] if asset['kind']==kind)
+               for kind in ('apk','installer','portable','tv_bundle','tv_widget','checksums','other')}
+        repo.update(kinds=kinds,packages=sum(kinds[k] for k in ('apk','installer','portable','tv_bundle','tv_widget')),allAssets=sum(kinds.values()))
+    return snapshot
+
 # Promotion must be exercised from the historical stable baseline, even after
 # the staged versions really ship. Native publication is exercised separately
 # by check_native_project; do not append a duplicate native repository there.
@@ -27,6 +35,7 @@ for repo in DATA['repositories']:
     stable=[release for release in repo['releases'] if not release['prerelease']]
     assert stable,('Historical promotion fixture baseline missing',repo['name'])
     repo['latestTag']=max(stable,key=version)['tag']
+recount(DATA)
 
 
 def fixture(complete=True,preview=False):
@@ -44,7 +53,7 @@ def fixture(complete=True,preview=False):
             asset['id']+=90000000;asset['count']=0
         if not complete:release['assets']=[asset for asset in release['assets'] if asset['kind']=='installer'] if prefix=='windows' else []
         repo['latestTag']=release['tag'];repo['releases'].append(release)
-    return snapshot
+    return recount(snapshot)
 
 
 class Quiet(SimpleHTTPRequestHandler):
