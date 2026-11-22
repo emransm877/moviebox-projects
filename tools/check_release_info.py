@@ -14,6 +14,20 @@ TARGETS={'moviebox-desktop':('windows','0.10.4','installer'),
          'moviebox-tizen':('tv','0.9.3','tv_bundle'),
          'moviebox-android-tv':('androidtv','0.2.0','apk')}
 
+# Promotion must be exercised from the historical stable baseline, even after
+# the staged versions really ship. Native publication is exercised separately
+# by check_native_project; do not append a duplicate native repository there.
+DATA['repositories']=[repo for repo in DATA['repositories'] if repo['name']!='moviebox-android-native']
+for repo in DATA['repositories']:
+    if repo['name'] not in TARGETS:continue
+    target=tuple(int(part) for part in TARGETS[repo['name']][1].split('.'))
+    def version(release):
+        return tuple(int(part) for part in release['tag'].lstrip('v').split('-')[0].split('.'))
+    repo['releases']=[release for release in repo['releases'] if version(release)<target]
+    stable=[release for release in repo['releases'] if not release['prerelease']]
+    assert stable,('Historical promotion fixture baseline missing',repo['name'])
+    repo['latestTag']=max(stable,key=version)['tag']
+
 
 def fixture(complete=True,preview=False):
     snapshot=copy.deepcopy(DATA)

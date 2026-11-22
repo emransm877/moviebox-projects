@@ -150,7 +150,7 @@ with sync_playwright() as pw:
     current['now'] += 61000
     page.clock.fast_forward(61000)
     result = page.evaluate('MovieBoxLiveCounts.load().then(value=>value.repositories.length)')
-    assert result == 4 and not current['downloads']
+    assert result == len(DATA['repositories']) and not current['downloads']
     checks['transient_github_error_recovers_after_short_backoff'] = True
     ctx.close()
 
