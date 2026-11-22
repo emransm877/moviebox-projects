@@ -43,14 +43,15 @@
     try {
       snapshot = await window.MovieBoxLiveCounts.load(controller.signal);
       showTime(true);
-      renderStats();
+      updateNativeAvailability();renderStats();
       updateVersions();
       renderGrowth();
       for (const [platform, prefix, kinds] of [
         ['Windows', 'windows', {installer:'windows-download', portable:'portable-download'}],
         ['Android', 'android', {apk:'android-download'}],
         ['Samsung TV', 'tv', {tv_bundle:'tv-download'}],
-        ['Android TV', 'androidtv', {apk:'androidtv-download'}]
+        ['Android TV', 'androidtv', {apk:'androidtv-download'}],
+        ['Android app', 'native', {apk:'native-download'}]
       ]) setDownloads(snapshot.repositories.find(repo => repo.platform === platform), kinds, prefix);
     } catch {
       showTime($('analytics').dataset.state === 'live', 'unavailable');
@@ -70,13 +71,29 @@
     try { const parsed = new URL(url); return parsed.origin === 'https://github.com' && parsed.pathname.startsWith('/emransm877/' + repo + '/releases/tag/') ? parsed.href : ''; } catch { return ''; }
   }
   function setDownloads(repo, selector, prefix) {
-    const release = repo.releases.find(item => item.tag === repo.latestTag && !item.prerelease);
-    if (!release) return; $(prefix + '-version').textContent = release.tag;
-    document.querySelectorAll('[data-version-source="'+prefix+'"]').forEach(node=>node.textContent=release.tag);
+    if(!repo)return;
+    const release = MovieBoxReleaseInfo.published(repo);
+    if (!release) return; $(prefix + '-version').textContent = MovieBoxReleaseInfo.label(release.tag);
+    document.querySelectorAll('[data-version-source="'+prefix+'"]').forEach(node=>node.textContent=MovieBoxReleaseInfo.label(release.tag));
+    document.querySelectorAll('[data-theme-source="'+prefix+'"]').forEach(node=>node.textContent=MovieBoxReleaseInfo.themes(repo,release));
+    if(prefix==='tv')document.querySelectorAll('[data-tizen-scope]').forEach(node=>node.textContent=MovieBoxReleaseInfo.tizenScope(release));
     for (const [kind, id] of Object.entries(selector)) {
       const asset = release.assets.find(item => item.kind === kind), url = asset && safeDownload(asset.url, repo.name);
       if (url) {$(id).href = url;document.querySelectorAll('[data-download-source="'+id+'"]').forEach(node=>node.href=url);}
     }
+  }
+  function platformLabel(repo){return repo.name==='moviebox-android'?'Android patch':repo.platform;}
+  function updateNativeAvailability(){
+    const repo=snapshot.repositories.find(item=>item.name==='moviebox-android-native'),available=!!(repo&&MovieBoxReleaseInfo.published(repo));
+    const card=$('native-project'),changed=card.hidden===available;
+    document.querySelectorAll('[data-published-project="moviebox-android-native"]').forEach(node=>node.hidden=!available);
+    const count=available?5:4;
+    document.querySelector('.project-grid').dataset.projectCount=count;
+    document.querySelector('.stat-grid').dataset.projectCount=count;
+    document.querySelectorAll('[data-project-total]').forEach(node=>node.textContent=available?'Five':'Four');
+    document.querySelectorAll('[data-all-projects]').forEach(node=>node.textContent=available?'All five projects':'All four projects');
+    if(available)setDownloads(repo,{apk:'native-download'},'native');
+    if(changed)window.dispatchEvent(new Event('resize'));
   }
   function renderStats() {
     const all = $('count-mode').value === 'all', android = snapshot.repositories.find(r => r.platform === 'Android'), windows = snapshot.repositories.find(r => r.platform === 'Windows'), tv = snapshot.repositories.find(r => r.platform === 'Samsung TV');
@@ -86,6 +103,7 @@
     $('tv-count-label').textContent = all ? 'all file downloads' : 'package downloads';
     const androidtv=snapshot.repositories.find(repo=>repo.platform==='Android TV');$('androidtv-count').textContent=format(all?androidtv.allAssets:androidtv.packages);$('androidtv-count-label').textContent=all?'all file downloads':'APK downloads';$('androidtv-breakdown').textContent=format(androidtv.kinds.apk)+' APKs · '+format(androidtv.kinds.checksums)+' checksum files';
     $('tv-breakdown').textContent = format(tv.kinds.tv_bundle) + ' bundles · ' + format(tv.kinds.tv_widget) + ' widgets';
+    const native=snapshot.repositories.find(repo=>repo.name==='moviebox-android-native');if(native){$('native-count').textContent=format(all?native.allAssets:native.packages);$('native-count-label').textContent=all?'all file downloads':'APK downloads';$('native-breakdown').textContent=format(native.kinds.apk)+' APKs \u00b7 '+format(native.kinds.checksums)+' checksum files';}
     $('combined-count').textContent = format(snapshot.repositories.reduce((total,repo)=>total+(all?repo.allAssets:repo.packages),0));
     $('android-count-label').textContent = all ? 'all file downloads' : 'APK downloads';
     $('windows-count-label').textContent = all ? 'all file downloads' : 'package downloads';
@@ -100,7 +118,7 @@
   }
   function updateVersions(preserve=true) {
     const select = $('version-filter'),previous=preserve?select.value:'all'; select.replaceChildren(element('option', 'All versions')); select.firstChild.value = 'all';
-    for (const { repo, release } of filteredReleases()) { const option = element('option', repo.platform + ' ' + release.tag); option.value = repo.name + ':' + release.tag; select.append(option); }
+    for (const { repo, release } of filteredReleases()) { const option = element('option', platformLabel(repo) + ' ' + MovieBoxReleaseInfo.label(release.tag)); option.value = repo.name + ':' + release.tag; select.append(option); }
     if(Array.from(select.options).some(option=>option.value===previous))select.value=previous;
     renderReleases();
   }
@@ -117,11 +135,11 @@
     if($('release-range').textContent!==range)$('release-range').textContent=range;
     for (const { repo, release } of releases.slice(start,end)) {
       const assets = release.assets.filter(a => all || ['apk', 'installer', 'portable', 'tv_bundle', 'tv_widget'].includes(a.kind));
-      const row = element('tr'); row.append(element('td', repo.platform));
+      const row = element('tr'); row.append(element('td', platformLabel(repo)));
       const version = element('td'), url = releaseLink(release.url, repo.name);
-      const link = element(url ? 'a' : 'span', release.tag); if (url) link.href = url; version.append(link);
+      const link = element(url ? 'a' : 'span', MovieBoxReleaseInfo.label(release.tag)); if (url) link.href = url; version.append(link);
       if (release.tag === repo.latestTag) version.append(element('span', 'Latest', 'release-badge'));
-      if (release.prerelease) version.append(element('span', 'Preview', 'release-badge'));
+      if (release.prerelease && !MovieBoxReleaseInfo.label(release.tag).includes(' \u00b7 Preview ')) version.append(element('span', 'Preview', 'release-badge'));
       row.append(version, element('td', new Date(release.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })), element('td', format(assets.reduce((n, a) => n + a.count, 0)), 'number'));
       const files = element('td', null, 'file-links'),chips=element('div',null,'release-assets');files.append(chips);
       for (const asset of assets) {
@@ -164,7 +182,7 @@
     }
     const controls = element('div', null, 'trend-toolbar'), tabs = element('div', null, 'trend-tabs');
     tabs.setAttribute('aria-label', 'Chart platform');
-    [['all', 'All platforms'], ...projects.map(repo => [repo.name, repo.platform])].forEach(([name, label], index) => {
+    [['all', 'All platforms'], ...projects.map(repo => [repo.name, platformLabel(repo)])].forEach(([name, label], index) => {
       const button = element('button', label, 'trend-tab' + (index ? ' growth-color-' + (index - 1) : ''));
       button.id = 'trend-platform-' + name; button.type = 'button'; button.setAttribute('aria-pressed', String(name === platform));
       button.addEventListener('click', () => { chart.dataset.platform = name; renderGrowth(); });
@@ -228,7 +246,7 @@
       cursor.style.display = ''; dot.style.display = ''; cursor.setAttribute('x1', position); cursor.setAttribute('x2', position); dot.setAttribute('cx', position); dot.setAttribute('cy', y(count));
       tooltip.hidden = false; tooltip.style.left = Math.max(24, Math.min(76, position / 10)) + '%';
       tooltip.replaceChildren(element('span', new Date(point.at).toLocaleString(undefined, {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'})), element('strong', '+' + format(count) + ' in this period'));
-      active.forEach(repo => tooltip.append(element('small', repo.platform + ' +' + format(series[projects.indexOf(repo)][selected + 1]))));
+      active.forEach(repo => tooltip.append(element('small', platformLabel(repo) + ' +' + format(series[projects.indexOf(repo)][selected + 1]))));
       detail.textContent = tooltip.textContent;
     }
     function hide() { tooltip.hidden = true; cursor.style.display = 'none'; dot.style.display = 'none'; }
@@ -268,8 +286,8 @@
       if (responses.some(r => !r.ok)) throw new Error('Snapshot unavailable');
       [snapshot, history] = await Promise.all(responses.map(r => r.json()));
       savedSnapshot=snapshot;
-      if (snapshot.schemaVersion !== 1 || !snapshot.repositories || snapshot.repositories.length !== 4) throw new Error('Unsupported snapshot');
-      showTime(false);
+      if (snapshot.schemaVersion !== 1 || !snapshot.repositories || ![4,5].includes(snapshot.repositories.length)) throw new Error('Unsupported snapshot');
+      updateNativeAvailability();showTime(false);
       setDownloads(snapshot.repositories.find(r => r.platform === 'Windows'), { installer: 'windows-download', portable: 'portable-download' }, 'windows');
       setDownloads(snapshot.repositories.find(r => r.platform === 'Android'), { apk: 'android-download' }, 'android');
       setDownloads(snapshot.repositories.find(r => r.platform === 'Samsung TV'), { tv_bundle: 'tv-download' }, 'tv');

@@ -1,11 +1,12 @@
 /* Public GitHub metadata only. No tokens, app telemetry or visitor identifiers. */
 (function(global){
   'use strict';
-  const owner='emransm877',projects=[['moviebox-android','Android'],['moviebox-desktop','Windows'],['moviebox-tizen','Samsung TV'],['moviebox-android-tv','Android TV']];
+  const owner='emransm877',projects=[['moviebox-android','Android'],['moviebox-desktop','Windows'],['moviebox-tizen','Samsung TV'],['moviebox-android-tv','Android TV'],['moviebox-android-native','Android app']];
   function kind(name,repo){
     name=name.toLowerCase();
     if(/\.(sha256|sha512)$/.test(name)||['sha256sums.txt','checksums.txt'].includes(name))return 'checksums';
     if(repo==='moviebox-android'&&/^moviebox-android-[0-9.]+\.apk$/.test(name))return 'apk';
+    if(repo==='moviebox-android-native'&&/^moviebox-android-(app|native)-[0-9.]+\.apk$/.test(name))return 'apk';
     if(repo==='moviebox-android-tv'&&/^moviebox-android-tv-[0-9.]+\.apk$/.test(name))return 'apk';
     if(repo==='moviebox-desktop'&&/^moviebox-setup-[0-9.]+-windows-x64(-self-signed-test)?\.exe$/.test(name))return 'installer';
     if(repo==='moviebox-desktop'&&/^moviebox-(desktop-)?[0-9.]+-windows-x64(-portable|-self-signed-test)?\.zip$/.test(name))return 'portable';
@@ -28,15 +29,18 @@
   let pausedUntil=0;
   async function load(signal){
     if(Date.now()<pausedUntil){const error=new Error('GitHub rate limit pause');error.status=429;error.retryAt=pausedUntil;throw error;}
-    async function request(path){
+    async function request(path,optional=false){
       const response=await fetch('https://api.github.com/repos/'+owner+'/'+path,{headers:{Accept:'application/vnd.github+json'},cache:'no-cache',signal});
+      if(optional&&response.status===404)return null;
       const remaining=Number(response.headers.get('x-ratelimit-remaining')),reset=Number(response.headers.get('x-ratelimit-reset'))*1000;
       if(response.headers.has('x-ratelimit-remaining')&&remaining<9&&reset>Date.now())pausedUntil=reset;
-      if(!response.ok){const error=new Error(response.status===403||response.status===429?'GitHub rate limit reached':'GitHub could not be reached');error.status=response.status;error.retryAt=reset||Date.now()+60000;pausedUntil=Math.max(pausedUntil,error.retryAt);throw error;}
+      if(!response.ok){const error=new Error(response.status===403||response.status===429?'GitHub rate limit reached':'GitHub could not be reached');error.status=response.status;error.retryAt=(response.status===403||response.status===429)&&reset>Date.now()?reset:Date.now()+60000;pausedUntil=Math.max(pausedUntil,error.retryAt);throw error;}
       return response.json();
     }
     const repositories=await Promise.all(projects.map(async([repo,platform])=>{
-      const [latest,first]=await Promise.all([request(repo+'/releases/latest'),request(repo+'/releases?per_page=100&page=1')]);
+      const optional=repo==='moviebox-android-native';
+      const [latest,first]=await Promise.all([request(repo+'/releases/latest',optional),request(repo+'/releases?per_page=100&page=1',optional)]);
+      if(optional&&(!latest||!first))return null;
       let releases=first;
       for(let page=2;releases.length===(page-1)*100;page++){
         if(page>100)throw new Error('Pagination limit exceeded');
@@ -51,9 +55,10 @@
         }
         release.assets=assets;
       }
-      return normalise(repo,platform,releases,latest);
+      const record=normalise(repo,platform,releases,latest);
+      return optional&&!global.MovieBoxReleaseInfo.published(record)?null:record;
     }));
-    return {schemaVersion:1,observedAt:new Date().toISOString(),repositories};
+    return {schemaVersion:1,observedAt:new Date().toISOString(),repositories:repositories.filter(Boolean)};
   }
   global.MovieBoxLiveCounts={load,normalise,kind};
 })(window);
