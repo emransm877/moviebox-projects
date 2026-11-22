@@ -9,8 +9,12 @@ The independent community hub for the published **Windows**, **Android patch**,
 [Samsung TV](https://github.com/emransm877/moviebox-tizen) · [Android TV](https://github.com/emransm877/moviebox-android-tv)
 
 Only projects with published downloads and documented working scope are offered
-as ready downloads. Android TV 0.1.0 is published with signed-artifact runtime
-evidence. Apple work remains outside ready downloads. Device compatibility limits
+as ready downloads. Android TV has a published APK with bounded runtime
+evidence. The native **MovieBox Android App** is a separate project and does not replace
+the Android patch. Its fifth project card, download button and installation guide
+become public only after a complete non-preview APK is published in
+`emransm877/moviebox-android-native` and collected. Until then it is excluded from
+ready downloads and the sitemap. Apple work remains outside ready downloads. Device compatibility limits
 are explicit on each page.
 
 ## Maintain the site
@@ -20,13 +24,43 @@ This is a buildless static site with Python metadata tooling:
 ```text
 python tools/collect_downloads.py
 python tools/build_site.py
-python -m unittest test_download_analytics test_seo
+python -m unittest test_download_analytics test_seo test_release_info
 python -m http.server 8090 --directory site
 ```
 
 Open `http://localhost:8090/`. `tools/check_site.py` runs browser checks with the
 pinned Playwright version in `.github/workflows/site.yml`. No app account,
-signing key or GitHub token is sent to visitors' browsers.
+signing key or GitHub token is sent to visitors' browsers. Recovery checks in
+`tools/check_client_recovery.py` mock all external services and verify failed or
+expired optional-usage sessions, short retries after ordinary API failures, and
+GitHub rate-limit pauses. They never download application release files.
+
+## Release information
+
+`release-plan.json` records the next coordinated Windows, Samsung TV and Android
+TV versions. It is a maintainer plan, not proof of a published download. Public
+buttons only select a non-preview release whose full required package set appears
+in the collected GitHub metadata. The same policy drives desktop cards, mobile
+download buttons and generated installation guides. Incomplete uploads retain
+the previous complete release instead of mixing installer/ZIP versions.
+
+Historical release IDs and asset counters stay unchanged. Their presentation is
+cleaned for visitors: `v0.10.3-selfsigned.1` appears as `0.10.3 - Preview 1`, while
+links and version filters keep the exact underlying tag. Technical Windows signing
+facts remain in the linked desktop signing policy; a short label is not a claim of
+public certificate trust.
+
+After each approved release is fully uploaded, run the collector and site builder
+above. Verify the new download set and release notes before deploying. The current
+native phone APK is never substituted for the published patch. `tools/check_native_project.py`
+checks the five-project publication state at mobile, tablet and desktop widths,
+using synthetic metadata without fetching any release assets. New platform history
+begins with its first real observation; earlier points are not backfilled with zero.
+
+`site/assets/screenshots.json` records genuine captures, device scope, source
+dimensions and SHA-256 hashes. The builder chooses a capture no newer than the
+published release; Windows 0.10.4 and Samsung 0.9.3 captures therefore activate
+with those actual releases. Android TV captions identify emulator captures.
 
 ## Live counts and historical observations
 
@@ -53,7 +87,7 @@ started, or assets deleted before collection, cannot be reconstructed.
 
 ## SEO and ownership
 
-The site has six unique canonical pages, relevant static content, breadcrumbs,
+The site has six core canonical pages (seven after the native Android app is published), relevant static content, breadcrumbs,
 honest JSON-LD, social metadata, a 1200×630 social card and an XML sitemap. No
 invented ratings, reviews or ranking guarantees are used. Project Pages hosts
 this site under a path; the effective robots file is at the host root, not this
@@ -73,7 +107,7 @@ untouched. Click **Verify** in Search Console once this file is live, then submi
 the sitemap above. Hosting the file alone does not confirm account verification
 or indexing.
 
-Every deployment runs `tools/check_live_seo.py` against the public site: five
+Every deployment runs `tools/check_live_seo.py` against the public site: all published
 HTTP-200 canonical pages, unique titles, indexability, sitemap URLs, a real 404,
 the old URL's redirect/canonical, and the exact Google verification file bytes.
 Its result is retained as the `live-seo-audit` Actions artifact. This is a

@@ -11,7 +11,10 @@ assets=Path(__file__).resolve().parents[1]/'site/assets'
 with sync_playwright() as pw:
     browser=pw.chromium.launch(channel=os.environ.get('BROWSER_CHANNEL') or None,headless=True)
     page=browser.new_page()
-    for name,widths in [('desktop-home',[640,1280]),('android-home',[360,720])]:
+    captures=json.loads((assets/'screenshots.json').read_text(encoding='utf-8'))
+    for capture in captures['captures']:
+        name=Path(capture['file']).stem
+        widths=[360,720] if capture['width']<capture['height'] else [640,1280]
         original=assets/(name+'.png')
         for width in widths:
             encoded=page.evaluate('''async ({source,width})=>{

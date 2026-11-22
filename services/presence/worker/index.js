@@ -2,10 +2,10 @@ const ORIGIN='https://emransm877.github.io';
 export const WINDOW_MS=90_000;
 const TOKEN_MS=30*60_000;
 const encoder=new TextEncoder();
-const routes=new Set(['home','windows','android','samsung-tv','android-tv','help']);
+const routes=new Set(['home','windows','android','samsung-tv','android-tv','android-app','help']);
 const sources=new Set(['facebook','direct','other']);
-const platforms=new Set(['none','windows','android','samsung-tv','android-tv']);
-const contentPattern=/^(?:|[rpc]\d{2}|release-moviebox-(?:desktop|android|tizen|android-tv)-\d{1,15})$/;
+const platforms=new Set(['none','windows','android','samsung-tv','android-tv','android-app']);
+const contentPattern=/^(?:|[rpc]\d{2}|release-moviebox-(?:desktop|android|tizen|android-tv|android-native)-\d{1,15})$/;
 const day=now=>new Date(now+6*60*60*1000).toISOString().slice(0,10);
 const encode=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
 const decode=value=>Uint8Array.from(atob(value.replaceAll('-','+').replaceAll('_','/')),c=>c.charCodeAt(0));
@@ -46,8 +46,11 @@ export default {
       if(path==='/api/usage-summary'){
         const days=Number(new URL(request.url).searchParams.get('days')||7);
         if(!Number.isInteger(days)||days<1||days>30)return reply({error:'invalid-window'},400);
-        const rows=await env.DB.batch([env.DB.prepare('SELECT day, route, source, content, event, platform, count FROM usage_counts WHERE day >= ? ORDER BY day').bind(day(now-(days-1)*86400000))]);
-        return reply({windowDays:days,timezone:'Asia/Dhaka',observedAt:now,coverage:'Consenting-browser event requests only; not unique people, completed downloads or installations. Anonymous events can include repeats or simulated activity.',rows:rows[0].results});
+        const rows=await env.DB.batch([
+          env.DB.prepare('DELETE FROM usage_counts WHERE day < ?').bind(day(now-89*86400000)),
+          env.DB.prepare('SELECT day, route, source, content, event, platform, count FROM usage_counts WHERE day >= ? ORDER BY day').bind(day(now-(days-1)*86400000))
+        ]);
+        return reply({windowDays:days,timezone:'Asia/Dhaka',observedAt:now,coverage:'Consenting-browser event requests only; not unique people, completed downloads or installations. Anonymous events can include repeats or simulated activity.',rows:rows.at(-1).results});
       }
       if(path==='/api/usage'){
         let data;try{data=await input(request);}catch{return reply({error:'invalid-input'},400);}
@@ -55,7 +58,7 @@ export default {
         if(data.event==='page_view'&&data.platform!=='none'||data.event==='download_click'&&data.platform==='none')return reply({error:'invalid-platform'},400);
         if(!await verify(data.token,env,now))return reply({error:'invalid-session'},401);
         await env.DB.batch([
-          env.DB.prepare('DELETE FROM usage_counts WHERE day < ?').bind(day(now-90*86400000)),
+          env.DB.prepare('DELETE FROM usage_counts WHERE day < ?').bind(day(now-89*86400000)),
           env.DB.prepare('INSERT INTO usage_counts (day, route, source, content, event, platform, count) VALUES (?, ?, ?, ?, ?, ?, 1) ON CONFLICT(day, route, source, content, event, platform) DO UPDATE SET count = count + 1').bind(day(now),data.route,data.source,data.content,data.event,data.platform)
         ]);
         return reply({accepted:true},202);

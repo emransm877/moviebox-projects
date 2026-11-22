@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "projects": {
+    "moviebox-desktop": {
+      "nextVersion": "0.10.4",
+      "requiredKinds": [
+        "installer",
+        "portable"
+      ],
+      "themeUpdate": {
+        "version": "0.10.4",
+        "count": 20
+      }
+    },
+    "moviebox-android": {
+      "nextVersion": "0.2.0",
+      "requiredKinds": [
+        "apk"
+      ]
+    },
+    "moviebox-tizen": {
+      "nextVersion": "0.9.3",
+      "requiredKinds": [
+        "tv_bundle"
+      ],
+      "themeUpdate": {
+        "version": "0.9.3",
+        "count": 20
+      }
+    },
+    "moviebox-android-tv": {
+      "nextVersion": "0.2.0",
+      "requiredKinds": [
+        "apk"
+      ],
+      "themeUpdate": {
+        "version": "0.2.0",
+        "count": 20
+      }
+    },
+    "moviebox-android-native": {
+      "nextVersion": "0.1.0",
+      "requiredKinds": [
+        "apk"
+      ],
+      "optionalUntilPublished": true
+    }
+  },
+  "unpublishedProjects": {
+    "nativeAndroidPhone": {
+      "package": "org.emransm.moviebox.phone",
+      "status": "approved separate first release; pending completed public APK",
+      "replacesPublishedPatch": false,
+      "repository": "moviebox-android-native"
+    }
+  }
+}

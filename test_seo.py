@@ -30,7 +30,9 @@ class Page(HTMLParser):
 class SEOTests(unittest.TestCase):
     def test_sitemap_canonical_pages_and_honest_schema(self):
         urls=[e.text for e in ET.parse(SITE/'sitemap.xml').getroot().iter() if e.tag.endswith('loc')]
-        self.assertEqual(set(urls),{BASE,BASE+'windows/',BASE+'android/',BASE+'samsung-tv/',BASE+'help/',BASE+'android-tv/'})
+        expected={BASE,BASE+'windows/',BASE+'android/',BASE+'samsung-tv/',BASE+'help/',BASE+'android-tv/'}
+        if 'noindex' not in Page((SITE/'android-app/index.html').read_text(encoding='utf-8')).meta['robots']:expected.add(BASE+'android-app/')
+        self.assertEqual(set(urls),expected)
         titles=[];descriptions=[]
         for url in urls:
             relative=url.removeprefix(BASE);path=SITE/relative/'index.html';page=Page(path.read_text(encoding='utf-8'))
@@ -48,12 +50,14 @@ class SEOTests(unittest.TestCase):
                 target=(path.parent/unquote(urlsplit(link).path)).resolve()
                 if target.is_dir():target=target/'index.html'
                 self.assertTrue(target.exists(),str(target))
-        self.assertEqual(len(set(titles)),6);self.assertEqual(len(set(descriptions)),6)
+        self.assertEqual(len(set(titles)),len(urls));self.assertEqual(len(set(descriptions)),len(urls))
     def test_404_is_not_indexable_and_social_image_has_real_dimensions(self):
         self.assertIn('noindex',Page((SITE/'404.html').read_text(encoding='utf-8')).meta['robots'])
         import struct
         image=(SITE/'assets/community-share.png').read_bytes();self.assertEqual(image[:8],b'\x89PNG\r\n\x1a\n');self.assertEqual(struct.unpack('>II',image[16:24]),(1200,630))
-    def test_only_four_published_projects_are_listed_as_downloads(self):
+    def test_only_published_projects_have_ready_download_links(self):
         text=(SITE/'index.html').read_text(encoding='utf-8')
         for name in ['windows-download','android-download','tv-download','androidtv-download']:self.assertIn('id="'+name+'"',text)
+        native=Page((SITE/'android-app/index.html').read_text(encoding='utf-8'))
+        if 'noindex' in native.meta['robots']:self.assertNotIn('/moviebox-android-native/releases/download/',text)
         self.assertNotIn('id="ios-download"',text);self.assertNotIn('id="macos-download"',text)

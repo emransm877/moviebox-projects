@@ -20,6 +20,9 @@ class DownloadAnalyticsTests(unittest.TestCase):
         self.assertEqual(classify('MovieBox-Desktop-0.10.3-windows-x64.zip','moviebox-desktop'),'portable')
         self.assertEqual(classify('MovieBox-Android-0.2.0.apk','moviebox-android'),'apk')
         self.assertEqual(classify('MovieBox-Android-TV-0.1.0.apk','moviebox-android-tv'),'apk')
+        self.assertEqual(classify('MovieBox-Android-App-0.1.0.apk','moviebox-android-native'),'apk')
+        self.assertEqual(classify('MovieBox-Android-Native-0.1.0.apk','moviebox-android-native'),'apk')
+        self.assertEqual(classify('MovieBox-Android-App-0.1.0.apk','moviebox-android'),'other')
         self.assertEqual(classify('MovieBox-Android-TV-0.1.0.apk','moviebox-android'),'other')
         self.assertEqual(classify('MovieBox-Setup-0.10.3-windows-x64.exe.sha256','moviebox-desktop'),'checksums')
         self.assertEqual(classify('SHA256SUMS.txt','moviebox-desktop'),'checksums')
@@ -50,3 +53,12 @@ class DownloadAnalyticsTests(unittest.TestCase):
         self.assertEqual(normalise('moviebox-desktop','Windows',[{'draft':True}])['allAssets'],0)
         asset={'id':1,'name':'x','download_count':2,'browser_download_url':'https://evil.invalid/x','size':1,'created_at':'2026-01-01'}
         with self.assertRaises(ValueError): normalise('moviebox-desktop','Windows',[{'draft':False,'assets':[asset]}])
+    def test_native_phone_first_observation_is_not_backfilled_as_zero(self):
+        before=fixture(10);history=update_history({},before)
+        self.assertNotIn('moviebox-android-native',history['points'][0]['packages'])
+        first=fixture(10);first['observedAt']='2026-11-23T12:00:00+00:00'
+        first['repositories'].append({'name':'moviebox-android-native','releases':[{'assets':[{'id':99,'count':8,'kind':'apk'}]}]})
+        history=update_history(history,first)
+        self.assertNotIn('moviebox-android-native',history['points'][0]['packages'])
+        self.assertEqual(history['points'][-1]['packages']['moviebox-android-native'],8)
+        self.assertEqual(history['points'][0]['packages']['moviebox-desktop'],10)

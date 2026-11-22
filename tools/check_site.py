@@ -14,6 +14,7 @@ threading.Thread(target=server.serve_forever,daemon=True).start()
 url=f'http://127.0.0.1:{server.server_port}/'
 data=json.loads((root/'data/latest.json').read_text(encoding='utf-8'))
 windows=next(r for r in data['repositories'] if r['platform']=='Windows')
+project_count=len(data['repositories'])
 checks={};errors=[]
 try:
     with sync_playwright() as pw:
@@ -22,7 +23,7 @@ try:
         browser_context.route('https://api.github.com/**',lambda route:route.fulfill(status=403,content_type='application/json',body='{"message":"Fixture: offline rate-limit fallback"}'))
         page=browser_context.new_page();page.set_viewport_size({'width':1440,'height':1000})
         page.on('pageerror',lambda error:errors.append(str(error)))
-        page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== 'â€”'")
+        page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
         assert page.locator('.hero-preview .preview-phone img').is_visible()
@@ -37,7 +38,7 @@ try:
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe','moviebox-desktop')")=='installer'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip','moviebox-desktop')")=='portable'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-TEST-ONLY.cer','moviebox-desktop')")=='other'
-        assert page.locator('#downloads .quick-download').count()==4
+        assert page.locator('#downloads .quick-download:not([hidden])').count()==project_count
         assert page.locator('.hero-actions .primary:visible').get_attribute('href')=='#projects'
         assert not page.locator('#downloads').is_visible()
         assert page.locator('#projects').is_visible()
@@ -49,12 +50,13 @@ try:
         assert page.locator('#snapshot-status').count()==0
         assert page.locator('.chart-method').count()==0
         checks['requested_sync_and_explainer_removed']=True
-        assert page.locator('.project-grid > .project').count()==4
-        assert 'v0.1.0' in page.locator('#android-tv-project').inner_text()
+        assert page.locator('.project-grid > .project:not([hidden])').count()==project_count
+        android_tv=next(repo for repo in data['repositories'] if repo['platform']=='Android TV')
+        assert page.evaluate('(tag)=>MovieBoxReleaseInfo.label(tag)',android_tv['latestTag']) in page.locator('#android-tv-project').inner_text()
         assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==1
         page.locator('#android-tv-project .flip-open').focus();page.keyboard.press('Enter')
         assert page.locator('#android-tv-project').evaluate("node=>node.classList.contains('is-flipped')")
-        assert '/v0.1.0/MovieBox-Android-TV-0.1.0.apk' in page.locator('#androidtv-download').get_attribute('href')
+        assert '/'+android_tv['latestTag']+'/' in page.locator('#androidtv-download').get_attribute('href')
         page.keyboard.press('Escape')
         assert page.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
         page.locator('.windows-project').hover()
@@ -67,7 +69,7 @@ try:
         assert mobile.locator('#downloads').is_visible()
         assert not mobile.locator('#projects').is_visible()
         assert mobile.locator('.hero-actions .primary:visible').get_attribute('href')=='#downloads'
-        assert mobile.locator('#downloads .quick-primary:visible').count()==4
+        assert mobile.locator('#downloads .quick-primary:visible').count()==project_count
         mobile.locator('#trend-interactive').scroll_into_view_if_needed()
         mobile.locator('#trend-interactive').tap()
         assert mobile.locator('.trend-tooltip').is_visible(), 'Touch details must persist after finger lift'
@@ -78,7 +80,7 @@ try:
         assert mobile.locator('.trend-tooltip').is_hidden()
         checks['touch_tooltip_persists_and_dismisses_outside_or_escape']=True
         touch.close();checks['mobile_uses_direct_downloads_without_3d_cards']=True
-        checks['four_published_project_cards_with_real_downloads']=True
+        checks['published_project_cards_with_real_downloads']=True
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
         checks['all_file_counts_match_github_asset_sum']=True
@@ -105,6 +107,15 @@ try:
         assert page.locator('#release-next').is_disabled()
         assert 'Windows' in page.locator('#release-rows').inner_text()
         checks['platform_and_version_filters_work']=True
+        legacy=next((release for release in windows['releases'] if '-selfsigned.' in release['tag']),None)
+        if legacy:
+            page.locator('#version-filter').select_option('moviebox-desktop:'+legacy['tag'])
+            assert '-selfsigned.' not in page.locator('#release-rows').inner_text()
+            assert 'Preview 1' in page.locator('#release-rows').inner_text()
+            assert legacy['tag'] in page.locator('#release-rows td').nth(1).locator('a').get_attribute('href')
+            assert page.locator('#version-filter').input_value()=='moviebox-desktop:'+legacy['tag']
+            page.locator('#version-filter').select_option('moviebox-desktop:'+windows['latestTag'])
+        checks['clean_preview_labels_preserve_real_release_identity']=True
         page.locator('#count-mode').select_option('packages')
         for link in page.locator('#release-rows a').all():assert '.sha256' not in (link.get_attribute('href') or '')
         checks['package_mode_hides_checksum_assets']=True
@@ -118,21 +129,24 @@ try:
         page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'desktop-analytics.png'))
         for width in [390,768,1024,1280,1920]:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
-            page.wait_for_function("document.getElementById('windows-count').textContent !== 'â€”'")
+            page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
             page.mouse.move(0,0)
-            page.locator('.project').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
+            page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
             page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
             assert page.locator('.stat p').evaluate_all("nodes=>nodes.every(node=>{const dot=getComputedStyle(node,'::before'),label=getComputedStyle(node);return Math.abs(parseFloat(dot.top)+3-parseFloat(label.lineHeight)/2)<1;})")
-            quick_rows=page.locator('#downloads .quick-download')
+            quick_rows=page.locator('#downloads .quick-download:not([hidden])')
             if width<=720:
                 assert not page.locator('#projects').is_visible()
                 assert page.locator('#downloads').is_visible()
-                for button in page.locator('#downloads .quick-primary').all():assert button.bounding_box()['height']>=44
+                for button in page.locator('#downloads .quick-primary:visible').all():assert button.bounding_box()['height']>=44
                 rows=quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().top)')
                 assert all(b>a for a,b in zip(rows,rows[1:])),rows
                 assert page.locator('#downloads').bounding_box()['y']<page.locator('.hero-preview').bounding_box()['y']
-                assert page.locator('#downloads').bounding_box()['height']<600
+                # Preserve the four-project compact budget, plus one bounded row
+                # for each separately published native phone project.
+                assert all(box['height']<=140 for box in quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().toJSON())'))
+                assert page.locator('#downloads').bounding_box()['height']<600+140*max(0,quick_rows.count()-4)
                 page.locator('#downloads').screenshot(path=str(out/'mobile-quick-downloads.png'))
                 checks['compact_vertical_downloads_before_mobile_preview']=True
             else:
@@ -140,16 +154,18 @@ try:
                 assert page.locator('#projects').is_visible()
             if width >= 768:
                 assert page.locator('.analytics-header').bounding_box()['height']<140
-                cards=page.locator('.project').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
+                cards=page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
                 for card in cards:
                     peers=[other for other in cards if abs(other['top']-card['top'])<2]
                     assert max(other['button'] for other in peers)-min(other['button'] for other in peers)<2,(width,cards)
                     assert abs(card['width']-card['footerWidth'])<2,(width,card)
                 checks['card_actions_align_each_row_'+str(width)]=True
             if width >= 1280:
-                for selector in ['.project-download', '.project-download .button', '.project-source']:
-                    tops=page.locator(selector).evaluate_all('(nodes)=>nodes.map(node=>node.getBoundingClientRect().top)')
-                    assert max(tops)-min(tops)<2,(width,selector,tops)
+                for selector in ['.project:not([hidden]) .project-download', '.project:not([hidden]) .project-download .button', '.project:not([hidden]) .project-source']:
+                    positions=page.locator(selector).evaluate_all('(nodes)=>nodes.map(node=>({row:node.closest(".project").getBoundingClientRect().top,top:node.getBoundingClientRect().top}))')
+                    for position in positions:
+                        tops=[other['top'] for other in positions if abs(other['row']-position['row'])<2]
+                        assert max(tops)-min(tops)<2,(width,selector,tops)
                 checks['project_downloads_align_'+str(width)]=True
             for image in page.locator('img').all():
                 if not image.is_visible():continue
@@ -175,7 +191,7 @@ try:
         history_page.goto(url);history_page.locator('#trend-interactive').wait_for()
         assert history_page.locator('.trend-caption strong').inner_text()=='+7'
         history_page.locator('#trend-interactive').focus()
-        assert 'Android +3' in history_page.locator('.trend-tooltip').inner_text()
+        assert 'Android patch +3' in history_page.locator('.trend-tooltip').inner_text()
         assert 'Windows +4' in history_page.locator('.trend-tooltip').inner_text()
         assert 'Samsung TV +0' in history_page.locator('.trend-tooltip').inner_text()
         history_page.keyboard.press('Escape');assert history_page.locator('.trend-tooltip').is_hidden()
@@ -183,14 +199,16 @@ try:
         history_page.locator('#growth-range').select_option('24')
         assert history_page.locator('#growth-range').input_value()=='24'
         assert history_page.locator('.trend-caption strong').inner_text()=='+7'
-        assert history_page.locator('.trend-line').count()==4
+        assert history_page.locator('.trend-line').count()==len(data['repositories'])
         history_page.locator('#trend-platform-moviebox-desktop').click()
         assert history_page.locator('.trend-caption strong').inner_text()=='+4'
         assert history_page.locator('.trend-line').count()==1
         history_page.locator('#trend-interactive').focus();history_page.keyboard.press('Home')
         assert 'Nov 21' in history_page.locator('.trend-tooltip').inner_text()
         checks['observed_growth_platform_filters_keyboard_and_tooltip']=True
-        for route in ['windows/','android/','samsung-tv/','android-tv/','help/']:
+        guide_routes=['windows/','android/','samsung-tv/','android-tv/','help/']
+        if any(repo['name']=='moviebox-android-native' for repo in data['repositories']):guide_routes.append('android-app/')
+        for route in guide_routes:
             response=page.goto(url+route)
             assert response.status==200
             assert page.locator('h1').count()==1
@@ -203,7 +221,8 @@ try:
             state['requests']+=1
             if state['limited']:
                 route.fulfill(status=429,content_type='application/json',headers={'x-ratelimit-remaining':'0','x-ratelimit-reset':'1999999999'},body='{"message":"Fixture rate limit"}');return
-            parts=urlsplit(route.request.url).path.split('/');name=parts[3];repo=next(r for r in data['repositories'] if r['name']==name)
+            parts=urlsplit(route.request.url).path.split('/');name=parts[3];repo=next((r for r in data['repositories'] if r['name']==name),None)
+            if repo is None:route.fulfill(status=404,body='{}');return
             if parts[-1]=='latest':result={'tag_name':repo['latestTag']}
             else:
                 result=[]

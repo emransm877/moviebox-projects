@@ -2,7 +2,7 @@ name: Project website and download snapshots
 on:
   push:
     branches: [main]
-    paths: ['site/**', 'services/presence/**', 'tools/**', 'test_*.py', '.github/workflows/site.yml']
+    paths: ['site/**', 'services/presence/**', 'tools/**', 'test_*.py', 'release-plan.json', '.github/workflows/site.yml']
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:
@@ -22,14 +22,17 @@ jobs:
       - run: python -m pip install playwright==1.65.1
       - run: python -m playwright install --with-deps chromium
       - run: python tools/build_site.py
-      - run: python -m unittest test_download_analytics test_seo
+      - run: python -m unittest test_download_analytics test_seo test_release_info
       - run: python tools/check_site.py
+      - run: python tools/check_release_info.py
+      - run: python tools/check_native_project.py
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: node --test services/presence/test/presence.test.mjs
       - run: python tools/check_presence.py
       - run: python tools/check_usage.py
+      - run: python tools/check_client_recovery.py
   snapshot:
     needs: verify
     runs-on: ubuntu-latest
@@ -47,9 +50,10 @@ jobs:
       - name: Check collector and documentation contracts
         run: |
           python tools/build_site.py
-          python -m unittest test_download_analytics test_seo
+          python -m unittest test_download_analytics test_seo test_release_info
           node --check site/app.js
           node --check site/live-counts.js
+          node --check site/release-info.js
       - name: Retain observation history
         run: |
           git config user.name 'github-actions[bot]'

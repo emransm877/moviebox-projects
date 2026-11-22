@@ -39,3 +39,32 @@ test('usage retention removes aggregates older than ninety days without changing
    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM usage_counts').get().count,1);
  }finally{Date.now=clock;db.close();}
 });
+
+test('usage summary purges the ninetieth prior day but retains ninety calendar days inclusive',async()=>{
+ const {db,env}=setup(),clock=Date.now;const now=Date.UTC(2026,10,22,18,5);Date.now=()=>now;
+ const day=value=>new Date(value+6*60*60*1000).toISOString().slice(0,10);
+ try{
+   const insert=db.prepare("INSERT INTO usage_counts(day,route,source,content,event,platform,count) VALUES (?,'home','direct','','page_view','none',1)");
+   for(const age of [90,89,0])insert.run(day(now-age*86400000));
+   const token=await session(env,'c'.repeat(32));await worker.fetch(req('/api/presence',{token}),env);
+   const result=await worker.fetch(req('/api/usage-summary?days=30'),env);assert.equal(result.status,200);
+   assert.equal(db.prepare('SELECT COUNT(*) AS count FROM usage_counts').get().count,2);
+   assert.equal(db.prepare('SELECT COUNT(*) AS count FROM usage_counts WHERE day=?').get(day(now-90*86400000)).count,0);
+   assert.equal(db.prepare('SELECT COUNT(*) AS count FROM usage_counts WHERE day=?').get(day(now-89*86400000)).count,1);
+   assert.equal((await result.json()).rows.length,1);
+   assert.equal(db.prepare('SELECT COUNT(*) AS count FROM active_browsers').get().count,1);
+ }finally{Date.now=clock;db.close();}
+});
+
+
+test('native Android guide and download are separate from the Android patch',async()=>{
+ const {db,env}=setup();try{
+  const token=await session(env,'9'.repeat(32));
+  for(const [route,platform] of [['android-app','android-app'],['android','android']]){
+   const response=await worker.fetch(req('/api/usage',{token,consent:true,route,source:'direct',content:'',event:'download_click',platform}),env);
+   assert.equal(response.status,202);
+  }
+  const rows=db.prepare('SELECT route,platform,count FROM usage_counts ORDER BY route').all();
+  assert.deepEqual(rows.map(r=>[r.route,r.platform,r.count]),[['android','android',1],['android-app','android-app',1]]);
+ }finally{db.close();}
+});

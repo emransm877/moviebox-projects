@@ -11,3 +11,7 @@ These are **event requests from consenting browsers**, not unique people, comple
 Tracked Facebook links use UTMs before any fragment. Only source and an allowlisted public post code are retained; arbitrary query values and private information are discarded. Internal navigation retains the broad campaign context in the opted-in tab without modifying release URLs.
 
 No Meta Pixel, advertising SDK, new paid analytics service or third-party analytics cookie is installed. The private marketing report reads aggregate evidence; it does not infer an installation from a visit or click.
+
+The native Android app uses the separate allowlisted route/platform `android-app`;
+the existing Android patch keeps `android`. The backend and browser must be
+deployed together when publishing the native app guide.

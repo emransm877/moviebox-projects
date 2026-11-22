@@ -1,6 +1,7 @@
 """Isolated browser presence scenarios. Never sends heartbeats to production."""
 from pathlib import Path
 import json,mimetypes,os
+from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
@@ -35,16 +36,16 @@ def context(browser,normal=True):
     return ctx
 with sync_playwright() as p:
     browser=p.chromium.launch(channel=os.environ.get('BROWSER_CHANNEL') or None,headless=True)
-    first=context(browser);page=first.new_page();page.clock.install(time=1795228800000)
+    first=context(browser);page=first.new_page();page.clock.install(time=datetime.fromtimestamp(1795228800,timezone.utc))
     page.goto(BASE);page.wait_for_function("document.getElementById('live-presence').dataset.state==='live'")
     assert page.locator('#presence-value').inner_text()=='1'
     initial=state['heartbeats'];page.clock.fast_forward(25000)
     page.wait_for_function("document.getElementById('live-presence').dataset.state==='live'")
     assert len(state['ids'])==1
-    second_tab=first.new_page();second_tab.clock.install(time=1795228800000)
+    second_tab=first.new_page();second_tab.clock.install(time=datetime.fromtimestamp(1795228800,timezone.utc))
     second_tab.goto(BASE+'windows/');second_tab.wait_for_function("document.getElementById('live-presence').dataset.state==='live'")
     assert second_tab.locator('#presence-value').inner_text()=='1'
-    second=context(browser);other=second.new_page();other.clock.install(time=1795228800000)
+    second=context(browser);other=second.new_page();other.clock.install(time=datetime.fromtimestamp(1795228800,timezone.utc))
     other.goto(BASE);other.wait_for_function("document.getElementById('presence-value').textContent==='2'")
     assert len(state['ids'])==2
     before=state['heartbeats']

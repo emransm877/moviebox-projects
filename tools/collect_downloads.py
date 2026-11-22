@@ -8,8 +8,13 @@ import re
 import time
 from urllib.request import Request, urlopen
 from urllib.parse import urlsplit
+from urllib.error import HTTPError
+try:
+    from .release_info import published_release
+except ImportError:
+    from release_info import published_release
 
-REPOSITORIES = [('moviebox-android', 'Android'), ('moviebox-desktop', 'Windows'), ('moviebox-tizen', 'Samsung TV'), ('moviebox-android-tv', 'Android TV')]
+REPOSITORIES = [('moviebox-android', 'Android'), ('moviebox-desktop', 'Windows'), ('moviebox-tizen', 'Samsung TV'), ('moviebox-android-tv', 'Android TV'), ('moviebox-android-native', 'Android app')]
 OWNER = 'emransm877'
 
 def classify(name, repo):
@@ -17,6 +22,8 @@ def classify(name, repo):
     if name.endswith(('.sha256', '.sha512')) or name in ('sha256sums.txt', 'checksums.txt'):
         return 'checksums'
     if repo == 'moviebox-android' and re.fullmatch(r'moviebox-android-[0-9.]+\.apk', name):
+        return 'apk'
+    if repo == 'moviebox-android-native' and re.fullmatch(r'moviebox-android-(?:app|native)-[0-9.]+\.apk', name):
         return 'apk'
     if repo == 'moviebox-android-tv' and re.fullmatch(r'moviebox-android-tv-[0-9.]+\.apk', name):
         return 'apk'
@@ -66,7 +73,8 @@ def update_history(history, snapshot):
                 key = repo['name'] + ':' + str(asset['id'])
                 old = known.get(key, {})
                 known[key] = {'count': max(asset['count'], old.get('count', 0)), 'kind': asset['kind'], 'repo': repo['name']}
-    totals = {repo: sum(a['count'] for a in known.values() if a['repo'] == repo and a['kind'] in ('apk','installer','portable','tv_bundle','tv_widget')) for repo, _ in REPOSITORIES}
+    observed = {repo['name'] for repo in snapshot['repositories']} | {asset['repo'] for asset in known.values()}
+    totals = {repo: sum(a['count'] for a in known.values() if a['repo'] == repo and a['kind'] in ('apk','installer','portable','tv_bundle','tv_widget')) for repo, _ in REPOSITORIES if repo in observed}
     point = {'at': snapshot['observedAt'], 'packages': totals}
     points = list(history.get('points', []))
     if not points:
@@ -78,7 +86,7 @@ def update_history(history, snapshot):
     return {'schemaVersion': 1, 'trackingStartedAt': history.get('trackingStartedAt', snapshot['observedAt']),
             'assetPeaks': known, 'points': points}
 
-def api(path):
+def api(path, optional=False):
     if not path.startswith('/repos/' + OWNER + '/'): raise ValueError('Unexpected repository')
     headers = {'Accept': 'application/vnd.github+json', 'User-Agent': 'MovieBox-public-downloads', 'X-GitHub-Api-Version': '2022-11-28'}
     token = os.environ.get('GITHUB_TOKEN')
@@ -87,6 +95,10 @@ def api(path):
         try:
             with urlopen(Request('https://api.github.com' + path, headers=headers), timeout=25) as response:
                 return json.load(response)
+        except HTTPError as error:
+            if optional and error.code==404:return None
+            if attempt == 2:raise
+            time.sleep(1 + attempt)
         except OSError:
             if attempt == 2: raise
             time.sleep(1 + attempt)
@@ -94,12 +106,14 @@ def api(path):
 def collect():
     repositories = []
     for repo, platform in REPOSITORIES:
-        releases = []
+        releases = [];optional=repo=='moviebox-android-native'
         for page in range(1, 101):
-            batch = api(f'/repos/{OWNER}/{repo}/releases?per_page=100&page={page}')
+            batch = api(f'/repos/{OWNER}/{repo}/releases?per_page=100&page={page}',optional=optional)
+            if batch is None:break
             releases.extend(batch)
             if len(batch) < 100: break
         else: raise RuntimeError('Release pagination exceeded the safety limit')
+        if optional and not any(not release.get('draft') and not release.get('prerelease') for release in releases):continue
         # Release responses may truncate their embedded assets; paginate explicitly.
         for release in releases:
             assets = []
@@ -110,8 +124,11 @@ def collect():
             else: raise RuntimeError('Asset pagination exceeded the safety limit')
             release['assets'] = assets
         record = normalise(repo, platform, releases)
-        latest = api(f'/repos/{OWNER}/{repo}/releases/latest')
+        latest = api(f'/repos/{OWNER}/{repo}/releases/latest',optional=optional)
+        if optional and latest is None:continue
         record['latestTag'] = latest['tag_name']
+        if optional:
+            if published_release(record) is None:continue
         repositories.append(record)
     return {'schemaVersion': 1, 'observedAt': datetime.now(timezone.utc).isoformat(timespec='seconds'), 'repositories': repositories}
 
