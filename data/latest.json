@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-22T08:05:23+00:00",
+  "observedAt": "2026-11-22T16:22:08+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -16,7 +16,7 @@
             {
               "id": 744847608,
               "name": "MovieBox-Android-0.2.0.apk",
-              "count": 205,
+              "count": 244,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.2.0/MovieBox-Android-0.2.0.apk",
               "size": 67368390,
@@ -44,7 +44,7 @@
             {
               "id": 740994538,
               "name": "MovieBox-Android-0.1.0.apk",
-              "count": 158,
+              "count": 162,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.1.0/MovieBox-Android-0.1.0.apk",
               "size": 67352006,
@@ -65,7 +65,7 @@
         }
       ],
       "kinds": {
-        "apk": 363,
+        "apk": 406,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -73,8 +73,8 @@
         "checksums": 6,
         "other": 0
       },
-      "packages": 363,
-      "allAssets": 369,
+      "packages": 406,
+      "allAssets": 412,
       "latestTag": "v0.2.0"
     },
     {
@@ -91,7 +91,7 @@
             {
               "id": 748121556,
               "name": "MovieBox-Desktop-0.10.3-windows-x64.zip",
-              "count": 76,
+              "count": 78,
               "kind": "portable",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Desktop-0.10.3-windows-x64.zip",
               "size": 58994941,
@@ -111,7 +111,7 @@
             {
               "id": 748121235,
               "name": "MovieBox-Setup-0.10.3-windows-x64.exe",
-              "count": 188,
+              "count": 201,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Setup-0.10.3-windows-x64.exe",
               "size": 42459520,
@@ -121,7 +121,7 @@
             {
               "id": 748121508,
               "name": "MovieBox-Setup-0.10.3-windows-x64.exe.sha256",
-              "count": 3,
+              "count": 4,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.3/MovieBox-Setup-0.10.3-windows-x64.exe.sha256",
               "size": 105,
@@ -797,15 +797,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 274,
-        "portable": 111,
+        "installer": 287,
+        "portable": 113,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 61,
+        "checksums": 62,
         "other": 8
       },
-      "packages": 385,
-      "allAssets": 454,
+      "packages": 400,
+      "allAssets": 470,
       "latestTag": "v0.10.3"
     },
     {
@@ -822,7 +822,7 @@
             {
               "id": 751659404,
               "name": "MovieBox-TV-0.9.2-install-bundle.zip",
-              "count": 43,
+              "count": 45,
               "kind": "tv_bundle",
               "url": "https://github.com/emransm877/moviebox-tizen/releases/download/v0.9.2/MovieBox-TV-0.9.2-install-bundle.zip",
               "size": 424693,
@@ -1538,13 +1538,13 @@
         "apk": 0,
         "installer": 0,
         "portable": 0,
-        "tv_bundle": 88,
+        "tv_bundle": 90,
         "tv_widget": 33,
         "checksums": 60,
         "other": 0
       },
-      "packages": 121,
-      "allAssets": 181,
+      "packages": 123,
+      "allAssets": 183,
       "latestTag": "v0.9.2"
     },
     {
@@ -1561,7 +1561,7 @@
             {
               "id": 773729053,
               "name": "MovieBox-Android-TV-0.1.0.apk",
-              "count": 47,
+              "count": 51,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.1.0/MovieBox-Android-TV-0.1.0.apk",
               "size": 5060565,
@@ -1571,7 +1571,7 @@
             {
               "id": 773729173,
               "name": "MovieBox-Android-TV-0.1.0.apk.sha256",
-              "count": 5,
+              "count": 6,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.1.0/MovieBox-Android-TV-0.1.0.apk.sha256",
               "size": 97,
@@ -1582,16 +1582,16 @@
         }
       ],
       "kinds": {
-        "apk": 47,
+        "apk": 51,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 5,
+        "checksums": 6,
         "other": 0
       },
-      "packages": 47,
-      "allAssets": 52,
+      "packages": 51,
+      "allAssets": 57,
       "latestTag": "v0.1.0"
     }
   ]
