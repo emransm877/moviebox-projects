@@ -3,632 +3,632 @@
   "trackingStartedAt": "2026-11-20T19:43:55+00:00",
   "assetPeaks": {
     "moviebox-android:744847608": {
-      "count": 190,
+      "count": 205,
       "kind": "apk",
       "repo": "moviebox-android"
     },
     "moviebox-android:744848050": {
-      "count": 3,
+      "count": 4,
       "kind": "checksums",
       "repo": "moviebox-android"
     },
     "moviebox-android:740994538": {
-      "count": 157,
+      "count": 158,
       "kind": "apk",
       "repo": "moviebox-android"
     },
     "moviebox-android:740995286": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-android"
     },
     "moviebox-desktop:748121556": {
-      "count": 73,
+      "count": 76,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:748121800": {
-      "count": 2,
+      "count": 3,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:748121235": {
-      "count": 186,
+      "count": 188,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:748121508": {
-      "count": 2,
+      "count": 3,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:747558008": {
-      "count": 1,
+      "count": 2,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:747558823": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:747557764": {
-      "count": 14,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747557977": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747473228": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747473449": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747473031": {
-      "count": 4,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747473207": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747456367": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747456581": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747455454": {
-      "count": 1,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:747456329": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746854846": {
-      "count": 4,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746855132": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746854670": {
-      "count": 5,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746854808": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746775942": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746776162": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746775723": {
-      "count": 2,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746775902": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746684040": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746684289": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746683706": {
-      "count": 7,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:746683991": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745272086": {
-      "count": 3,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745272448": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745271757": {
-      "count": 2,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745272043": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745240994": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745241394": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745240674": {
-      "count": 2,
-      "kind": "installer",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745240960": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745146322": {
-      "count": 1,
-      "kind": "portable",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745146685": {
-      "count": 1,
-      "kind": "checksums",
-      "repo": "moviebox-desktop"
-    },
-    "moviebox-desktop:745145988": {
       "count": 15,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
+    "moviebox-desktop:747557977": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747473228": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747473449": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747473031": {
+      "count": 5,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747473207": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747456367": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747456581": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747455454": {
+      "count": 2,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:747456329": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746854846": {
+      "count": 5,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746855132": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746854670": {
+      "count": 6,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746854808": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746775942": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746776162": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746775723": {
+      "count": 3,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746775902": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746684040": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746684289": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746683706": {
+      "count": 8,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:746683991": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745272086": {
+      "count": 4,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745272448": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745271757": {
+      "count": 3,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745272043": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745240994": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745241394": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745240674": {
+      "count": 3,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745240960": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745146322": {
+      "count": 2,
+      "kind": "portable",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745146685": {
+      "count": 2,
+      "kind": "checksums",
+      "repo": "moviebox-desktop"
+    },
+    "moviebox-desktop:745145988": {
+      "count": 16,
+      "kind": "installer",
+      "repo": "moviebox-desktop"
+    },
     "moviebox-desktop:745146279": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:745006250": {
-      "count": 1,
+      "count": 2,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:745006732": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:745005757": {
-      "count": 2,
+      "count": 3,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:745006163": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:744846412": {
-      "count": 1,
+      "count": 2,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:744846922": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:744846089": {
-      "count": 4,
+      "count": 5,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:744846364": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:740929648": {
-      "count": 1,
+      "count": 2,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:740929872": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:740994175": {
-      "count": 11,
+      "count": 12,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:740994379": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-tizen:751659404": {
-      "count": 39,
+      "count": 43,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:751659458": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:751659532": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:751659624": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748540446": {
-      "count": 2,
+      "count": 4,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748540489": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748540523": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748540559": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748122101": {
-      "count": 2,
+      "count": 4,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748122174": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748122208": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:748122260": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747559042": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747559077": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747559127": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747559176": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747473700": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747473724": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747473762": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747473843": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747456858": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747456897": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747456936": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:747456976": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746855352": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746855395": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746855435": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746855485": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746776362": {
-      "count": 3,
+      "count": 4,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746776396": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746776428": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746776481": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746684548": {
-      "count": 3,
+      "count": 4,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746684599": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746684629": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:746684673": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745272804": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745272844": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745272873": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745272951": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745241703": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745241749": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745241802": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745241867": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745146961": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745147034": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745147073": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745147118": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745007148": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745007210": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745007259": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:745007331": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:744848454": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:744848508": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:744848543": {
-      "count": 1,
+      "count": 2,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:744848582": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:740995513": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:740995579": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:740931277": {
-      "count": 2,
+      "count": 3,
       "kind": "tv_widget",
       "repo": "moviebox-tizen"
     },
     "moviebox-tizen:740931346": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-tizen"
     },
     "moviebox-android-tv:773729053": {
-      "count": 44,
+      "count": 47,
       "kind": "apk",
       "repo": "moviebox-android-tv"
     },
     "moviebox-android-tv:773729173": {
-      "count": 4,
+      "count": 5,
       "kind": "checksums",
       "repo": "moviebox-android-tv"
     },
     "moviebox-desktop:773869285": {
-      "count": 2,
+      "count": 3,
       "kind": "other",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773868950": {
-      "count": 4,
+      "count": 6,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773869395": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773868822": {
-      "count": 4,
+      "count": 5,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773869326": {
-      "count": 1,
+      "count": 2,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773869194": {
-      "count": 1,
+      "count": 2,
       "kind": "other",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773869225": {
-      "count": 2,
+      "count": 3,
       "kind": "other",
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:773869448": {
-      "count": 2,
+      "count": 3,
       "kind": "checksums",
       "repo": "moviebox-desktop"
     }
@@ -729,6 +729,15 @@
         "moviebox-desktop": 353,
         "moviebox-tizen": 86,
         "moviebox-android-tv": 44
+      }
+    },
+    {
+      "at": "2026-11-22T08:05:23+00:00",
+      "packages": {
+        "moviebox-android": 363,
+        "moviebox-desktop": 385,
+        "moviebox-tizen": 121,
+        "moviebox-android-tv": 47
       }
     }
   ]
