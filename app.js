@@ -2,7 +2,7 @@
 (() => {
   const $ = id => document.getElementById(id), format = value => Number(value || 0).toLocaleString();
   function setupProjectFlips(){
-    const grid=document.querySelector('.project-grid');if(!grid)return;
+    const grid=document.querySelector('.project-grid');if(!grid||grid.classList.contains('cinema-scenes'))return;
     const cards=Array.from(grid.children),fine=matchMedia('(hover:hover) and (pointer:fine)');
     cards.forEach((card,index)=>{
       const label=card.querySelector('.project-label'),heading=card.querySelector('h3'),description=card.querySelector(':scope > p'),features=card.querySelector('.feature-list'),downloads=card.querySelector('.project-download');
@@ -107,7 +107,14 @@
     $('combined-count').textContent = format(snapshot.repositories.reduce((total,repo)=>total+(all?repo.allAssets:repo.packages),0));
     $('android-count-label').textContent = all ? 'all file downloads' : 'APK downloads';
     $('windows-count-label').textContent = all ? 'all file downloads' : 'package downloads';
-    $('combined-label').textContent = all ? 'Combined release-file downloads' : 'Combined package downloads';
+    $('combined-label').textContent = all ? 'Release-file downloads across all releases' : 'Application package downloads across all releases';
+    const peak=Math.max(0,...snapshot.repositories.map(repo=>all?repo.allAssets:repo.packages));
+    document.querySelectorAll('[data-tally-repo]').forEach(bar=>{
+      const repo=snapshot.repositories.find(item=>item.name===bar.dataset.tallyRepo);if(!repo)return;
+      const value=all?repo.allAssets:repo.packages;
+      bar.querySelector('i').style.width=(peak?value/peak*100:0)+'%';
+      bar.title=format(value)+(all?' release-file':' package')+' downloads across all releases';
+    });
     $('android-breakdown').textContent = format(android.kinds.apk) + ' APKs · ' + format(android.kinds.checksums) + ' checksum files';
     $('windows-breakdown').textContent = format(windows.kinds.installer) + ' installers · ' + format(windows.kinds.portable) + ' ZIPs';
     renderReleases();

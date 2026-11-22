@@ -51,9 +51,12 @@
   const control=document.createElement('button');control.type='button';control.className='usage-control';control.textContent='Usage statistics';
   const dialog=document.createElement('dialog');dialog.className='usage-dialog';dialog.setAttribute('aria-labelledby','usage-title');
   dialog.innerHTML='<h2 id="usage-title">Optional usage statistics</h2><p>Help improve installation guides with anonymous page-view and download-click counts. This is off until you allow it.</p><p>Only the day, project page, broad source, public post code and platform are kept. No names, emails, IP addresses, full URLs or browser IDs are stored in these statistics. Daily totals cover up to 90 calendar days; older rows are removed on the next usage event or summary request. Aggregate totals are publicly readable. Hosting providers process normal HTTP traffic.</p><p>These are event requests, not unique people, completed downloads or installs. Your choice is stored in this browser; campaign context is kept in this tab for up to 30 minutes. Global Privacy Control and Do Not Track override an allowance. The separate live presence counter is explained in Help.</p><p id="usage-choice" role="status"></p><div class="usage-actions"><button type="button" data-usage="allow">Allow anonymous counts</button><button type="button" data-usage="deny">Keep off</button><button type="button" data-usage="close">Close</button></div>';
-  document.body.append(dialog);(document.querySelector('footer.footer')||document.body).append(control);
+  const heading=dialog.querySelector('h2');heading.tabIndex=-1;heading.setAttribute('autofocus','');
+  const copy=document.createElement('div');copy.className='usage-copy';
+  Array.from(dialog.querySelectorAll('p:not(#usage-choice)')).forEach(paragraph=>copy.append(paragraph));heading.after(copy);
+  document.body.append(dialog);(document.querySelector('footer')||document.body).append(control);
   function status(){dialog.querySelector('#usage-choice').textContent=privacySignal()?'Off — your browser sends a privacy signal.':consent?'Allowed in this browser.':'Off in this browser.';}
-  control.addEventListener('click',()=>{status();dialog.showModal();});
+  control.addEventListener('click',()=>{status();dialog.showModal();heading.focus({preventScroll:true});dialog.scrollTop=0;});
   dialog.addEventListener('click',event=>{
     const action=event.target.closest('[data-usage]')?.dataset.usage;if(!action)return;
     if(action!=='close'){
