@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-22T19:59:51+00:00",
+  "observedAt": "2026-11-22T20:26:55+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -978,7 +978,7 @@
             {
               "id": 751659404,
               "name": "MovieBox-TV-0.9.2-install-bundle.zip",
-              "count": 45,
+              "count": 46,
               "kind": "tv_bundle",
               "url": "https://github.com/emransm877/moviebox-tizen/releases/download/v0.9.2/MovieBox-TV-0.9.2-install-bundle.zip",
               "size": 424693,
@@ -1694,13 +1694,13 @@
         "apk": 0,
         "installer": 0,
         "portable": 0,
-        "tv_bundle": 91,
+        "tv_bundle": 92,
         "tv_widget": 34,
         "checksums": 62,
         "other": 2
       },
-      "packages": 125,
-      "allAssets": 189,
+      "packages": 126,
+      "allAssets": 190,
       "latestTag": "v0.9.3"
     },
     {
@@ -1812,7 +1812,7 @@
             {
               "id": 780243126,
               "name": "MovieBox-Android-App-0.1.0.apk",
-              "count": 0,
+              "count": 2,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk",
               "size": 4750201,
@@ -1822,7 +1822,7 @@
             {
               "id": 780243344,
               "name": "MovieBox-Android-App-0.1.0.apk.sha256",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk.sha256",
               "size": 98,
@@ -1833,16 +1833,16 @@
         }
       ],
       "kinds": {
-        "apk": 0,
+        "apk": 2,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 0,
+        "checksums": 1,
         "other": 0
       },
-      "packages": 0,
-      "allAssets": 0,
+      "packages": 2,
+      "allAssets": 3,
       "latestTag": "v0.1.0"
     }
   ]
