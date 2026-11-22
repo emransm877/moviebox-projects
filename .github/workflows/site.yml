@@ -34,6 +34,7 @@ jobs:
       - run: python tools/check_presence.py
       - run: python tools/check_usage.py
       - run: python tools/check_client_recovery.py
+      - run: python tools/check_tally_recovery.py
   snapshot:
     needs: verify
     runs-on: ubuntu-latest

@@ -169,11 +169,15 @@ try:
                 page.locator('.project-grid').screenshot(path=str(out/'project-downloads.png'))
             checks['layout_and_images_'+str(width)]=True
             if width==390:page.screenshot(path=str(out/'mobile-top.png'));page.locator('#analytics').scroll_into_view_if_needed();page.screenshot(path=str(out/'mobile-analytics.png'))
-        failure=browser_context.new_page();failure.set_viewport_size({'width':390,'height':900})
+        # A genuine first-visit outage has no last-good browser snapshot.
+        failure_context=browser.new_context()
+        failure_context.route('https://api.github.com/**',lambda route:route.fulfill(status=403,body='{}'))
+        failure=failure_context.new_page();failure.set_viewport_size({'width':390,'height':900})
         failure.route('**/data/latest.json',lambda route:route.fulfill(status=503,body='unavailable'))
         failure.goto(url);failure.wait_for_function("document.getElementById('analytics').dataset.state==='unavailable'")
         assert '/'+windows['latestTag']+'/' in failure.locator('#windows-download').get_attribute('href')
         checks['snapshot_failure_keeps_published_downloads_usable']=True
+        failure_context.close()
         baseline_page=browser_context.new_page()
         baseline_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps({'schemaVersion':1,'points':[]})))
         baseline_page.goto(url);baseline_page.wait_for_function("document.querySelector('#growth-chart .trend-empty')!==null")
