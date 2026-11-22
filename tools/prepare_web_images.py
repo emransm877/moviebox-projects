@@ -14,7 +14,7 @@ with sync_playwright() as pw:
     captures=json.loads((assets/'screenshots.json').read_text(encoding='utf-8'))
     for capture in captures['captures']:
         name=Path(capture['file']).stem
-        widths=[360,720] if capture['width']<capture['height'] else [640,1280]
+        widths=capture.get('webpWidths') or ([360,720] if capture['width']<capture['height'] else [640,1280])
         original=assets/(name+'.png')
         for width in widths:
             encoded=page.evaluate('''async ({source,width})=>{

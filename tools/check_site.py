@@ -26,21 +26,18 @@ try:
         page.goto(url);page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['packages']
         checks['application_counts_exclude_checksums']=True
-        assert page.locator('.hero-preview .preview-phone img').is_visible()
+        assert page.locator('.native-scene img').is_visible()
         assert page.locator('.android-capture').count()==0
-        page.locator('#preview-windows-tab').focus();page.keyboard.press('ArrowRight')
-        assert page.locator('#preview-tv-panel').is_visible()
-        assert not page.locator('#preview-windows-panel').is_visible()
-        assert page.locator('#preview-tv-tab').get_attribute('aria-selected')=='true'
-        page.keyboard.press('Home')
-        assert page.locator('#preview-windows-panel').is_visible()
-        checks['top_preview_contains_phone_and_keyboard_switchable_tv_capture']=True
+        assert page.locator('.scene img').count()==project_count
+        assert page.locator('.scene img').evaluate_all("nodes=>nodes.every(node=>getComputedStyle(node).objectFit==='contain')")
+        for image in page.locator('.scene img').all():
+            assert image.locator('xpath=ancestor::a').get_attribute('href').startswith('assets/')
+        checks['all_platform_scenes_keep_full_capture_and_open_original']=True
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Setup-0.10.3-windows-x64-SELF-SIGNED-TEST.exe','moviebox-desktop')")=='installer'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-Desktop-0.10.3-windows-x64-SELF-SIGNED-TEST.zip','moviebox-desktop')")=='portable'
         assert page.evaluate("MovieBoxLiveCounts.kind('MovieBox-TEST-ONLY.cer','moviebox-desktop')")=='other'
-        assert page.locator('#downloads .quick-download:not([hidden])').count()==project_count
-        assert page.locator('.hero-actions .primary:visible').get_attribute('href')=='#projects'
-        assert not page.locator('#downloads').is_visible()
+        assert page.locator('#tickets .tk:not([hidden])').count()==project_count
+        assert page.locator('#tickets').is_visible()
         assert page.locator('#projects').is_visible()
         for quick in page.locator('[data-download-source]').all():
             original=page.locator('#'+quick.get_attribute('data-download-source'))
@@ -54,22 +51,21 @@ try:
         android_tv=next(repo for repo in data['repositories'] if repo['platform']=='Android TV')
         assert page.evaluate('(tag)=>MovieBoxReleaseInfo.label(tag)',android_tv['latestTag']) in page.locator('#android-tv-project').inner_text()
         assert page.locator('#android-tv-project a[href*="/releases/download/"]').count()==1
-        page.locator('#android-tv-project .flip-open').focus();page.keyboard.press('Enter')
-        assert page.locator('#android-tv-project').evaluate("node=>node.classList.contains('is-flipped')")
+        assert page.locator('#androidtv-download').is_visible()
         assert '/'+android_tv['latestTag']+'/' in page.locator('#androidtv-download').get_attribute('href')
-        page.keyboard.press('Escape')
-        assert page.locator('#android-tv-project .flip-open').get_attribute('aria-expanded')=='false'
-        page.locator('.windows-project').hover()
-        assert page.locator('.windows-project').evaluate("node=>node.classList.contains('is-flipped')")
-        page.locator('#projects-title').hover()
-        checks['cards_flip_with_hover_keyboard_and_escape']=True
+        assert page.locator('.flip-open').count()==0
+        page.locator('#androidtv-download').focus()
+        assert page.locator('#androidtv-download').evaluate('node=>node===document.activeElement')
+        checks['download_scenes_are_direct_and_keyboard_accessible']=True
         touch=browser.new_context(viewport={'width':390,'height':900},has_touch=True,is_mobile=True,reduced_motion='reduce')
         touch.route('https://api.github.com/**',lambda route:route.fulfill(status=403,body='{}'))
         mobile=touch.new_page();mobile.goto(url)
-        assert mobile.locator('#downloads').is_visible()
-        assert not mobile.locator('#projects').is_visible()
-        assert mobile.locator('.hero-actions .primary:visible').get_attribute('href')=='#downloads'
-        assert mobile.locator('#downloads .quick-primary:visible').count()==project_count
+        assert mobile.locator('#tickets').is_visible()
+        assert mobile.locator('#projects').is_visible()
+        assert mobile.locator('#tickets .tk:visible').count()==project_count
+        assert mobile.locator('.scene:visible').count()==project_count
+        assert mobile.evaluate("window.__mbTier==='static'")
+        mobile.locator('details.download-history>summary').tap()
         mobile.locator('#trend-interactive').scroll_into_view_if_needed()
         mobile.locator('#trend-interactive').tap()
         assert mobile.locator('.trend-tooltip').is_visible(), 'Touch details must persist after finger lift'
@@ -79,8 +75,11 @@ try:
         mobile.keyboard.press('Escape')
         assert mobile.locator('.trend-tooltip').is_hidden()
         checks['touch_tooltip_persists_and_dismisses_outside_or_escape']=True
-        touch.close();checks['mobile_uses_direct_downloads_without_3d_cards']=True
+        touch.close();checks['mobile_uses_direct_tickets_flat_scenes_and_static_hero']=True
         checks['published_project_cards_with_real_downloads']=True
+        assert page.locator('details.download-history').get_attribute('open') is None
+        page.locator('details.download-history>summary').click()
+        assert page.locator('#trend-interactive').bounding_box()['width']>0
         page.locator('#count-mode').select_option('all')
         assert int(page.locator('#windows-count').inner_text().replace(',',''))==windows['allAssets']
         checks['all_file_counts_match_github_asset_sum']=True
@@ -131,34 +130,28 @@ try:
             page.set_viewport_size({'width':width,'height':900});page.goto(url)
             page.wait_for_function("document.getElementById('windows-count').textContent !== '—'")
             page.mouse.move(0,0)
-            page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false;})')
-            page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),str(width)
-            assert page.locator('.stat p').evaluate_all("nodes=>nodes.every(node=>{const dot=getComputedStyle(node,'::before'),label=getComputedStyle(node);return Math.abs(parseFloat(dot.top)+3-parseFloat(label.lineHeight)/2)<1;})")
-            quick_rows=page.locator('#downloads .quick-download:not([hidden])')
+            assert page.locator('.tally-row p').evaluate_all("nodes=>nodes.every(node=>node.scrollWidth<=node.clientWidth+1)")
+            quick_rows=page.locator('#tickets .tk:not([hidden])')
             if width<=720:
-                assert not page.locator('#projects').is_visible()
-                assert page.locator('#downloads').is_visible()
-                for button in page.locator('#downloads .quick-primary:visible').all():assert button.bounding_box()['height']>=44
-                rows=quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().top)')
-                assert all(b>a for a,b in zip(rows,rows[1:])),rows
-                assert page.locator('#downloads').bounding_box()['y']<page.locator('.hero-preview').bounding_box()['y']
-                # Preserve the four-project compact budget, plus one bounded row
-                # for each separately published native phone project.
-                assert all(box['height']<=140 for box in quick_rows.evaluate_all('(nodes)=>nodes.map(n=>n.getBoundingClientRect().toJSON())'))
-                assert page.locator('#downloads').bounding_box()['height']<600+140*max(0,quick_rows.count()-4)
-                page.locator('#downloads').screenshot(path=str(out/'mobile-quick-downloads.png'))
-                checks['compact_vertical_downloads_before_mobile_preview']=True
+                assert page.locator('#projects').is_visible()
+                assert page.locator('#tickets').is_visible()
+                for button in quick_rows.all():assert button.bounding_box()['height']>=44
+                assert page.locator('#tickets').bounding_box()['y']<page.locator('#projects').bounding_box()['y']
+                assert page.locator('#tickets').bounding_box()['height']<480
+                page.locator('#tickets').screenshot(path=str(out/'mobile-quick-downloads.png'))
+                checks['compact_ticket_downloads_before_mobile_scenes']=True
             else:
-                assert not page.locator('#downloads').is_visible()
+                assert page.locator('#tickets').is_visible()
                 assert page.locator('#projects').is_visible()
             if width >= 768:
-                assert page.locator('.analytics-header').bounding_box()['height']<140
+                page.locator('details.download-history>summary').click()
+                assert page.locator('.analytics-header').bounding_box()['height']<210
                 cards=page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top,width:node.querySelector(".button").getBoundingClientRect().width,footerWidth:node.querySelector(".project-download").getBoundingClientRect().width}))')
                 for card in cards:
                     peers=[other for other in cards if abs(other['top']-card['top'])<2]
                     assert max(other['button'] for other in peers)-min(other['button'] for other in peers)<2,(width,cards)
-                    assert abs(card['width']-card['footerWidth'])<2,(width,card)
+                    assert card['width']<=card['footerWidth']+2,(width,card)
                 checks['card_actions_align_each_row_'+str(width)]=True
             if width >= 1280:
                 for selector in ['.project:not([hidden]) .project-download', '.project:not([hidden]) .project-download .button', '.project:not([hidden]) .project-source']:
@@ -188,7 +181,7 @@ try:
         history_page=browser_context.new_page();history_page.set_viewport_size({'width':900,'height':900})
         fake={'schemaVersion':1,'points':[{'at':'2026-11-21T12:00:00Z','packages':{'moviebox-android':194,'moviebox-desktop':236}},{'at':'2026-11-21T13:00:00Z','packages':{'moviebox-android':197,'moviebox-desktop':240,'moviebox-tizen':51}}]}
         history_page.route('**/data/history.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps(fake)))
-        history_page.goto(url);history_page.locator('#trend-interactive').wait_for()
+        history_page.goto(url);history_page.locator('details.download-history>summary').click();history_page.locator('#trend-interactive').wait_for()
         assert history_page.locator('.trend-caption strong').inner_text()=='+7'
         history_page.locator('#trend-interactive').focus()
         assert 'Android patch +3' in history_page.locator('.trend-tooltip').inner_text()
@@ -233,6 +226,7 @@ try:
         live_context.route('https://api.github.com/**',github_fixture)
         live=live_context.new_page();live.clock.install();live.goto(url)
         live.wait_for_function("document.getElementById('analytics').dataset.state==='live'")
+        live.locator('details.download-history>summary').click()
         state['increase']=1;live.clock.fast_forward(10000)
         live.wait_for_function('(expected)=>document.getElementById("windows-count").textContent.replaceAll(",","")===String(expected)',arg=windows['packages']+1)
         checks['automatic_ten_second_refresh_updates_real_api_counts']=True

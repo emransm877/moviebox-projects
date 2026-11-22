@@ -45,7 +45,7 @@ def head(path,extra=None):
             tags+=f'<meta name="{name}" content="{e(verification[key])}">\n'
     return f'''<meta name="description" content="{e(description)}">
 <meta name="robots" content="{'noindex,follow' if path=='android-app/' and not NATIVE_AVAILABLE else 'index,follow,max-image-preview:large'}">
-<meta name="author" content="Emran Hossain"><meta name="theme-color" content="#0b1716">
+<meta name="author" content="Emran Hossain"><meta name="theme-color" content="#05060a">
 <link rel="canonical" href="{BASE+path}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="MovieBox Projects">
 <meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(description)}">
@@ -53,7 +53,7 @@ def head(path,extra=None):
 <meta property="og:image" content="{BASE}assets/community-share.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png">
 <meta property="og:image:alt" content="MovieBox community projects for Windows, Android phones, Android TV and Samsung Tizen">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(description)}"><meta name="twitter:image" content="{BASE}assets/community-share.png"><meta name="twitter:image:alt" content="Independent MovieBox projects for Windows, Android phones, Android TV and Samsung Tizen">
-<link rel="icon" href="{prefix}assets/moviebox-logo.svg" type="image/svg+xml"><link rel="alternate icon" href="{prefix}assets/moviebox-icon.png">
+<link rel="icon" href="{prefix}assets/cinema-favicon.svg" type="image/svg+xml"><link rel="icon" href="{prefix}assets/cinema-favicon.ico" sizes="16x16 32x32 48x48"><link rel="alternate icon" href="{prefix}assets/cinema-icon-32.png" type="image/png"><link rel="apple-touch-icon" href="{prefix}assets/cinema-apple-touch.png" sizes="180x180">
 {tags}<title>{e(title)}</title>
 <script type="application/ld+json">{json.dumps({'@context':'https://schema.org','@graph':graph},ensure_ascii=False).replace('<',chr(92)+'u003c')}</script>'''
 
@@ -125,7 +125,7 @@ def build():
       'help/':shell('help/','Installation help & troubleshooting','Choose the correct package, preserve your data, and report a reproducible problem.',help_body)}
     for path,html in pages.items():
         (SITE/path).mkdir(exist_ok=True)
-        html=html.replace('</head>','<link rel="stylesheet" href="../guides.css"></head>')
+        html=html.replace('<body>','<body class="cinema-guide">').replace('src="../assets/moviebox-logo.svg"','src="../assets/cinema-favicon.svg"').replace('</head>','<link rel="stylesheet" href="../guides.css"><link rel="stylesheet" href="../cinema-guides.css"></head>')
         (SITE/path/'index.html').write_text(html,encoding='utf-8')
     index=SITE/'index.html';text=index.read_text(encoding='utf-8')
     if '<!-- seo:start -->' in text:text=re.sub(r'<!-- seo:start -->.*?<!-- seo:end -->','<!-- seo:start -->\n'+head('')+'\n<!-- seo:end -->',text,flags=re.S)
@@ -194,6 +194,10 @@ def build():
         if page_path.parent.name=='assets':continue
         if re.fullmatch(r'google[a-f0-9]+\.html',page_path.name):continue
         html=page_path.read_text(encoding='utf-8')
+        if page_path.name=='404.html':
+            html=html.replace('<body>','<body class="cinema-guide">')
+            if 'cinema-favicon.svg' not in html:
+                html=html.replace('</head>','<link rel="icon" href="'+BASE+'assets/cinema-favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="'+BASE+'assets/cinema-icon-32.png"><link rel="apple-touch-icon" href="'+BASE+'assets/cinema-apple-touch.png"><link rel="stylesheet" href="'+BASE+'cinema-guides.css"></head>')
         if '<footer class="wrap footer"' in html and 'data-community-facebook' not in html:
             link='<a data-community-facebook href="'+e(FACEBOOK_PAGE)+'">Facebook community</a>'
             html=re.sub(r'(<footer class="wrap footer">.*?)(</div></footer>)',lambda match:match[1]+link+match[2],html,count=1,flags=re.S)
@@ -203,7 +207,7 @@ def build():
         if page_path.name=='index.html' and (page_path.parent==SITE or page_path.parent.name in ('windows','android','android-app','samsung-tv','android-tv','help')) and 'usage.js' not in html:
             prefix='../' if page_path.parent!=SITE else ''
             html=html.replace('</head>','<script src="'+prefix+'usage.js" defer></script></head>')
-        for name in ['styles.css','guides.css','trends.css','app.js','live-counts.js','presence.js','usage.js','release-info.js']:
+        for name in ['styles.css','guides.css','trends.css','cinema.css','cinema-guides.css','cinema.js','app.js','live-counts.js','presence.js','usage.js','release-info.js']:
             digest=hashlib.sha256((SITE/name).read_bytes()).hexdigest()[:12]
             html=re.sub(r'((?:href|src)="(?:[^"?]*/)?'+re.escape(name)+r')(?:\?v=[a-f0-9]+)?"',lambda m:m[1]+'?v='+digest+'"',html)
         for name,widths in [('desktop-home',[640,1280]),('android-home',[360,720])]:

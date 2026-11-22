@@ -41,22 +41,21 @@ try:
    page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
    page.goto(f'http://127.0.0.1:{server.server_port}/');page.wait_for_function("document.getElementById('native-count').textContent==='8'")
    assert page.locator('.project-grid>.project:not([hidden])').count()==5
-   assert page.locator('#downloads .quick-download:not([hidden])').count()==5
+   assert page.locator('#tickets .tk:not([hidden])').count()==5
+   page.locator('details.download-history>summary').click()
    assert 'All five projects' in page.locator('#platform-filter').inner_text()
-   assert 'Five projects' in page.locator('#projects-title').inner_text()
-   assert page.locator('.hero-facts').inner_text().find('Android App 6+')>=0
+   assert 'five projects' in page.locator('#projects .card-t').inner_text().lower()
+   assert 'Android 6+' in page.locator('#tickets [data-dev="native"]').text_content()
    assert page.locator('#native-version').inner_text()=='0.1.0'
    assert page.locator('#android-version').inner_text()=='0.2.0'
    assert '/moviebox-android-native/' in page.locator('#native-download').get_attribute('href')
    assert '/moviebox-android/' in page.locator('#android-download').get_attribute('href')
-   assert page.locator('.preview-phone img').get_attribute('src').endswith('android-native-0.1.0-home.png')
-   assert page.locator('#preview-windows-panel img').get_attribute('src').endswith('desktop-0.10.4-home.png')
-   assert page.locator('#preview-samsung-tab').count()==1
+   assert page.locator('.native-scene img').get_attribute('src').endswith('android-native-0.1.0-home.png')
+   assert page.locator('.windows-scene img').get_attribute('src').endswith('desktop-0.10.4-home.png')
+   assert page.locator('.tv-scene img').count()==1
    assert page.locator('#trend-platform-moviebox-android-native').count()==1
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
    if width>720:
-    page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.forEach(node=>{node.classList.add("is-flipped");node.querySelector(".flip-front").inert=true;node.querySelector(".flip-back").inert=false})')
-    page.locator('.project-flip-inner').evaluate_all('(nodes)=>Promise.all(nodes.flatMap(node=>node.getAnimations().map(animation=>animation.finished)))')
     cards=page.locator('.project:not([hidden])').evaluate_all('(nodes)=>nodes.map(node=>({top:node.getBoundingClientRect().top,button:node.querySelector(".button").getBoundingClientRect().top}))')
     for card in cards:
      peers=[item for item in cards if abs(item['top']-card['top'])<2]
@@ -66,7 +65,7 @@ try:
     if image.is_visible():assert image.evaluate('node=>node.complete&&node.naturalWidth>0')
    page.screenshot(path=str(OUT/f'hub-{width}.png'),full_page=True)
    page.goto(f'http://127.0.0.1:{server.server_port}/android-app/')
-   assert page.locator('h1').inner_text()=='MovieBox Android App'
+   assert page.locator('h1').text_content()=='MovieBox Android App'
    assert page.locator('img.guide-phone-shot').count()==1
    assert page.locator('.guide-actions a').first.get_attribute('href')==native['releases'][0]['assets'][0]['url']
    assert not errors,errors

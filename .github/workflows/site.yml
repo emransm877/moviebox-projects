@@ -26,6 +26,7 @@ jobs:
       - run: python tools/check_site.py
       - run: python tools/check_release_info.py
       - run: python tools/check_native_project.py
+      - run: python tools/check_cinema.py
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -54,6 +55,7 @@ jobs:
           node --check site/app.js
           node --check site/live-counts.js
           node --check site/release-info.js
+          node --check site/cinema.js
       - name: Retain observation history
         run: |
           git config user.name 'github-actions[bot]'

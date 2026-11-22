@@ -1,21 +1,35 @@
 # MovieBox Projects
 
-The independent community hub for the published **Windows**, **Android patch**,
+The independent community hub for the published **Windows**, **Android app**, **Android patch**,
 **Samsung Tizen TV** and **Android TV / Google TV** projects maintained by Emran Hossain.
 
 [Website](https://emransm877.github.io/moviebox-projects/) ·
 [Windows](https://github.com/emransm877/moviebox-desktop) ·
+[Android app](https://github.com/emransm877/moviebox-android-native) ·
 [Android patch](https://github.com/emransm877/moviebox-android) ·
 [Samsung TV](https://github.com/emransm877/moviebox-tizen) · [Android TV](https://github.com/emransm877/moviebox-android-tv)
 
 Only projects with published downloads and documented working scope are offered
 as ready downloads. Android TV has a published APK with bounded runtime
 evidence. The native **MovieBox Android App** is a separate project and does not replace
-the Android patch. Its fifth project card, download button and installation guide
-become public only after a complete non-preview APK is published in
-`emransm877/moviebox-android-native` and collected. Until then it is excluded from
-ready downloads and the sitemap. Apple work remains outside ready downloads. Device compatibility limits
+the Android patch. Its complete 0.1.0 APK is published in
+`emransm877/moviebox-android-native`; all five projects have separate downloads
+and installation guides. Publication gating still excludes an incomplete or
+preview-only native APK from ready downloads and the sitemap. Apple work remains outside ready downloads. Device compatibility limits
 are explicit on each page.
+
+## Website design
+
+The cinema theme follows the supplied d08 reference: a responsive title screen,
+download tickets, genuine application captures and the simple Tally total with
+five colored bars. The Tally uses actual GitHub counters across all releases;
+file requests are not people or installs. Detailed chart filters, observation
+history and release pagination remain under **Download history and releases**.
+
+Desktop smoke rendering adapts to performance and pauses offscreen. Phones,
+coarse pointers, reduced-motion settings, weak devices and software renderers use
+a lightweight static background. Download links and installation guides work
+without JavaScript. The guides share the theme, with readable document layouts.
 
 ## Maintain the site
 
@@ -74,9 +88,9 @@ The browser scenarios in `tools/check_presence.py` intercept the backend and nev
 send test traffic to production or download release files.
 
 The page attempts automatic public GitHub count refreshes every 10 seconds while
-visible and offers a manual refresh button. GitHub caches and public API limits
-can delay updates. The page shows the actual verified time and any rate-limit
-pause; it never claims that an old snapshot was just refreshed.
+visible. GitHub caches and public API limits can delay updates; the last verified
+numbers remain available during an outage. The collector timestamp is retained
+in the public data, without a misleading manual-refresh control.
 
 Hourly Actions snapshots retain an observation history for growth charts. Counts
 measure file downloads, not people, installs or active users. Application-package
@@ -87,7 +101,7 @@ started, or assets deleted before collection, cannot be reconstructed.
 
 ## SEO and ownership
 
-The site has six core canonical pages (seven after the native Android app is published), relevant static content, breadcrumbs,
+The site has seven core canonical pages, relevant static content, breadcrumbs,
 honest JSON-LD, social metadata, a 1200×630 social card and an XML sitemap. No
 invented ratings, reviews or ranking guarantees are used. Project Pages hosts
 this site under a path; the effective robots file is at the host root, not this
