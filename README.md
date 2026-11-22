@@ -9,6 +9,23 @@ The independent community hub for the published **Windows**, **Android app**, **
 [Android patch](https://github.com/emransm877/moviebox-android) ·
 [Samsung TV](https://github.com/emransm877/moviebox-tizen) · [Android TV](https://github.com/emransm877/moviebox-android-tv)
 
+## Download the apps
+
+**This repository hosts the website, not the app installers.** Its Releases list
+is empty because each app publishes its installation files in its own repository.
+Choose your device below, or use the [download website](https://emransm877.github.io/moviebox-projects/).
+
+| Your device / project | Current version | Installation files |
+| --- | --- | --- |
+| Windows PC | 0.10.4 | [Setup EXE and portable ZIP](https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.4) |
+| Android phone — native app | 0.1.0 | [Android App APK](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.0) |
+| Android phone — separate patch | 0.2.0 | [Android patch APK](https://github.com/emransm877/moviebox-android/releases/tag/v0.2.0) |
+| Samsung Tizen TV | 0.9.3 | [TV installation bundle](https://github.com/emransm877/moviebox-tizen/releases/tag/v0.9.3) |
+| Android TV / Google TV | 0.2.0 | [Android TV APK](https://github.com/emransm877/moviebox-android-tv/releases/tag/v0.2.0) |
+
+The native Android app and Android patch are separate installations with separate
+saved lists. Check each project's installation guide and compatibility notes.
+
 Only projects with published downloads and documented working scope are offered
 as ready downloads. Android TV has a published APK with bounded runtime
 evidence. The native **MovieBox Android App** is a separate project and does not replace
