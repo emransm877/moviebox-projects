@@ -18,13 +18,15 @@ Choose your device below, or use the [download website](https://emransm877.githu
 | Your device / project | Current version | Installation files |
 | --- | --- | --- |
 | Windows PC | 0.10.4 | [Setup EXE and portable ZIP](https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.4) |
-| Android phone — native app | 0.1.0 | [Android App APK](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.0) |
+| Android phone — native app | 0.1.1 | [Android App APK](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.1) |
 | Android phone — separate patch | 0.2.0 | [Android patch APK](https://github.com/emransm877/moviebox-android/releases/tag/v0.2.0) |
 | Samsung Tizen TV | 0.9.3 | [TV installation bundle](https://github.com/emransm877/moviebox-tizen/releases/tag/v0.9.3) |
 | Android TV / Google TV | 0.2.0 | [Android TV APK](https://github.com/emransm877/moviebox-android-tv/releases/tag/v0.2.0) |
 
 The native Android app and Android patch are separate installations with separate
 saved lists. Check each project's installation guide and compatibility notes.
+
+The native Android App **0.1.1** reliability update is published. It adds library backup/recovery, Wi-Fi-first downloads with per-file mobile-data consent, bounded subtitle storage and more reliable optional reminders. Its exact release APK passed 127 scoped phone scenarios and 29 unit tests on one Android 17 phone; broader device compatibility remains unverified. [Release, APK and checksum](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.1).
 
 Only projects with published downloads and documented working scope are offered
 as ready downloads. Android TV has a published APK with bounded runtime

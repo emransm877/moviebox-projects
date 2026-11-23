@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-23T12:16:46+00:00",
+  "observedAt": "2026-11-23T20:06:06+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -16,7 +16,7 @@
             {
               "id": 744847608,
               "name": "MovieBox-Android-0.2.0.apk",
-              "count": 278,
+              "count": 288,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.2.0/MovieBox-Android-0.2.0.apk",
               "size": 67368390,
@@ -44,7 +44,7 @@
             {
               "id": 740994538,
               "name": "MovieBox-Android-0.1.0.apk",
-              "count": 164,
+              "count": 167,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.1.0/MovieBox-Android-0.1.0.apk",
               "size": 67352006,
@@ -65,7 +65,7 @@
         }
       ],
       "kinds": {
-        "apk": 442,
+        "apk": 455,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -73,8 +73,8 @@
         "checksums": 6,
         "other": 0
       },
-      "packages": 442,
-      "allAssets": 448,
+      "packages": 455,
+      "allAssets": 461,
       "latestTag": "v0.2.0"
     },
     {
@@ -82,6 +82,94 @@
       "platform": "Windows",
       "url": "https://github.com/emransm877/moviebox-desktop",
       "releases": [
+        {
+          "tag": "v0.10.5",
+          "url": "https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.5",
+          "publishedAt": "2026-11-23T16:47:59Z",
+          "prerelease": false,
+          "assets": [
+            {
+              "id": 783744859,
+              "name": "cryptographic-integrity-0.10.5.json",
+              "count": 1,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/cryptographic-integrity-0.10.5.json",
+              "size": 696,
+              "createdAt": "2026-11-23T16:48:29Z",
+              "digest": "sha256:3bed211a25d700a8af3ed722a1ff71ad61f5e0b021cf7908a8a8c8d792ce424b"
+            },
+            {
+              "id": 783743855,
+              "name": "MovieBox-Desktop-0.10.5-windows-x64.zip",
+              "count": 3,
+              "kind": "portable",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Desktop-0.10.5-windows-x64.zip",
+              "size": 60975907,
+              "createdAt": "2026-11-23T16:48:06Z",
+              "digest": "sha256:e76138d93a4b305e768466c06d61aa7e7e9f1134b6fda4c54d12251157033905"
+            },
+            {
+              "id": 783744697,
+              "name": "MovieBox-Desktop-0.10.5-windows-x64.zip.sha256",
+              "count": 1,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Desktop-0.10.5-windows-x64.zip.sha256",
+              "size": 106,
+              "createdAt": "2026-11-23T16:48:25Z",
+              "digest": "sha256:b7a4517b0ac99dc850004a95a7d43d2ed479fead557286db53ac4ba67b823ccf"
+            },
+            {
+              "id": 783744747,
+              "name": "MovieBox-Publisher.cer",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Publisher.cer",
+              "size": 1072,
+              "createdAt": "2026-11-23T16:48:26Z",
+              "digest": "sha256:5d933e5a7a883c9c97fc993a8e38e2e8cf42d69723ce0a449699f7132c8c677c"
+            },
+            {
+              "id": 783743585,
+              "name": "MovieBox-Setup-0.10.5-windows-x64.exe",
+              "count": 3,
+              "kind": "installer",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Setup-0.10.5-windows-x64.exe",
+              "size": 44342264,
+              "createdAt": "2026-11-23T16:48:00Z",
+              "digest": "sha256:7bf3e4704e3917567e6473acacd97deb66a4355595b4701546493332dd3d59d1"
+            },
+            {
+              "id": 783743821,
+              "name": "MovieBox-Setup-0.10.5-windows-x64.exe.sha256",
+              "count": 1,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Setup-0.10.5-windows-x64.exe.sha256",
+              "size": 104,
+              "createdAt": "2026-11-23T16:48:05Z",
+              "digest": "sha256:0a54b5c6b351536a5e5db78a9dc61f8a736bee4f7e4908426f1b2005a9b50395"
+            },
+            {
+              "id": 783744894,
+              "name": "RELEASE-NOTES-0.10.5-windows.md",
+              "count": 1,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/RELEASE-NOTES-0.10.5-windows.md",
+              "size": 2057,
+              "createdAt": "2026-11-23T16:48:30Z",
+              "digest": "sha256:268a1646829a64f9608da7b62385ae67d5c5465493db9f8022c1a40ba3c71507"
+            },
+            {
+              "id": 783744823,
+              "name": "SHA256SUMS-windows-0.10.5.txt",
+              "count": 2,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/SHA256SUMS-windows-0.10.5.txt",
+              "size": 499,
+              "createdAt": "2026-11-23T16:48:28Z",
+              "digest": "sha256:6b62ae871774433fa99a0230ddcaae0121c1c7f4c1b250d12d6dc283aca54021"
+            }
+          ]
+        },
         {
           "tag": "v0.10.4",
           "url": "https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.4",
@@ -91,7 +179,7 @@
             {
               "id": 780178663,
               "name": "cryptographic-integrity-0.10.4.json",
-              "count": 1,
+              "count": 2,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/cryptographic-integrity-0.10.4.json",
               "size": 767,
@@ -121,7 +209,7 @@
             {
               "id": 780178595,
               "name": "MovieBox-Publisher.cer",
-              "count": 0,
+              "count": 1,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/MovieBox-Publisher.cer",
               "size": 1072,
@@ -131,7 +219,7 @@
             {
               "id": 780178116,
               "name": "MovieBox-Setup-0.10.4-windows-x64.exe",
-              "count": 28,
+              "count": 31,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/MovieBox-Setup-0.10.4-windows-x64.exe",
               "size": 44351064,
@@ -141,7 +229,7 @@
             {
               "id": 780178875,
               "name": "MovieBox-Setup-0.10.4-windows-x64.exe.sha256",
-              "count": 1,
+              "count": 2,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/MovieBox-Setup-0.10.4-windows-x64.exe.sha256",
               "size": 105,
@@ -151,7 +239,7 @@
             {
               "id": 780178748,
               "name": "RELEASE-NOTES-0.10.4-windows.md",
-              "count": 1,
+              "count": 2,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/RELEASE-NOTES-0.10.4-windows.md",
               "size": 1976,
@@ -161,7 +249,7 @@
             {
               "id": 780179003,
               "name": "SHA256SUMS-windows-0.10.4.txt",
-              "count": 1,
+              "count": 2,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/SHA256SUMS-windows-0.10.4.txt",
               "size": 504,
@@ -885,16 +973,16 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 316,
-        "portable": 136,
+        "installer": 322,
+        "portable": 139,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 64,
-        "other": 11
+        "checksums": 67,
+        "other": 19
       },
-      "packages": 452,
-      "allAssets": 527,
-      "latestTag": "v0.10.4"
+      "packages": 461,
+      "allAssets": 547,
+      "latestTag": "v0.10.5"
     },
     {
       "name": "moviebox-tizen",
@@ -910,7 +998,7 @@
             {
               "id": 780181362,
               "name": "MovieBox-TV-0.9.3-install-bundle.zip",
-              "count": 24,
+              "count": 26,
               "kind": "tv_bundle",
               "url": "https://github.com/emransm877/moviebox-tizen/releases/download/v0.9.3/MovieBox-TV-0.9.3-install-bundle.zip",
               "size": 471185,
@@ -1694,13 +1782,13 @@
         "apk": 0,
         "installer": 0,
         "portable": 0,
-        "tv_bundle": 116,
+        "tv_bundle": 118,
         "tv_widget": 34,
         "checksums": 62,
         "other": 2
       },
-      "packages": 150,
-      "allAssets": 214,
+      "packages": 152,
+      "allAssets": 216,
       "latestTag": "v0.9.3"
     },
     {
@@ -1737,7 +1825,7 @@
             {
               "id": 780172612,
               "name": "MovieBox-Android-TV-0.2.0.apk",
-              "count": 34,
+              "count": 41,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.2.0/MovieBox-Android-TV-0.2.0.apk",
               "size": 5136440,
@@ -1786,7 +1874,7 @@
         }
       ],
       "kinds": {
-        "apk": 85,
+        "apk": 92,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -1794,8 +1882,8 @@
         "checksums": 7,
         "other": 2
       },
-      "packages": 85,
-      "allAssets": 94,
+      "packages": 92,
+      "allAssets": 101,
       "latestTag": "v0.2.0"
     },
     {
@@ -1803,6 +1891,34 @@
       "platform": "Android app",
       "url": "https://github.com/emransm877/moviebox-android-native",
       "releases": [
+        {
+          "tag": "v0.1.1",
+          "url": "https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.1",
+          "publishedAt": "2026-11-23T20:05:02Z",
+          "prerelease": false,
+          "assets": [
+            {
+              "id": 784362252,
+              "name": "MovieBox-Android-App-0.1.1.apk",
+              "count": 0,
+              "kind": "apk",
+              "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.1/MovieBox-Android-App-0.1.1.apk",
+              "size": 4781491,
+              "createdAt": "2026-11-23T20:04:57Z",
+              "digest": "sha256:e8c527f2b34501a1cef90419e8a885f5b0f9d2b8cfbf8ed38708e11017ee7c3f"
+            },
+            {
+              "id": 784362359,
+              "name": "MovieBox-Android-App-0.1.1.apk.sha256",
+              "count": 0,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.1/MovieBox-Android-App-0.1.1.apk.sha256",
+              "size": 97,
+              "createdAt": "2026-11-23T20:05:00Z",
+              "digest": "sha256:b24997743f72c80b7ce044c6f06455c9b9344eea314988b2fb827dac5236dbc0"
+            }
+          ]
+        },
         {
           "tag": "v0.1.0",
           "url": "https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.0",
@@ -1812,7 +1928,7 @@
             {
               "id": 780243126,
               "name": "MovieBox-Android-App-0.1.0.apk",
-              "count": 48,
+              "count": 62,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk",
               "size": 4750201,
@@ -1833,7 +1949,7 @@
         }
       ],
       "kinds": {
-        "apk": 48,
+        "apk": 62,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -1841,9 +1957,9 @@
         "checksums": 2,
         "other": 0
       },
-      "packages": 48,
-      "allAssets": 50,
-      "latestTag": "v0.1.0"
+      "packages": 62,
+      "allAssets": 64,
+      "latestTag": "v0.1.1"
     }
   ]
 }

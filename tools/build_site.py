@@ -3,7 +3,7 @@ from html import escape as e
 import json,re,hashlib
 from pathlib import Path
 import xml.etree.ElementTree as ET
-from release_info import browser_source, display_version, published_release, theme_count, tizen_scope
+from release_info import browser_source, display_version, published_release, theme_count, tizen_scope, version_tuple
 from screenshot_info import capture_for, figure, picture
 
 ROOT=Path(__file__).resolve().parents[1];SITE=ROOT/'site'
@@ -76,6 +76,21 @@ def software(path,name,version,asset,osname,description,screenshot=None):
     if screenshot:result['screenshot']=BASE+'assets/'+screenshot
     return result
 
+def native_maintenance_sections(release):
+    """Describe maintenance features only after their actual release is selected.
+
+    The release plan alone never promotes an APK or changes download counters.
+    Exact validation counts belong only to the release that was checked.
+    """
+    version=version_tuple(release['tag'])
+    if version is None or version < (0,1,1):return ''
+    validation='<p>The 0.1.1 release passed 127 scoped scenarios and 29 unit tests on the maintainer\'s physical Android 17 phone. These checks do not establish compatibility with every phone, Android version, network or file provider. See the release validation record for the exact APK identity.</p>' if version==(0,1,1) else '<p>See the selected release\'s validation record for its exact APK identity, checks and known limits.</p>'
+    return '''<section id="library-backup"><h2>Keep your saved titles safe</h2><p>In Me, choose Back up library to export My list and watch progress. Restore library backup merges a saved backup with your current library. It does not transfer account sessions, app settings or downloaded videos.</p><p>If saved data cannot be read, the recovery screen offers restoring a backup, saving the damaged data or starting a new library after confirmation. Do not uninstall or clear app data to repair a saved library.</p></section>
+<section id="offline-downloads"><h2>Downloads and mobile data</h2><p>New downloads use Wi-Fi unless you explicitly allow mobile data for that file. Roaming is disabled. Downloads shows progress and useful failure messages; Retry requests a fresh source.</p><p>Only supported single-file videos can be saved. Offline HLS/DASH playlists are not supported, and the app does not turn every stream into an offline file. Format choices rely on the supplied source metadata; server and device behavior can vary.</p></section>
+<section id="subtitle-storage"><h2>Subtitle storage stays bounded</h2><p>Cached subtitles have file, size and age limits. Me &rarr; Clear cached subtitles removes unused cached captions while keeping My list, history and the subtitle currently playing. It does not remove your downloaded videos.</p></section>
+<section id="optional-updates"><h2>Updates are your choice</h2><p>Optional reminders check published release information while the app is in use. A reminder can wait until you leave the player. They are not instant push notifications, and the app does not silently download or install updates. You can turn reminders off or use Check for updates yourself.</p></section>
+<section id="phone-validation"><h2>What was checked</h2>'''+validation+'''<p>Android 6.0/API 23 is the minimum target. The selected release's runtime evidence is from one physical phone; minimum-OS, low-end hardware, process-death restoration, whole-app accessibility and real carrier/OEM interruption coverage remain limited.</p></section>'''
+
 def build():
     global NATIVE_AVAILABLE
     data=json.loads((SITE/'data/latest.json').read_text(encoding='utf-8'))
@@ -115,8 +130,9 @@ def build():
     nshot=capture_for(native_repo['name'],native_release) if NATIVE_AVAILABLE else None
     if NATIVE_AVAILABLE:
         native_body=f'''<section><h2>Download the native Android app</h2><p>This is MovieBox Android App, an independently authored phone client. The installed name is MovieBox. It is separate from the <a href="../android/">Android APK patch</a> and uses <code>org.emransm.moviebox.phone</code>.</p><div class="guide-actions"><a class="button primary" href="{e(native_asset['url'])}">Download Android App APK {display_version(native_release['tag'])}</a><a href="{e(native_release['url'])}">Release notes and checksum</a></div></section>
-{figure(nshot,phone=True)}<section><h2>Install and keep your library</h2><ol><li>Use an Android phone running Android 6.0/API 23 or newer.</li><li>Download the APK from this project's release and compare its SHA-256 checksum.</li><li>Open the APK using your browser or file manager and approve installation from that source when Android asks.</li><li>Open MovieBox. Keep your device security protections enabled.</li></ol><p>The app targets Android 6 and newer. It has been exercised on the maintainer's Android 17 phone and an Android 6 emulator; other phone models and OS combinations are not universally certified.</p><p>For later updates, install an APK with the same package and certificate over this one. Do not uninstall or clear data to troubleshoot an update: My list, progress and local downloads belong to this app's private storage.</p></section>
+{figure(nshot,phone=True)}<section><h2>Install and keep your library</h2><ol><li>Use an Android phone running Android 6.0/API 23 or newer.</li><li>Download the APK from this project's release and compare its SHA-256 checksum.</li><li>Open the APK using your browser or file manager and approve installation from that source when Android asks.</li><li>Open MovieBox. Keep your device security protections enabled.</li></ol><p>Android 6.0/API 23 is the minimum target. Earlier app candidates were exercised on an Android 6 emulator. Those historical checks do not certify this selected APK on every Android version or phone; read its release validation record.</p><p>For later updates, install an APK with the same package and certificate over this one. Do not uninstall or clear data to troubleshoot an update: My list, progress and local downloads belong to this app's private storage.</p></section>
 <section><h2>Playback made for touch</h2><p>Native Media3 playback, available audio and subtitles, per-episode resume, automatic episode continuation, touch seeking, volume and brightness gestures, screen-fit controls and ten selectable app icons. Tap a featured slider thumbnail to play that title.</p><p>Source availability, quality, languages and captions depend on the upstream service. Account login, live channels and complete upstream feature parity are not included. This app does not change memberships or protected service access.</p></section>
+{native_maintenance_sections(native_release)}
 <section><h2>Which Android download do I need?</h2><p><strong>Android App</strong> is this separate native phone client for Android 6 and newer. <strong>Android patch</strong> is a reviewed modification of a specific upstream APK, with Android 10/ARM64 requirements and a different package. They have separate release histories and libraries; one is not an in-place update for the other.</p><a href="{e(native_repo['url'])}">Source, validation and project documentation</a> &middot; <a href="{e(native_repo['url'])}/issues">Report an Android app issue</a></section>'''
     else:
         native_body='<section><h2>The first public APK is being prepared</h2><p>MovieBox Android App is a separate native phone client. Its download button will appear after a complete public release is available. The existing <a href="../android/">Android patch</a> remains available and is not replaced.</p></section>'
