@@ -41,26 +41,10 @@ try:
     bar=page.locator('[data-tally-repo="'+repo['name']+'"] i')
     width_value=bar.evaluate('node=>parseFloat(node.style.width)')
     assert abs(width_value-(repo['packages']/peak*100 if peak else 0))<.01
-   details=page.locator('details.download-history');assert details.get_attribute('open') is None
-   details.locator('summary').focus();page.keyboard.press('Enter')
-   assert page.locator('#trend-interactive').bounding_box()['width']>0
-   page.locator('#growth-range').select_option('168');page.locator('#trend-platform-moviebox-desktop').click()
-   page.locator('#release-next').click();page_number=page.locator('#release-page-label').inner_text()
-   details.locator('summary').click();details.locator('summary').click()
-   assert page.locator('#growth-range').input_value()=='168'
-   assert page.locator('#trend-platform-moviebox-desktop').get_attribute('aria-pressed')=='true'
-   assert page.locator('#release-page-label').inner_text()==page_number
-   page.locator('#count-mode').select_option('all')
-   assert int(page.locator('#combined-count').inner_text().replace(',',''))==sum(repo['allAssets'] for repo in data['repositories'])
-   assert 'Release-file downloads across all releases'==page.locator('#combined-label').inner_text()
-   # Long historical labels stay inside their own cells rather than covering dates.
-   page.locator('#platform-filter').select_option('Windows')
-   old=next(r for r in data['repositories'] if r['platform']=='Windows')
-   legacy=next((r for r in old['releases'] if '-selfsigned.' in r['tag']),None)
-   if legacy:
-    page.locator('#version-filter').select_option('moviebox-desktop:'+legacy['tag'])
-    bounds=page.locator('#release-rows tr').first.evaluate("row=>{const a=row.children[1].querySelector('a').getBoundingClientRect(),b=row.children[2].getBoundingClientRect();return {text:a.right,date:b.left};}")
-    assert bounds['text']+8<=bounds['date'],bounds
+   assert page.locator('details.download-history,.history-wrap,#download-history,#count-mode,#release-rows').count()==0
+   assert page.get_by_text('Download history and releases',exact=True).count()==0
+   page.reload();page.wait_for_function("document.querySelector('#combined-count').textContent!=='—'")
+   assert int(page.locator('#combined-count').inner_text().replace(',',''))==expected
    if width>=720:
     a=page.locator('#windows-download').bounding_box();b=page.locator('#portable-download').bounding_box();assert abs(a['y']-b['y'])<2
    page.locator('.usage-control').click();page.wait_for_timeout(100)
@@ -72,7 +56,7 @@ try:
    page.screenshot(path=str(OUT/f'privacy-{width}.png'));page.keyboard.press('Escape')
    assert page.locator('.usage-dialog').is_hidden()
    assert not errors,errors
-   checks[str(width)]={'noOverflow':True,'fiveRealProjects':True,'correctTally':True,'detailStatePreserved':True,'privacyActionsVisible':True,'noWebGLForReducedMotion':True}
+   checks[str(width)]={'noOverflow':True,'fiveRealProjects':True,'correctTally':True,'historySectionRemoved':True,'privacyActionsVisible':True,'noWebGLForReducedMotion':True}
    context.close()
   for path in ['','windows/','android/','android-app/','samsung-tv/','android-tv/','help/','404.html']:
    page=browser.new_page();page.goto(url+path)

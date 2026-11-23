@@ -27,7 +27,8 @@ staged=OUT/'site';shutil.copytree(ROOT/'site',staged)
 spec=importlib.util.spec_from_file_location('native_build_fixture',ROOT/'tools/build_site.py');builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder);builder.SITE=staged;builder.build()
 assert 'noindex' not in (staged/'android-app/index.html').read_text()
 assert '/android-app/' in (staged/'sitemap.xml').read_text()
-class Quiet(SimpleHTTPRequestHandler):
+from history_fixture import HistoryFixtureHandler
+class Quiet(HistoryFixtureHandler):
  def log_message(self,*args):pass
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(staged)));threading.Thread(target=server.serve_forever,daemon=True).start()
 checks=[]

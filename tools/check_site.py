@@ -1,4 +1,4 @@
-"""Browser verification of the real static site, with isolated fixture errors."""
+"""Browser regressions with the archived analytics component mounted as a test fixture."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
 import json,threading,os,tempfile
@@ -7,7 +7,8 @@ from playwright.sync_api import sync_playwright
 
 root=Path(__file__).resolve().parents[1]/'site'
 out=Path(tempfile.mkdtemp(prefix='moviebox-site-qa-'))
-class Quiet(SimpleHTTPRequestHandler):
+from history_fixture import HistoryFixtureHandler
+class Quiet(HistoryFixtureHandler):
     def log_message(self,*args):pass
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(root)))
 threading.Thread(target=server.serve_forever,daemon=True).start()

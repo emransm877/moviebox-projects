@@ -115,7 +115,7 @@
     if(changed)window.dispatchEvent(new Event('resize'));
   }
   function renderStats() {
-    const all = $('count-mode').value === 'all', android = snapshot.repositories.find(r => r.platform === 'Android'), windows = snapshot.repositories.find(r => r.platform === 'Windows'), tv = snapshot.repositories.find(r => r.platform === 'Samsung TV');
+    const all = $('count-mode')?.value === 'all', android = snapshot.repositories.find(r => r.platform === 'Android'), windows = snapshot.repositories.find(r => r.platform === 'Windows'), tv = snapshot.repositories.find(r => r.platform === 'Samsung TV');
     $('android-count').textContent = format(all ? android.allAssets : android.packages);
     $('windows-count').textContent = format(all ? windows.allAssets : windows.packages);
     $('tv-count').textContent = format(all ? tv.allAssets : tv.packages);
@@ -144,13 +144,13 @@
       .flatMap(repo => repo.releases.map(release => ({ repo, release })));
   }
   function updateVersions(preserve=true) {
-    const select = $('version-filter'),previous=preserve?select.value:'all'; select.replaceChildren(element('option', 'All versions')); select.firstChild.value = 'all';
+    const select = $('version-filter');if(!select)return;const previous=preserve?select.value:'all'; select.replaceChildren(element('option', 'All versions')); select.firstChild.value = 'all';
     for (const { repo, release } of filteredReleases()) { const option = element('option', platformLabel(repo) + ' ' + MovieBoxReleaseInfo.label(release.tag)); option.value = repo.name + ':' + release.tag; select.append(option); }
     if(Array.from(select.options).some(option=>option.value===previous))select.value=previous;
     renderReleases();
   }
   function renderReleases() {
-    const body = $('release-rows'); body.replaceChildren(); const all = $('count-mode').value === 'all';
+    const body = $('release-rows');if(!body)return;body.replaceChildren(); const all = $('count-mode')?.value === 'all';
     const releases = filteredReleases().filter(({ repo, release }) => $('version-filter').value === 'all' || $('version-filter').value === repo.name + ':' + release.tag)
       .sort((a, b) => b.release.publishedAt.localeCompare(a.release.publishedAt));
     const selectedSize=Number($('release-page-size').value),pageSize=[5,10,20].includes(selectedSize)?selectedSize:5;
@@ -182,7 +182,7 @@
     if (!releases.length) { const row = element('tr'), cell = element('td', 'No published releases match this filter.'); cell.colSpan = 5; row.append(cell); body.append(row); }
   }
   function renderGrowth() {
-    const chart = $('growth-chart'), projects = snapshot.repositories;
+    const chart = $('growth-chart');if(!chart)return;const projects = snapshot.repositories;
     const range = chart.dataset.range || 'all', platform = chart.dataset.platform || 'all';
     const signature = JSON.stringify([history.points, projects.map(repo => [repo.name, repo.packages]), range, platform]);
     if (chart.dataset.signature === signature) return;
@@ -309,21 +309,22 @@
   }
   async function load() {
     try {
-      $('count-mode').value=window.MovieBoxLiveCounts.mode();
+      if($('count-mode'))$('count-mode').value=window.MovieBoxLiveCounts.mode();
       history={schemaVersion:1,points:[]};
       const cached=window.MovieBoxLiveCounts.cached();
       if(cached)applySnapshot(cached);
       try{await refreshSaved();}catch{if(!snapshot)throw new Error('Snapshot unavailable');}
-      $('count-mode').addEventListener('change',()=>{window.MovieBoxLiveCounts.mode($('count-mode').value);renderStats();});
-      $('platform-filter').addEventListener('change',()=>{releasePage=1;updateVersions(false);});
-      $('version-filter').addEventListener('change',()=>{releasePage=1;renderReleases();});
-      $('release-page-size').addEventListener('change',()=>{releasePage=1;renderReleases();});
-      $('release-previous').addEventListener('click',()=>{releasePage--;renderReleases();});
-      $('release-next').addEventListener('click',()=>{releasePage++;renderReleases();});
+      $('count-mode')?.addEventListener('change',()=>{window.MovieBoxLiveCounts.mode($('count-mode').value);renderStats();});
+      $('platform-filter')?.addEventListener('change',()=>{releasePage=1;updateVersions(false);});
+      $('version-filter')?.addEventListener('change',()=>{releasePage=1;renderReleases();});
+      $('release-page-size')?.addEventListener('change',()=>{releasePage=1;renderReleases();});
+      $('release-previous')?.addEventListener('click',()=>{releasePage--;renderReleases();});
+      $('release-next')?.addEventListener('click',()=>{releasePage++;renderReleases();});
       refreshLive();setInterval(()=>refreshLive(),10000);
     } catch {
       $('analytics').dataset.state = 'unavailable';
-      $('growth-chart').textContent = 'Download statistics are temporarily unavailable.';
+      if($('growth-chart'))$('growth-chart').textContent = 'Download statistics are temporarily unavailable.';
+      if(!$('release-rows'))return;
       $('release-rows').replaceChildren(); const row = element('tr'), cell = element('td', 'Could not load the last successful snapshot. Please try again later.'); cell.colSpan = 5; row.append(cell); $('release-rows').append(row);
     }
   }

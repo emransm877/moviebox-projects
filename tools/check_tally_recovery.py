@@ -1,6 +1,7 @@
 """Browser regressions for real observations surviving reload and API outages.
 
 Every request is mocked or blocked: no production telemetry or app downloads.
+The retired analytics component is mounted only in this regression fixture.
 """
 import copy
 from datetime import datetime, timedelta, timezone
@@ -11,6 +12,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from playwright.sync_api import sync_playwright
+from history_fixture import with_history
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / 'site'
@@ -108,7 +110,7 @@ def fixture(browser, cache=None, mode=None, blocked=False, api_status=403):
                 assert path.is_relative_to(SITE.resolve())
                 request.fulfill(status=200 if path.is_file() else 404,
                                 content_type=mimetypes.guess_type(str(path))[0] or 'application/octet-stream',
-                                body=path.read_bytes() if path.is_file() else b'missing')
+                                body=with_history(path.read_bytes()) if path == SITE / 'index.html' else path.read_bytes() if path.is_file() else b'missing')
             return
         request.abort()
 
