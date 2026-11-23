@@ -12,7 +12,7 @@ For Node projects with package-lock.json use `npm ci`; without a lockfile use `n
 
 ## Repository commands
 
-Use Python 3.12, Node 24, and Playwright 1.65.1 for browser checks. Run `python -m pip install playwright==1.65.1` then `python -m playwright install chromium` (Linux may additionally need `python -m playwright install-deps chromium`). Run `python tools/build_site.py`, `python -m unittest test_download_analytics test_seo test_release_info`, and `node --test services/presence/test/presence.test.mjs`. Run the remaining browser checks recorded below before changing site behavior. Preview with `python -m http.server 8090 --directory site`. The scheduled collector remains hourly and retains observation history; development browser verification is omitted on schedule and retained on relevant pushes/manual dispatch. Never reset historic counters.
+Use Python 3.12, Node 24, and Playwright 1.65.1 for browser checks. Run `python -m pip install playwright==1.65.1` then `python -m playwright install chromium` (Linux may additionally need `python -m playwright install-deps chromium`). Run `python tools/build_site.py`, `python -m unittest test_download_analytics test_seo test_release_info`, and `node --test services/presence/test/presence.test.mjs`. Run the remaining browser checks recorded below before changing site behavior. Preview with `python -m http.server 8090 --directory site`. The existing hourly workflow is retained in source, but repository Actions is currently disabled: hosted collection and checks do not run. Keep existing observation history. Local collection can refresh snapshots before publishing; never reset historic counters.
 
 ## Existing hosted command reference
 
@@ -46,3 +46,47 @@ Before pushing a workflow change, inspect current branch protection/rulesets and
 Rollback: inspect the migration commit with `git show <migration-commit>`, then `git revert <migration-commit>` and push under normal repository policy. Reverting automatic triggers may start cloud jobs; review the resulting diff first. Avoid reverting later production state or historical statistics. Account billing and Actions permissions were not changed.
 
 For a new project, choose its existing/native tooling, record supported runtime versions, commit an appropriate dependency lock and environment example without secrets, define local validation commands and platform limits, and classify any proposed cloud automation before adding it. Do not copy an unrelated stack's build script.
+
+## Direct static Pages publishing
+
+The owner prefers local builds, tests and Agency reviews. The current live Pages
+source is `gh-pages` at `/`, with `.nojekyll` present. Actions stays disabled.
+Source development stays on `main`; pushing `main` alone does not publish the site.
+
+After local checks pass, commit the finished `site/` changes to `main`. Publish a
+new artifact commit whose parent is the current `origin/gh-pages` and whose tree
+is exactly the committed `site/` tree. This retains publishing history and avoids
+force-pushing an unrelated subtree history:
+
+```text
+git fetch origin gh-pages
+git rev-parse HEAD:site
+git rev-parse origin/gh-pages
+git commit-tree <site-tree-from-first-rev-parse> -p <published-commit-from-second-rev-parse> -m "Publish locally verified website"
+git push origin <new-commit-from-commit-tree>:refs/heads/gh-pages
+```
+
+Replace the angle-bracket values with the actual command output. `HEAD` must be
+the reviewed source commit containing the built static files. Confirm `.nojekyll`
+is in that tree. Inspect remote publication changes before pushing; if the remote
+advances, fetch and prepare a new commit against it. Never force-push. A separate
+publishing worktree with ordinary commits is also suitable if it preserves the
+`.git` worktree pointer and uses exactly the reviewed generated files.
+Changing hosting configuration is not a routine per-release step.
+The one-time Pages source selection is Settings > Pages > Deploy from a branch >
+`gh-pages` > `/ (root)`. It is already configured for this repository.
+
+GitHub Pages can deploy this prebuilt content directly while Actions is disabled;
+see [GitHub's publishing documentation](https://github.blog/changelog/2024-07-08-pages-legacy-worker-sunset/).
+The GitHub Pages hosting service still performs publication; `.nojekyll` avoids the
+Jekyll build. This does not run the project's Actions workflow.
+
+After publication, verify the actual live page, key downloads links, Tally and
+Google verification file. Run `python tools/check_live_seo.py --output local-live-seo.json`
+locally. Do not download application packages just to verify links. Keep generated
+reports, credentials and machine-specific files out of git.
+
+Public browser count polling remains active. With Actions disabled, the existing
+hourly snapshot schedule is inactive; run the collector locally when fresh stored
+observations are needed, preserving history. Never silently enable a workflow to
+restore that schedule.

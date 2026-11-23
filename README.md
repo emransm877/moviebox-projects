@@ -109,7 +109,9 @@ visible. GitHub caches and public API limits can delay updates; the last verifie
 numbers remain available during an outage. The collector timestamp is retained
 in the public data, without a misleading manual-refresh control.
 
-Hourly Actions snapshots retain an observation history for growth charts. Counts
+The retained data includes earlier observation history. GitHub Actions is currently
+disabled; hourly hosted collection is paused. Local collection can update snapshots
+before publishing. The homepage no longer includes the history disclosure. Counts
 measure file downloads, not people, installs or active users. Application-package
 totals exclude checksums. TV bundles and raw widgets count as separate downloads.
 Deleted assets retain their last observed peak in historical data. A newly added
@@ -138,10 +140,11 @@ untouched. Click **Verify** in Search Console once this file is live, then submi
 the sitemap above. Hosting the file alone does not confirm account verification
 or indexing.
 
-Every deployment runs `tools/check_live_seo.py` against the public site: all published
+After publishing, run `python tools/check_live_seo.py` locally against the public site: all published
 HTTP-200 canonical pages, unique titles, indexability, sitemap URLs, a real 404,
 the old URL's redirect/canonical, and the exact Google verification file bytes.
-Its result is retained as the `live-seo-audit` Actions artifact. This is a
+Save its result locally with `--output`; historical runs also have
+`live-seo-audit` Actions artifacts. This is a
 technical crawlability check, not an invented ranking score or a field Core Web
 Vitals measurement.
 
@@ -158,3 +161,11 @@ artwork retain their respective owners' rights. Project-source licensing does
 not grant rights to upstream applications or media. This is not affiliated with
 MovieBox, Google, Microsoft or Samsung. No application release is published by
 the website workflow.
+
+## Publishing without GitHub Actions
+
+Build, test and obtain Agency review locally. The live site publishes prebuilt
+static files from the `gh-pages` branch root with `.nojekyll`. The website address
+is unchanged. Repository Actions remains disabled. See
+[the local publishing instructions](LOCAL_DEVELOPMENT.md#direct-static-pages-publishing).
+Do not enable or trigger Actions without the owner's explicit confirmation.
