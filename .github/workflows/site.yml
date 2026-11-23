@@ -13,7 +13,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
+    # Hourly statistics collection does not need the development browser suite.
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,7 +40,9 @@ jobs:
       - run: python tools/check_tally_recovery.py
   snapshot:
     needs: verify
+    if: ${{ !cancelled() && (needs.verify.result == 'success' || (github.event_name == 'schedule' && needs.verify.result == 'skipped')) }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
@@ -71,7 +76,9 @@ jobs:
           path: site
   deploy:
     needs: snapshot
+    if: ${{ !cancelled() && needs.snapshot.result == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       pages: write
       id-token: write
@@ -84,7 +91,9 @@ jobs:
         uses: actions/deploy-pages@v4
   live-seo:
     needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -94,5 +103,6 @@ jobs:
         run: python tools/check_live_seo.py --attempts 4 --output live-seo.json
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: live-seo-audit
           path: live-seo.json
