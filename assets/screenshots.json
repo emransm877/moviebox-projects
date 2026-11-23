@@ -105,6 +105,22 @@
         1280,
         1920
       ]
+    },
+    {
+      "repo": "moviebox-android-native",
+      "version": "0.1.1",
+      "versionCode": 4,
+      "file": "android-native-0.1.1-home.png",
+      "caption": "Android App - 0.1.1 build 4 on the maintainer's phone",
+      "device": "Physical Android 17 phone",
+      "capturedOn": "2026-11-24",
+      "width": 1156,
+      "height": 2510,
+      "sha256": "25678c1b38f000e28b95641cbd2fed638a88443e4c0bcc7cd4c6ef7f7bdea5c3",
+      "webpWidths": [
+        360,
+        720
+      ]
     }
   ]
 }
