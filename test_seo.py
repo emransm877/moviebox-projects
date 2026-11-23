@@ -1,5 +1,5 @@
 """Static contracts for indexable content, honest structured data and internal links."""
-import json,unittest
+import hashlib,json,unittest
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit,unquote
@@ -39,7 +39,9 @@ class SEOTests(unittest.TestCase):
             self.assertEqual(page.canonical,[url]);self.assertEqual(page.h1,1)
             self.assertIn('index,follow',page.meta['robots'])
             self.assertEqual(page.meta['og:url'],url);self.assertEqual(page.meta['twitter:card'],'summary_large_image')
-            self.assertEqual(page.meta['og:image'],BASE+'assets/community-share.png')
+            share_digest=hashlib.sha256((SITE/'assets/community-share.png').read_bytes()).hexdigest()[:12]
+            self.assertEqual(page.meta['og:image'],BASE+'assets/community-share.png?v='+share_digest)
+            self.assertEqual(page.meta['twitter:image'],page.meta['og:image'])
             self.assertTrue(page.json);self.assertTrue(25<=len(page.title)<=75)
             self.assertTrue(90<=len(page.meta['description'])<=190)
             raw=json.dumps(page.json)

@@ -29,6 +29,10 @@ def product(data,name,kind):
 
 def head(path,extra=None):
     title,description=PAGES[path];prefix='../' if path else ''
+    # Sharing platforms cache image URLs separately from page HTML. Change the
+    # preview URL only when its maintained artwork changes, just like CSS/JS.
+    share_digest=hashlib.sha256((SITE/'assets/community-share.png').read_bytes()).hexdigest()[:12]
+    share_image=BASE+'assets/community-share.png?v='+share_digest
     graph=[OWNER,{'@type':'WebSite','@id':BASE+'#website','url':BASE,'name':'MovieBox Projects','creator':{'@id':OWNER['@id']},'inLanguage':'en','sameAs':[FACEBOOK_PAGE]}]
     page={'@type':'CollectionPage' if not path else 'WebPage','@id':BASE+path+'#page','url':BASE+path,'name':title,'description':description,'isPartOf':{'@id':BASE+'#website'},'inLanguage':'en'}
     graph.append(page)
@@ -50,9 +54,9 @@ def head(path,extra=None):
 <meta property="og:type" content="website"><meta property="og:site_name" content="MovieBox Projects">
 <meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(description)}">
 <meta property="og:url" content="{BASE+path}"><meta property="og:locale" content="en_US">
-<meta property="og:image" content="{BASE}assets/community-share.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png">
+<meta property="og:image" content="{share_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png">
 <meta property="og:image:alt" content="MovieBox community projects for Windows, Android phones, Android TV and Samsung Tizen">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(description)}"><meta name="twitter:image" content="{BASE}assets/community-share.png"><meta name="twitter:image:alt" content="Independent MovieBox projects for Windows, Android phones, Android TV and Samsung Tizen">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(description)}"><meta name="twitter:image" content="{share_image}"><meta name="twitter:image:alt" content="Independent MovieBox projects for Windows, Android phones, Android TV and Samsung Tizen">
 <link rel="icon" href="{prefix}assets/cinema-favicon.svg" type="image/svg+xml"><link rel="icon" href="{prefix}assets/cinema-favicon.ico" sizes="16x16 32x32 48x48"><link rel="alternate icon" href="{prefix}assets/cinema-icon-32.png" type="image/png"><link rel="apple-touch-icon" href="{prefix}assets/cinema-apple-touch.png" sizes="180x180">
 {tags}<title>{e(title)}</title>
 <script type="application/ld+json">{json.dumps({'@context':'https://schema.org','@graph':graph},ensure_ascii=False).replace('<',chr(92)+'u003c')}</script>'''
