@@ -3,7 +3,7 @@
   "trackingStartedAt": "2026-11-20T19:43:55+00:00",
   "assetPeaks": {
     "moviebox-android:744847608": {
-      "count": 269,
+      "count": 278,
       "kind": "apk",
       "repo": "moviebox-android"
     },
@@ -23,7 +23,7 @@
       "repo": "moviebox-android"
     },
     "moviebox-desktop:748121556": {
-      "count": 78,
+      "count": 79,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
@@ -283,7 +283,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-tizen:751659404": {
-      "count": 46,
+      "count": 47,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
@@ -638,7 +638,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:780178307": {
-      "count": 20,
+      "count": 22,
       "kind": "portable",
       "repo": "moviebox-desktop"
     },
@@ -653,7 +653,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-desktop:780178116": {
-      "count": 21,
+      "count": 28,
       "kind": "installer",
       "repo": "moviebox-desktop"
     },
@@ -673,7 +673,7 @@
       "repo": "moviebox-desktop"
     },
     "moviebox-tizen:780181362": {
-      "count": 19,
+      "count": 24,
       "kind": "tv_bundle",
       "repo": "moviebox-tizen"
     },
@@ -713,7 +713,7 @@
       "repo": "moviebox-android-tv"
     },
     "moviebox-android-tv:780172612": {
-      "count": 27,
+      "count": 34,
       "kind": "apk",
       "repo": "moviebox-android-tv"
     },
@@ -723,7 +723,7 @@
       "repo": "moviebox-android-tv"
     },
     "moviebox-android-native:780243126": {
-      "count": 33,
+      "count": 48,
       "kind": "apk",
       "repo": "moviebox-android-native"
     },
@@ -897,6 +897,16 @@
         "moviebox-tizen": 144,
         "moviebox-android-tv": 78,
         "moviebox-android-native": 33
+      }
+    },
+    {
+      "at": "2026-11-23T12:16:46+00:00",
+      "packages": {
+        "moviebox-android": 442,
+        "moviebox-desktop": 452,
+        "moviebox-tizen": 150,
+        "moviebox-android-tv": 85,
+        "moviebox-android-native": 48
       }
     }
   ]
