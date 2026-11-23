@@ -37,11 +37,16 @@ try:
             assert page.locator('#offline-downloads').count()==1
             assert page.locator('#subtitle-storage').count()==1
             assert page.locator('#optional-updates').count()==1
-            assert '127 scoped scenarios' in page.locator('#phone-validation').inner_text()
+            assert '131 scoped scenarios' in page.locator('#phone-validation').inner_text()
             assert page.locator('.guide-actions a').first.get_attribute('href').endswith('/v0.1.1/MovieBox-Android-App-0.1.1.apk')
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
             page.screenshot(path=str(OUT/f'guide-{width}.png'),full_page=True)
             page.goto(f'http://127.0.0.1:{server.server_port}/')
+            assert page.locator('.native-scene img').get_attribute('src').endswith('android-native-0.1.1-home.png')
+            assert page.locator('.native-scene .im a').get_attribute('href').endswith('android-native-0.1.1-home.png')
+            assert '0.1.1 build 4' in page.locator('.native-scene .capture-caption').inner_text()
+            assert page.locator('.native-scene img').evaluate("image=>{const photo=image.getBoundingClientRect(),frame=image.closest('.im').getBoundingClientRect();return photo.top>=frame.top-1&&photo.bottom<=frame.bottom+1}")
+            page.locator('.native-scene').screenshot(path=str(OUT/f'native-project-{width}.png'))
             assert page.locator('.tally-list .tally-row:not([hidden])').count()==5
             assert '0.1.1'==page.locator('#native-version').inner_text()
             assert not errors,errors

@@ -76,6 +76,19 @@ def software(path,name,version,asset,osname,description,screenshot=None):
     if screenshot:result['screenshot']=BASE+'assets/'+screenshot
     return result
 
+def refresh_scene_capture(text, scene_class, capture, label, phone=False):
+    """Use the same publication-matched capture for a project card and its link."""
+    if not capture:return text
+    # Keep responsive sources, but use the card's styles rather than guide margins.
+    image=picture(capture,phone=phone).replace(' class="guide-screen'+(' guide-phone-shot' if phone else '')+'"','')
+    markup='<div class="im'+(' ph' if phone else '')+'"><a href="assets/'+e(capture['file'])+'" aria-label="Open full '+e(label)+' screenshot">'+image+'</a></div>'
+    pattern=r'(<article\b[^>]*class="[^\"]*\b'+re.escape(scene_class)+r'\b[^\"]*"[^>]*>)(.*?)(</article>)'
+    def update(match):
+        body=re.sub(r'<div class="im(?: ph)?">.*?</div>',lambda _:markup,match[2],count=1,flags=re.S)
+        body=re.sub(r'<p class="capture-caption">.*?</p>',lambda _:'<p class="capture-caption">'+e(capture['caption'])+'</p>',body,count=1,flags=re.S)
+        return match[1]+body+match[3]
+    return re.sub(pattern,update,text,flags=re.S)
+
 def native_maintenance_sections(release):
     """Describe maintenance features only after their actual release is selected.
 
@@ -173,6 +186,9 @@ def build():
         text=re.sub(r'(<[^>]+data-published-project="moviebox-android-native")(?! hidden)',lambda match:match[1]+' hidden',text)
         for attribute in ['id','data-download-source']:
             text=re.sub(r'(<a\b[^>]*'+attribute+'="native-download") href="[^"]*"',lambda match:match[1],text)
+    # Project cards and the main preview share publication-matched captures.
+    for scene,capture,label,phone in [('windows-scene',wshot,'Windows',False),('native-scene',nshot,'Android App',True),('android-scene',ashot,'Android patch',True),('tv-scene',tshot,'Samsung TV',False),('androidtv-scene',atvshot,'Android TV',False)]:
+        text=refresh_scene_capture(text,scene,capture,label,phone)
     # The main preview uses genuine, publication-matched captures for each platform.
     shots=[('windows','Windows',wshot),('tv','Android TV',atvshot)]
     if tshot:shots.append(('samsung','Samsung TV',tshot))

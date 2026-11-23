@@ -5,11 +5,21 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0,str(Path(__file__).parent/'tools'))
-from build_site import native_maintenance_sections
+from build_site import native_maintenance_sections, refresh_scene_capture
 from release_info import published_release
 
 
 class NativeMaintenanceInformationTests(unittest.TestCase):
+    def test_project_card_updates_image_sources_link_and_caption_together(self):
+        old='<article class="project scene native-scene"><h3>Android App</h3><div class="im ph"><a href="old.png"><img src="old.png"></a></div><p class="capture-caption">Old capture</p></article><article class="other">Keep this</article>'
+        capture={'file':'current.png','caption':'0.1.1 build 4 & real phone','width':1156,'height':2510,'webpWidths':[360,720]}
+        result=refresh_scene_capture(old,'native-scene',capture,'Android App',True)
+        self.assertNotIn('old.png',result)
+        self.assertNotIn('guide-screen',result)
+        for expected in ['href="assets/current.png"','src="assets/current.png"','assets/current-360.webp 360w','assets/current-720.webp 720w','0.1.1 build 4 &amp; real phone','<h3>Android App</h3>','<article class="other">Keep this</article>']:
+            self.assertIn(expected,result)
+        self.assertEqual(refresh_scene_capture(old,'native-scene',None,'Android App',True),old)
+
     def test_original_apk_does_not_gain_unpublished_features(self):
         self.assertEqual(native_maintenance_sections({'tag':'v0.1.0'}),'')
 
