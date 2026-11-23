@@ -51,6 +51,10 @@ def normalise(repo, platform, releases):
             assets.append({'id': asset['id'], 'name': asset['name'], 'count': count,
                 'kind': classify(asset['name'], repo), 'url': url, 'size': asset['size'],
                 'createdAt': asset['created_at'], 'digest': asset.get('digest')})
+        if repo == 'moviebox-android-native':
+            # Keep older same-release APKs/counts, but offer the canonical App APK first.
+            assets.sort(key=lambda asset: not bool(re.fullmatch(
+                r'moviebox-android-app-[0-9.]+\.apk', asset['name'], re.IGNORECASE)))
         output.append({'tag': release['tag_name'], 'url': release['html_url'],
             'publishedAt': release['published_at'], 'prerelease': release['prerelease'], 'assets': assets})
     kinds = {kind: sum(a['count'] for r in output for a in r['assets'] if a['kind'] == kind)

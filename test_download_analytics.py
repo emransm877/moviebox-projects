@@ -6,6 +6,29 @@ def fixture(count=10):
     return {'schemaVersion':1,'observedAt':'2026-11-21T12:00:00+00:00','repositories':[{'name':'moviebox-desktop','releases':[{'assets':[{'id':1,'count':count,'kind':'installer'}]}]}]}
 
 class DownloadAnalyticsTests(unittest.TestCase):
+    def test_same_release_native_refresh_prefers_app_apk_without_losing_original_counts(self):
+        repo='moviebox-android-native'
+        def asset(id,name,count):
+            return {'id':id,'name':name,'download_count':count,'size':100+id,
+                    'created_at':'2026-11-24T00:00:00Z','digest':'sha256:'+str(id),
+                    'browser_download_url':f'https://github.com/emransm877/{repo}/releases/download/v0.1.1/{name}'}
+        old=asset(1,'MovieBox-Android-Native-0.1.1.apk',17)
+        new=asset(2,'MovieBox-Android-App-0.1.1.apk',2)
+        checksum=asset(3,'MovieBox-Android-App-0.1.1.apk.sha256',5)
+        release={'tag_name':'v0.1.1','html_url':f'https://github.com/emransm877/{repo}/releases/tag/v0.1.1',
+                 'published_at':'2026-11-24T00:00:00Z','prerelease':False,'assets':[old,checksum,new]}
+        result=normalise(repo,'Android app',[release])
+        self.assertEqual(result['releases'][0]['assets'][0]['name'],new['name'])
+        self.assertEqual(result['packages'],19)
+        self.assertEqual(result['allAssets'],24)
+        self.assertEqual([a['id'] for a in result['releases'][0]['assets']],[2,1,3])
+        self.assertEqual(result['releases'][0]['assets'][1]['digest'],old['digest'])
+        self.assertEqual(release['assets'],[old,checksum,new])
+        release['assets']=[old]
+        fallback=normalise(repo,'Android app',[release])
+        self.assertEqual(fallback['releases'][0]['assets'][0]['name'],old['name'])
+        self.assertEqual(fallback['packages'],17)
+
     def test_hourly_observations_preserve_first_baseline_and_latest_in_hour(self):
         first=fixture(10);history=update_history({},first)
         second=fixture(12);second['observedAt']='2026-11-21T12:30:00+00:00';history=update_history(history,second)

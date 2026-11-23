@@ -23,6 +23,8 @@
       kinds[type]+=a.download_count;
       return {id:a.id,name:a.name,count:a.download_count,kind:type,url:url.href,size:a.size,createdAt:a.created_at,digest:a.digest||null};
     })}));
+    // Retain archived APKs/counts while making the canonical same-release App APK the download.
+    if(repo==='moviebox-android-native')for(const release of output)release.assets.sort((a,b)=>Number(/^moviebox-android-app-[0-9.]+\.apk$/i.test(b.name))-Number(/^moviebox-android-app-[0-9.]+\.apk$/i.test(a.name)));
     return {name:repo,platform,url:'https://github.com/'+owner+'/'+repo,releases:output,kinds,latestTag:latest.tag_name,
       packages:kinds.apk+kinds.installer+kinds.portable+kinds.tv_bundle+kinds.tv_widget,allAssets:Object.values(kinds).reduce((a,b)=>a+b,0)};
   }

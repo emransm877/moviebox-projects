@@ -18,13 +18,13 @@ class NativeMaintenanceInformationTests(unittest.TestCase):
         for phrase in ['Back up library','merges','Wi-Fi','Roaming is disabled',
                        'Retry requests a fresh source','Offline HLS/DASH',
                        'subtitle currently playing','not instant push notifications',
-                       '127 scoped scenarios','29 unit tests','one physical phone']:
+                       '131 scoped scenarios','29 unit tests','one physical phone']:
             self.assertIn(phrase,text)
         self.assertNotIn('/releases/download/',text)
 
     def test_future_release_does_not_inherit_specific_test_counts(self):
         text=native_maintenance_sections({'tag':'v0.1.2'})
-        self.assertNotIn('127',text)
+        self.assertNotIn('131',text)
         self.assertNotIn('29 unit',text)
         self.assertIn('selected release',text)
 

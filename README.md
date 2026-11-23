@@ -26,7 +26,7 @@ Choose your device below, or use the [download website](https://emransm877.githu
 The native Android app and Android patch are separate installations with separate
 saved lists. Check each project's installation guide and compatibility notes.
 
-The native Android App **0.1.1** reliability update is published. It adds library backup/recovery, Wi-Fi-first downloads with per-file mobile-data consent, bounded subtitle storage and more reliable optional reminders. Its exact release APK passed 127 scoped phone scenarios and 29 unit tests on one Android 17 phone; broader device compatibility remains unverified. [Release, APK and checksum](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.1).
+The native Android App **0.1.1** reliability update is published. It adds library backup/recovery, Wi-Fi-first downloads with per-file mobile-data consent, bounded subtitle storage and more reliable optional reminders. Its exact release APK passed 131 scoped phone scenarios and 29 unit tests on one Android 17 phone; broader device compatibility remains unverified. [Release, APK and checksum](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.1).
 
 Only projects with published downloads and documented working scope are offered
 as ready downloads. Android TV has a published APK with bounded runtime
