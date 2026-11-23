@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-22T22:14:54+00:00",
+  "observedAt": "2026-11-23T02:54:44+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -16,7 +16,7 @@
             {
               "id": 744847608,
               "name": "MovieBox-Android-0.2.0.apk",
-              "count": 268,
+              "count": 269,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android/releases/download/v0.2.0/MovieBox-Android-0.2.0.apk",
               "size": 67368390,
@@ -65,7 +65,7 @@
         }
       ],
       "kinds": {
-        "apk": 432,
+        "apk": 433,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -73,8 +73,8 @@
         "checksums": 6,
         "other": 0
       },
-      "packages": 432,
-      "allAssets": 438,
+      "packages": 433,
+      "allAssets": 439,
       "latestTag": "v0.2.0"
     },
     {
@@ -101,7 +101,7 @@
             {
               "id": 780178307,
               "name": "MovieBox-Desktop-0.10.4-windows-x64.zip",
-              "count": 18,
+              "count": 20,
               "kind": "portable",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/MovieBox-Desktop-0.10.4-windows-x64.zip",
               "size": 60966779,
@@ -131,7 +131,7 @@
             {
               "id": 780178116,
               "name": "MovieBox-Setup-0.10.4-windows-x64.exe",
-              "count": 17,
+              "count": 21,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.4/MovieBox-Setup-0.10.4-windows-x64.exe",
               "size": 44351064,
@@ -885,15 +885,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 305,
-        "portable": 131,
+        "installer": 309,
+        "portable": 133,
         "tv_bundle": 0,
         "tv_widget": 0,
         "checksums": 64,
         "other": 11
       },
-      "packages": 436,
-      "allAssets": 511,
+      "packages": 442,
+      "allAssets": 517,
       "latestTag": "v0.10.4"
     },
     {
@@ -1737,7 +1737,7 @@
             {
               "id": 780172612,
               "name": "MovieBox-Android-TV-0.2.0.apk",
-              "count": 26,
+              "count": 27,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-tv/releases/download/v0.2.0/MovieBox-Android-TV-0.2.0.apk",
               "size": 5136440,
@@ -1786,7 +1786,7 @@
         }
       ],
       "kinds": {
-        "apk": 77,
+        "apk": 78,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
@@ -1794,8 +1794,8 @@
         "checksums": 7,
         "other": 2
       },
-      "packages": 77,
-      "allAssets": 86,
+      "packages": 78,
+      "allAssets": 87,
       "latestTag": "v0.2.0"
     },
     {
@@ -1812,7 +1812,7 @@
             {
               "id": 780243126,
               "name": "MovieBox-Android-App-0.1.0.apk",
-              "count": 27,
+              "count": 33,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk",
               "size": 4750201,
@@ -1822,7 +1822,7 @@
             {
               "id": 780243344,
               "name": "MovieBox-Android-App-0.1.0.apk.sha256",
-              "count": 1,
+              "count": 2,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.0/MovieBox-Android-App-0.1.0.apk.sha256",
               "size": 98,
@@ -1833,16 +1833,16 @@
         }
       ],
       "kinds": {
-        "apk": 27,
+        "apk": 33,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 1,
+        "checksums": 2,
         "other": 0
       },
-      "packages": 27,
-      "allAssets": 28,
+      "packages": 33,
+      "allAssets": 35,
       "latestTag": "v0.1.0"
     }
   ]
