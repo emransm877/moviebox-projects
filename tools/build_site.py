@@ -106,6 +106,12 @@ def native_maintenance_sections(release):
 
 def build():
     global NATIVE_AVAILABLE
+    if (ROOT/'.galaxy-source.json').is_file():
+        raise SystemExit(
+            'Stopped: this legacy generator would overwrite the reviewed Galaxy site. '
+            'Build the current source with python release/build_all.py in '
+            'moviebox-galaxy-build; see WEBSITE-DEVELOPMENT.md. No files were changed.'
+        )
     data=json.loads((SITE/'data/latest.json').read_text(encoding='utf-8'))
     (SITE/'release-info.js').write_text(browser_source(),encoding='utf-8')
     native_repo=next((repo for repo in data['repositories'] if repo['name']=='moviebox-android-native'),None)

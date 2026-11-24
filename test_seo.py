@@ -6,11 +6,14 @@ from urllib.parse import urlsplit,unquote
 import xml.etree.ElementTree as ET
 
 SITE=Path(__file__).parent/'site';BASE='https://emransm877.github.io/moviebox-projects/'
+SHARE_ASSET='film-galaxy-share.png' if (SITE.parent/'.galaxy-source.json').is_file() else 'community-share.png'
 class Page(HTMLParser):
     def __init__(self,text):
-        super().__init__();self.meta={};self.links=[];self.title='';self.h1=0;self.canonical=[];self.json=[];self._title=False;self._json=False;self._buffer='';self.feed(text)
+        super().__init__();self.meta={};self.links=[];self.ids=set();self.anchors={};self.title='';self.h1=0;self.canonical=[];self.json=[];self._title=False;self._json=False;self._buffer='';self.feed(text)
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
+        if a.get('id'):self.ids.add(a['id'])
+        if tag=='a' and a.get('id'):self.anchors[a['id']]=a.get('href','')
         if tag=='meta':self.meta[a.get('name',a.get('property',''))]=a.get('content','')
         if tag=='link' and a.get('rel')=='canonical':self.canonical.append(a['href'])
         if tag=='title':self._title=True
@@ -19,7 +22,9 @@ class Page(HTMLParser):
         if tag in ('a','link','script','img'):
             target=a.get('href') or a.get('src')
             if target:self.links.append(target)
-        if tag=='img' and not a.get('alt') and a.get('alt')!='':raise AssertionError('Image without alt')
+        # In minified HTML, a present valueless alt is the empty string in the
+        # browser; HTMLParser represents that valid spelling as None.
+        if tag=='img' and 'alt' not in a:raise AssertionError('Image without alt')
     def handle_data(self,data):
         if self._title:self.title+=data
         if self._json:self._buffer+=data
@@ -39,8 +44,8 @@ class SEOTests(unittest.TestCase):
             self.assertEqual(page.canonical,[url]);self.assertEqual(page.h1,1)
             self.assertIn('index,follow',page.meta['robots'])
             self.assertEqual(page.meta['og:url'],url);self.assertEqual(page.meta['twitter:card'],'summary_large_image')
-            share_digest=hashlib.sha256((SITE/'assets/community-share.png').read_bytes()).hexdigest()[:12]
-            self.assertEqual(page.meta['og:image'],BASE+'assets/community-share.png?v='+share_digest)
+            share_digest=hashlib.sha256((SITE/'assets'/SHARE_ASSET).read_bytes()).hexdigest()[:12]
+            self.assertEqual(page.meta['og:image'],BASE+'assets/'+SHARE_ASSET+'?v='+share_digest)
             self.assertEqual(page.meta['twitter:image'],page.meta['og:image'])
             self.assertTrue(page.json);self.assertTrue(25<=len(page.title)<=75)
             self.assertTrue(90<=len(page.meta['description'])<=190)
@@ -56,10 +61,13 @@ class SEOTests(unittest.TestCase):
     def test_404_is_not_indexable_and_social_image_has_real_dimensions(self):
         self.assertIn('noindex',Page((SITE/'404.html').read_text(encoding='utf-8')).meta['robots'])
         import struct
-        image=(SITE/'assets/community-share.png').read_bytes();self.assertEqual(image[:8],b'\x89PNG\r\n\x1a\n');self.assertEqual(struct.unpack('>II',image[16:24]),(1200,630))
+        image=(SITE/'assets'/SHARE_ASSET).read_bytes();self.assertEqual(image[:8],b'\x89PNG\r\n\x1a\n');self.assertEqual(struct.unpack('>II',image[16:24]),(1200,630))
     def test_only_published_projects_have_ready_download_links(self):
         text=(SITE/'index.html').read_text(encoding='utf-8')
-        for name in ['windows-download','android-download','tv-download','androidtv-download']:self.assertIn('id="'+name+'"',text)
+        page=Page(text)
+        for name in ['windows-download','android-download','tv-download','androidtv-download']:
+            self.assertIn(name,page.anchors)
+            self.assertIn('/releases/download/',page.anchors[name])
         native=Page((SITE/'android-app/index.html').read_text(encoding='utf-8'))
         if 'noindex' in native.meta['robots']:self.assertNotIn('/moviebox-android-native/releases/download/',text)
-        self.assertNotIn('id="ios-download"',text);self.assertNotIn('id="macos-download"',text)
+        self.assertNotIn('ios-download',page.ids);self.assertNotIn('macos-download',page.ids)

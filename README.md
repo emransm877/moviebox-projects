@@ -1,5 +1,11 @@
 # MovieBox Projects
 
+**Current Galaxy website:** [development and home/work instructions](WEBSITE-DEVELOPMENT.md).
+The finished site is kept here; the complete readable source and design archive
+are maintained in the private `moviebox-galaxy-build` repository. The older build
+commands and cinema-theme description below are historical and do not rebuild the
+current Galaxy design. The legacy generator is guarded against overwriting it.
+
 The independent community hub for the published **Windows**, **Android app**, **Android patch**,
 **Samsung Tizen TV** and **Android TV / Google TV** projects maintained by Emran Hossain.
 
