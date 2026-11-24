@@ -3,7 +3,7 @@
   "sourceRepository": "https://github.com/emransm877/moviebox-galaxy-build",
   "buildCommand": "python release/build_all.py",
   "artifactDirectory": "release/integration/site",
-  "approvedCandidate": "selected-071b33e39e7c",
-  "approvedManifestSHA256": "b072e64657276487590e88cfee3d330ec11326b2630c64bafb529fe7303b5c52",
-  "sourceCommit": "317efcf2f3a75bc7b8b927026321110522c07c38"
+  "approvedCandidate": "selected-8a68bd3ed5c3",
+  "approvedManifestSHA256": "84a9d3464df865a49b0691ea807d4fbf7ed496dea0059f401b3034eac7191fb9",
+  "sourceCommit": "cbf610a98d7e12ea51be283c59bc9be55fcebbe6"
 }
