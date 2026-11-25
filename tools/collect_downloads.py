@@ -19,7 +19,8 @@ OWNER = 'emransm877'
 
 def classify(name, repo):
     name = name.lower()
-    if name.endswith(('.sha256', '.sha512')) or name in ('sha256sums.txt', 'checksums.txt'):
+    checksum_manifest = name.endswith('.txt') and re.search(r'(?:^|[-_.])sha(?:256|512)sums(?:[-_.]|$)', name)
+    if name.endswith(('.sha256', '.sha512')) or name in ('sha256sums.txt', 'checksums.txt') or checksum_manifest:
         return 'checksums'
     if repo == 'moviebox-android' and re.fullmatch(r'moviebox-android-[0-9.]+\.apk', name):
         return 'apk'
