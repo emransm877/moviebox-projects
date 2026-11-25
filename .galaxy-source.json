@@ -7,11 +7,11 @@
   "approvedManifestSHA256": "906ca99e365fd35c9cbd51ff8656162ff289f937a88f53b016b24ec7b523028a",
   "sourceCommit": "150edfbaf7d6bbbc563200fa48ebedc7e575f21a",
   "metadataOverlay": {
-    "nativeRelease": "v0.1.2",
-    "nativeSourceCommit": "8f78d87b0307dda7904d30ba9c26e17356063551",
-    "baseWebsiteCommit": "19867138223cc2b79b9a4cbe3d1fa9775dea5076",
-    "runtimeManifestSHA256": "b71bf58376c7733193fcdb1d595d9d4290d1467298ef11f618f6082e4e54890e",
-    "scope": "release metadata and authenticated count snapshot only; approved design preserved",
+    "nativeRelease": "v0.1.4",
+    "nativeSourceCommit": "81e80d46d912618795c7674207401b4e75923594",
+    "baseWebsiteCommit": "78d3164887c47d33e6bbe2d8d50874de9e3e6cd2",
+    "runtimeManifestSHA256": "3f1c16aef42e988695462c689f1c83f6cda670cc1aa7fb064af163d223d2f809",
+    "scope": "Published native release metadata, current scoped emulator screenshot and authenticated count snapshot; approved Galaxy design preserved",
     "authoringPrivate": true
   }
 }

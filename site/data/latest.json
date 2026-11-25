@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-25T17:15:37+00:00",
+  "observedAt": "2026-11-25T19:20:13+00:00",
   "repositories": [
     {
       "name": "moviebox-android",
@@ -101,7 +101,7 @@
             {
               "id": 783743855,
               "name": "MovieBox-Desktop-0.10.5-windows-x64.zip",
-              "count": 8,
+              "count": 11,
               "kind": "portable",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Desktop-0.10.5-windows-x64.zip",
               "size": 60975907,
@@ -131,7 +131,7 @@
             {
               "id": 783743585,
               "name": "MovieBox-Setup-0.10.5-windows-x64.exe",
-              "count": 35,
+              "count": 43,
               "kind": "installer",
               "url": "https://github.com/emransm877/moviebox-desktop/releases/download/v0.10.5/MovieBox-Setup-0.10.5-windows-x64.exe",
               "size": 44342264,
@@ -973,15 +973,15 @@
       ],
       "kinds": {
         "apk": 0,
-        "installer": 354,
-        "portable": 145,
+        "installer": 362,
+        "portable": 148,
         "tv_bundle": 0,
         "tv_widget": 0,
         "checksums": 71,
         "other": 15
       },
-      "packages": 499,
-      "allAssets": 585,
+      "packages": 510,
+      "allAssets": 596,
       "latestTag": "v0.10.5"
     },
     {
@@ -1892,6 +1892,44 @@
       "url": "https://github.com/emransm877/moviebox-android-native",
       "releases": [
         {
+          "tag": "v0.1.4",
+          "url": "https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.4",
+          "publishedAt": "2026-11-25T19:09:35Z",
+          "prerelease": false,
+          "assets": [
+            {
+              "id": 792783995,
+              "name": "MovieBox-Android-App-0.1.4.apk",
+              "count": 0,
+              "kind": "apk",
+              "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.4/MovieBox-Android-App-0.1.4.apk",
+              "size": 7439917,
+              "createdAt": "2026-11-25T19:09:28Z",
+              "digest": "sha256:d23fa38815e9862f333621481e4152b3ff40dd38f6fd4b0476a4ae7bc62fb4d8"
+            },
+            {
+              "id": 792784146,
+              "name": "MovieBox-Android-App-0.1.4-source.zip",
+              "count": 0,
+              "kind": "other",
+              "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.4/MovieBox-Android-App-0.1.4-source.zip",
+              "size": 16756714,
+              "createdAt": "2026-11-25T19:09:31Z",
+              "digest": "sha256:eb9b8e2d675ec70a858e006c162b01a1503d2f9d0efc46eae4bcd33d9a094b6d"
+            },
+            {
+              "id": 792784332,
+              "name": "SHA256SUMS.txt",
+              "count": 0,
+              "kind": "checksums",
+              "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.4/SHA256SUMS.txt",
+              "size": 203,
+              "createdAt": "2026-11-25T19:09:34Z",
+              "digest": "sha256:0804bde5f00edfa51634f6d6463cfe91e2e11fa80bc92e565553092fe7ad61b4"
+            }
+          ]
+        },
+        {
           "tag": "v0.1.3",
           "url": "https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.3",
           "publishedAt": "2026-11-25T17:13:36Z",
@@ -1900,7 +1938,7 @@
             {
               "id": 792409274,
               "name": "MovieBox-Android-App-0.1.3.apk",
-              "count": 0,
+              "count": 3,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.3/MovieBox-Android-App-0.1.3.apk",
               "size": 7424219,
@@ -1910,7 +1948,7 @@
             {
               "id": 792409562,
               "name": "MovieBox-Android-App-0.1.3-source.zip",
-              "count": 0,
+              "count": 1,
               "kind": "other",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.3/MovieBox-Android-App-0.1.3-source.zip",
               "size": 15930821,
@@ -1920,7 +1958,7 @@
             {
               "id": 792409771,
               "name": "MovieBox-Android-App-0.1.3-source.zip.sha256",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.3/MovieBox-Android-App-0.1.3-source.zip.sha256",
               "size": 105,
@@ -1930,7 +1968,7 @@
             {
               "id": 792409474,
               "name": "MovieBox-Android-App-0.1.3.apk.sha256",
-              "count": 0,
+              "count": 1,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.3/MovieBox-Android-App-0.1.3.apk.sha256",
               "size": 98,
@@ -1948,7 +1986,7 @@
             {
               "id": 791964588,
               "name": "MovieBox-Android-App-0.1.2.apk",
-              "count": 5,
+              "count": 6,
               "kind": "apk",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.2/MovieBox-Android-App-0.1.2.apk",
               "size": 7415793,
@@ -1978,7 +2016,7 @@
             {
               "id": 791964701,
               "name": "MovieBox-Android-App-0.1.2.apk.sha256",
-              "count": 1,
+              "count": 2,
               "kind": "checksums",
               "url": "https://github.com/emransm877/moviebox-android-native/releases/download/v0.1.2/MovieBox-Android-App-0.1.2.apk.sha256",
               "size": 98,
@@ -2085,17 +2123,17 @@
         }
       ],
       "kinds": {
-        "apk": 130,
+        "apk": 134,
         "installer": 0,
         "portable": 0,
         "tv_bundle": 0,
         "tv_widget": 0,
-        "checksums": 7,
-        "other": 2
+        "checksums": 10,
+        "other": 3
       },
-      "packages": 130,
-      "allAssets": 139,
-      "latestTag": "v0.1.3"
+      "packages": 134,
+      "allAssets": 147,
+      "latestTag": "v0.1.4"
     }
   ]
 }

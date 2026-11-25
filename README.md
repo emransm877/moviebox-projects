@@ -24,7 +24,7 @@ Choose your device below, or use the [download website](https://emransm877.githu
 | Your device / project | Current version | Installation files |
 | --- | --- | --- |
 | Windows PC | 0.10.5 | [Setup EXE and portable ZIP](https://github.com/emransm877/moviebox-desktop/releases/tag/v0.10.5) |
-| Android phone — native app | 0.1.3 | [Android App APK](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.3) |
+| Android phone — native app | 0.1.4 | [Android App APK](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.4) |
 | Android phone — separate patch | 0.2.0 | [Android patch APK](https://github.com/emransm877/moviebox-android/releases/tag/v0.2.0) |
 | Samsung Tizen TV | 0.9.3 | [TV installation bundle](https://github.com/emransm877/moviebox-tizen/releases/tag/v0.9.3) |
 | Android TV / Google TV | 0.2.0 | [Android TV APK](https://github.com/emransm877/moviebox-android-tv/releases/tag/v0.2.0) |
@@ -32,12 +32,12 @@ Choose your device below, or use the [download website](https://emransm877.githu
 The native Android app and Android patch are separate installations with separate
 saved lists. Check each project's installation guide and compatibility notes.
 
-The native Android App **0.1.3** improves portrait watch pages, the Home artwork layout, audio recovery and related titles. Confirmed upcoming movies show Coming soon instead of a playback error. The previous 18+ restriction and toggle have been removed. Its signed APK passed 38 unit tests, 72 combined Android 6 emulator scenarios and one additional visual scenario, with scoped independent HQ review. After publication, the owner installed 0.1.3 through the app and reported saved data preserved; read-only checks verified build 6 and the exact published APK identity. Broader physical playback, other devices and full upstream parity remain unverified. [Release, APK and checksum](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.3).
+The native Android App **0.1.4 (build 7)** improves the portrait Audio/Season/Episodes row, fullscreen controls, recommendation paging and optional in-app updates. Its signed APK passed 46 unit tests and 105 Android 6/API 23 emulator scenarios, with scoped independent HQ review and owner approval of the shown layout. An emulator update from the published 0.1.3 APK preserved saved lists, progress, preferences and recent searches. Current screenshots identify the exact 0.1.4 emulator capture. The agent has not updated the owner's phone; physical 0.1.4 installation, modern Android system gestures, Android 8+ installation permission screens and broader device compatibility remain unverified. [Release, APK and checksum](https://github.com/emransm877/moviebox-android-native/releases/tag/v0.1.4).
 
 Only projects with published downloads and documented working scope are offered
 as ready downloads. Android TV has a published APK with bounded runtime
 evidence. The native **MovieBox Android App** is a separate project and does not replace
-the Android patch. Its current 0.1.3 APK is published in
+the Android patch. Its current 0.1.4 APK is published in
 `emransm877/moviebox-android-native`; all five projects have separate downloads
 and installation guides. Publication gating still excludes an incomplete or
 preview-only native APK from ready downloads and the sitemap. Apple work remains outside ready downloads. Device compatibility limits
