@@ -39,7 +39,7 @@
       }
     },
     "moviebox-android-native": {
-      "nextVersion": "0.1.1",
+      "nextVersion": "0.1.2",
       "requiredKinds": [
         "apk"
       ],
@@ -49,7 +49,7 @@
   "unpublishedProjects": {
     "nativeAndroidPhone": {
       "package": "org.emransm.moviebox.phone",
-      "status": "separate native app and complete maintenance 0.1.1 APK published",
+      "status": "separate native app;0.1.2 published with scoped emulator validation; owner physical update test pending",
       "replacesPublishedPatch": false,
       "repository": "moviebox-android-native"
     }
