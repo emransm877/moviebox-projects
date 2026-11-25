@@ -1,1 +1,1 @@
-window.MovieBoxSelectedTallySeed={"counts":{"android":487,"windows":490,"samsung-tv":157,"android-tv":129,"android-native":124},"observedAt":"2026-11-25T14:55:44+00:00"};
+window.MovieBoxSelectedTallySeed={"counts":{"android":490,"windows":499,"samsung-tv":157,"android-tv":129,"android-native":130},"observedAt":"2026-11-25T17:15:37+00:00"};
